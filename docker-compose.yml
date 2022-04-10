@@ -1,0 +1,61 @@
+version: "3"
+services:
+  redis:
+    image: "library/redis:5.0.8-alpine"
+    ports:
+      - 6380:6379
+    volumes:
+      - redis-data:/data
+    networks:
+      - ppp-v3-network
+  postgres:
+    image: library/postgres:12.2-alpine
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=ppp
+    ports:
+      - "5432:5432"
+    volumes:
+      - db-data:/data
+    networks:
+      - ppp-v3-network
+    restart: unless-stopped
+  executor-node:
+    container_name: executor-node
+    image: executor-node
+    build: .
+    expose:
+      - "5000"
+    ports:
+      - "5000:5000"
+    environment:
+      - ENV=dev
+      - PORT=5000
+      # Redis
+      - REDIS_PORT=6379
+      - REDIS_HOST=redis
+      # Postgres
+      - DB_DIALECT=postgres
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_USERNAME=postgres
+      - DB_PASSWORD=postgres
+      - DB_DATABASE=ppp
+      - DB_LOGGING=false
+      - DB_SYNCHRONIZATION=true
+      - DB_DROP_SCHEMA=false
+      - DB_MIGRATIONS_RUN=false
+    volumes:
+      - ./src:/usr/src/app/src
+    networks:
+      - ppp-v3-network
+    depends_on:
+      - redis
+      - postgres
+    command: "dockerize -wait tcp://postgres:5432 -timeout 10m npm run serve"
+networks:
+  ppp-v3-network:
+volumes:
+  redis-data:
+  db-data:
