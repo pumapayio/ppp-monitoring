@@ -1,11 +1,5 @@
-import {
-  Entity,
-  Column,
-  OneToMany,
-  PrimaryColumn,
-  PrimaryGeneratedColumn,
-} from 'typeorm'
-// import { BMSubscription } from '../bm-subscription/bm-subscription.entity'
+import { Entity, Column, OneToMany, PrimaryGeneratedColumn } from 'typeorm'
+import { BMSubscription } from '../bm-subscription/bm-subscription.entity'
 import { DateAudit } from '../shared/entity/date-audit.entity'
 
 @Entity()
@@ -13,11 +7,14 @@ export class BillingModel extends DateAudit {
   @PrimaryGeneratedColumn('uuid')
   id: string
 
-  @Column('varchar', { length: 255 })
+  @Column('varchar', { length: 255, unique: true })
   billingModelId: string
 
-  // @OneToMany('Subscription', 'billingModel')
-  // subscriptions: BMSubscription[]
+  @OneToMany(
+    (type) => BMSubscription,
+    (bmSubscription) => bmSubscription.billingModel,
+  )
+  bmSubscriptions: BMSubscription[]
 
   @Column('varchar', { length: 255 })
   payee: string
@@ -29,7 +26,10 @@ export class BillingModel extends DateAudit {
   amount: string
 
   @Column('varchar', { length: 255 })
-  token: string
+  sellingToken: string
+
+  @Column('varchar', { length: 255 })
+  settlementToken: string
 
   @Column('varchar', { length: 255, nullable: true })
   frequency: string

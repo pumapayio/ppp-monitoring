@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common'
 import { BillingModelService } from 'src/api/billiing-model/billing-model.service'
-import { CreateBMDto } from 'src/api/billiing-model/dto/createBM.dto'
+import { UpdateBMDto } from 'src/api/billiing-model/dto/updateBM.dto'
 import {
   serializeBMDetails,
   UnserializedBillingModel,
@@ -8,13 +8,19 @@ import {
 import { ContractEventTypes } from 'src/api/contract-event/contract-event-types'
 import { ContractEvent } from 'src/api/contract-event/contract-event.entity'
 import { ContractEventService } from 'src/api/contract-event/contract-event.service'
-import { ContractEventLog, SmartContractNames } from 'src/utils/blockchain'
+import {
+  BillingModelEditedEvent,
+  ContractEventLog,
+  SmartContractNames,
+} from 'src/utils/blockchain'
 import { sleep } from 'src/utils/sleep'
 import { Web3Helper } from 'src/utils/web3Connector/web3Helper'
 
 @Injectable()
-export class SinglePullPaymentEventMonitoring {
-  private readonly logger = new Logger(SinglePullPaymentEventMonitoring.name)
+export class SinglePullPaymentBMEditedEventMonitoring {
+  private readonly logger = new Logger(
+    SinglePullPaymentBMEditedEventMonitoring.name,
+  )
 
   constructor(
     private web3Helper: Web3Helper,
@@ -60,31 +66,55 @@ export class SinglePullPaymentEventMonitoring {
         SmartContractNames[event.contractName],
         true,
       )
-      contract.events[ContractEventTypes.BillingModelCreated]({
+      contract.events[ContractEventTypes.BillingModelEdited]({
         from: event.address,
         fromBlock: latestBlock,
       })
-        .on('connected', async (subscriptionId: string) => {
+        .on('connected', (subscriptionId: string) => {
           console.log(subscriptionId)
         })
         .on('data', async (eventLog: ContractEventLog) => {
-          const web3Utils = this.web3Helper.getWeb3Utils(event.networkId)
-          const unserializedBillingModel: UnserializedBillingModel = await contract.methods
-            .getBillingModel(eventLog.returnValues.billingModelID)
-            .call()
-          const billinModelDetails = serializeBMDetails(
-            eventLog.returnValues.billingModelID,
-            unserializedBillingModel,
-            web3Utils,
-          )
-          billinModelDetails.billingModelId =
-            eventLog.returnValues.billingModelID
-          const createBM: CreateBMDto = Object.assign(billinModelDetails, {})
+          try {
+            // ==================================================================
+            // TODO: This approach is better as we don't make another call to retreive the bm details
+            // from the blokchain - need to figure out why we are getting `Invalid UTF-8 detected` and
+            // `Invalid continuation byte` errors though with this approach
+            // ==================================================================
+            // const web3Utils = this.web3Helper.getWeb3Utils(event.networkId)
+            // const eventData: BillingModelEditedEvent = eventLog.returnValues
+            // console.log(eventData)
+            // const updateBM: UpdateBMDto = {
+            //   billingModelId: eventData.billingModelID,
+            //   name: web3Utils.hexToUtf8(eventData.newName),
+            //   amount: eventData.amount,
+            //   sellingToken: eventData.settlementToken,
+            //   settlementToken: eventData.settlementToken,
+            //   payee: eventData.newPayee,
+            // }
+            // console.log(updateBM)
+            const web3Utils = this.web3Helper.getWeb3Utils(event.networkId)
+            const unserializedBillingModel: UnserializedBillingModel = await contract.methods
+              .getBillingModel(eventLog.returnValues.billingModelID)
+              .call()
+            const updateBM = serializeBMDetails(
+              eventLog.returnValues.billingModelID,
+              unserializedBillingModel,
+              web3Utils,
+            )
+            updateBM.billingModelId = eventLog.returnValues.billingModelID
 
-          console.log(createBM)
-          await this.billingModelService.create(createBM)
+            this.billingModelService.update(updateBM)
+          } catch (e) {
+            this.logger.error(
+              `Failed to process contract event. Reason: ${e.message}`,
+            )
+            // Sleep 10 seconds and start again monitoring events
+            sleep(10000).then(() =>
+              this.monitorFutureEvents(event, latestBlock),
+            )
+          }
         })
-        .on('error', async (error, receipt) => {
+        .on('error', (error, receipt) => {
           console.log(error, receipt)
         })
     } catch (error) {

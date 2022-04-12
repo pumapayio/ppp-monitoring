@@ -33,7 +33,11 @@ export interface ContractEventLog {
   logIndex: number
   removed: boolean
   id: string
-  returnValues: any | BillingModelCreatedEvent
+  returnValues:
+    | any
+    | BillingModelCreatedEvent
+    | NewSubscriptionEvent
+    | BillingModelEditedEvent
   event: ContractEventTypes
   signature: string
   timestamp: string
@@ -46,6 +50,21 @@ export interface ContractEventLog {
 export interface BillingModelCreatedEvent {
   billingModelID: string
   payee: string
+}
+
+export interface NewSubscriptionEvent {
+  billingModelID: string
+  subscriptionID: string
+  payee: string
+}
+
+export interface BillingModelEditedEvent {
+  billingModelID: string
+  newName: string
+  amount: string
+  settlementToken: string
+  oldPayee: string
+  newPayee: string
 }
 
 @Injectable()

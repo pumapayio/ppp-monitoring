@@ -1,8 +1,8 @@
-import { IsEmail, IsNotEmpty } from 'class-validator'
+import { IsNotEmpty } from 'class-validator'
 
 export class CreateBMSubscriptionDto {
   @IsNotEmpty()
-  subscriptionId: string
+  bmSubscriptionId: string
 
   @IsNotEmpty()
   billingModelId: string
@@ -13,18 +13,19 @@ export class CreateBMSubscriptionDto {
   @IsNotEmpty()
   paymentToken: string
 
-  @IsNotEmpty()
-  numberOfPayments: string
+  // The below will be empty for single pull payments, therefore are optional
+  numberOfPayments?: string
+  startTimestamp?: string
+  cancelTimestamp?: string
+  nextPaymentTimestamp?: string
+  lastPaymentTimestamp?: string
 
-  @IsNotEmpty()
-  startTimestamp: string
-
-  @IsNotEmpty()
-  cancelTimestamp: string
-
-  @IsNotEmpty()
-  nextPaymentTimestamp: string
-
-  @IsNotEmpty()
-  lastPaymentTimestamp: string
+  // billingModelId: string
+  // bmSubscriptionId: string
+  // subscriber: string
+  // paymentAmount: string
+  // settlementToken: string
+  // paymentToken: string
+  // token: string // we keep this here for now until we figure out how we will handle the token names in general
+  // pullPaymentIDs: string[]
 }

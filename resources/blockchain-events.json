@@ -19,7 +19,7 @@
       },
       {
         "eventName": "BillingModelEdited",
-        "topic": "missing topic ..."
+        "topic": "0xaca554e1e566a091d5eef840bd1356f90e5bd2610e7b6e6156fff2c899aaa38d"
       }
     ],
     "abi": [
@@ -664,7 +664,7 @@
       },
       {
         "eventName": "BillingModelEdited",
-        "topic": "missing topic ..."
+        "topic": "0xaca554e1e566a091d5eef840bd1356f90e5bd2610e7b6e6156fff2c899aaa38d"
       }
     ],
     "abi": [
@@ -1194,7 +1194,7 @@
       },
       {
         "eventName": "BillingModelEdited",
-        "topic": "missing topic ..."
+        "topic": "0xaca554e1e566a091d5eef840bd1356f90e5bd2610e7b6e6156fff2c899aaa38d"
       }
     ],
     "abi": [
@@ -1980,7 +1980,7 @@
       },
       {
         "eventName": "BillingModelEdited",
-        "topic": "missing topic ..."
+        "topic": "0xaca554e1e566a091d5eef840bd1356f90e5bd2610e7b6e6156fff2c899aaa38d"
       }
     ],
     "abi": [
@@ -2806,7 +2806,7 @@
       },
       {
         "eventName": "BillingModelEdited",
-        "topic": "missing topic ..."
+        "topic": "0xaca554e1e566a091d5eef840bd1356f90e5bd2610e7b6e6156fff2c899aaa38d"
       }
     ],
     "abi": [
@@ -3647,7 +3647,7 @@
       },
       {
         "eventName": "BillingModelEdited",
-        "topic": "missing topic ..."
+        "topic": "0xaca554e1e566a091d5eef840bd1356f90e5bd2610e7b6e6156fff2c899aaa38d"
       }
     ],
     "abi": [

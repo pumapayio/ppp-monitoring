@@ -14,7 +14,10 @@ export class CreateBMDto {
   amount: string
 
   @IsNotEmpty()
-  token: string
+  sellingToken: string
+
+  @IsNotEmpty()
+  settlementToken: string
 
   frequency?: string
   numberOfPayments?: string
