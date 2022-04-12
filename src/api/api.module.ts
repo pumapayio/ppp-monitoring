@@ -6,6 +6,7 @@ import { RolesGuard } from './guard/roles.guard'
 import { BillingModelModule } from './billiing-model/billing-model.module'
 import { BMSubscriptionModule } from './bm-subscription/bm-subscription.module'
 import { PullPaymentModule } from './pull-payment/pull-payment.module'
+import { ContractEventModule } from './contract-event/contract-event.module'
 
 @Module({
   imports: [
@@ -13,6 +14,13 @@ import { PullPaymentModule } from './pull-payment/pull-payment.module'
     BillingModelModule,
     BMSubscriptionModule,
     PullPaymentModule,
+    ContractEventModule,
+  ],
+  exports: [
+    BillingModelModule,
+    BMSubscriptionModule,
+    PullPaymentModule,
+    ContractEventModule,
   ],
   controllers: [APIController],
   providers: [

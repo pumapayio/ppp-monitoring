@@ -1,7 +1,7 @@
 import {MigrationInterface, QueryRunner} from "typeorm";
 
-export class initial1649585016881 implements MigrationInterface {
-    name = 'initial1649585016881'
+export class initial1649754211559 implements MigrationInterface {
+    name = 'initial1649754211559'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`
@@ -9,14 +9,15 @@ export class initial1649585016881 implements MigrationInterface {
                 "created_at" TIMESTAMP NOT NULL DEFAULT now(),
                 "updated_at" TIMESTAMP NOT NULL DEFAULT now(),
                 "deleted_at" TIMESTAMP,
-                "billingModelID" character varying(255) NOT NULL,
+                "id" uuid NOT NULL DEFAULT uuid_generate_v4(),
+                "billingModelId" character varying(255) NOT NULL,
                 "payee" character varying(255) NOT NULL,
                 "name" character varying(255) NOT NULL,
                 "amount" character varying(255) NOT NULL,
                 "token" character varying(255) NOT NULL,
-                "frequency" character varying(255) NOT NULL,
-                "numberOfPayments" character varying(255) NOT NULL,
-                CONSTRAINT "PK_c7ad5c91dd64cd79f2c55e2addf" PRIMARY KEY ("billingModelID")
+                "frequency" character varying(255),
+                "numberOfPayments" character varying(255),
+                CONSTRAINT "PK_6e0f970ffe341139eede9006038" PRIMARY KEY ("id")
             )
         `);
         await queryRunner.query(`
@@ -24,8 +25,8 @@ export class initial1649585016881 implements MigrationInterface {
                 "created_at" TIMESTAMP NOT NULL DEFAULT now(),
                 "updated_at" TIMESTAMP NOT NULL DEFAULT now(),
                 "deleted_at" TIMESTAMP,
-                "subscriptionID" character varying(255) NOT NULL,
-                "billingModelID" character varying(255) NOT NULL,
+                "id" uuid NOT NULL DEFAULT uuid_generate_v4(),
+                "billingModelId" character varying(255) NOT NULL,
                 "subscriber" character varying(255) NOT NULL,
                 "paymentToken" character varying(255) NOT NULL,
                 "numberOfPayments" character varying(255) NOT NULL,
@@ -33,7 +34,7 @@ export class initial1649585016881 implements MigrationInterface {
                 "cancelTimestamp" character varying(255) NOT NULL,
                 "nextPaymentTimestamp" character varying(255) NOT NULL,
                 "lastPaymentTimestamp" character varying(255) NOT NULL,
-                CONSTRAINT "PK_ecd19fbc77493cf42b1adaf8069" PRIMARY KEY ("subscriptionID")
+                CONSTRAINT "PK_ea2ddb46987311b1580f9670619" PRIMARY KEY ("id")
             )
         `);
         await queryRunner.query(`
@@ -59,22 +60,22 @@ export class initial1649585016881 implements MigrationInterface {
                 "created_at" TIMESTAMP NOT NULL DEFAULT now(),
                 "updated_at" TIMESTAMP NOT NULL DEFAULT now(),
                 "deleted_at" TIMESTAMP,
-                "pullPaymentID" character varying(255) NOT NULL,
+                "id" uuid NOT NULL DEFAULT uuid_generate_v4(),
                 "subscriptionID" character varying(255) NOT NULL,
                 "paymentAmount" character varying(255) NOT NULL,
                 "executionTimestamp" character varying(255) NOT NULL,
-                CONSTRAINT "PK_43358bc1a1af769666954747ab0" PRIMARY KEY ("pullPaymentID")
+                CONSTRAINT "PK_f7e1a32a34f74fc4255658e1f86" PRIMARY KEY ("id")
             )
         `);
         await queryRunner.query(`
             ALTER TABLE "public"."bm_subscription"
-            ADD CONSTRAINT "FK_5f4423dd47f9c56de666e9df55c" FOREIGN KEY ("billingModelID") REFERENCES "public"."billing_model"("billingModelID") ON DELETE CASCADE ON UPDATE NO ACTION
+            ADD CONSTRAINT "FK_ea2ddb46987311b1580f9670619" FOREIGN KEY ("id") REFERENCES "public"."billing_model"("id") ON DELETE CASCADE ON UPDATE NO ACTION
         `);
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`
-            ALTER TABLE "public"."bm_subscription" DROP CONSTRAINT "FK_5f4423dd47f9c56de666e9df55c"
+            ALTER TABLE "public"."bm_subscription" DROP CONSTRAINT "FK_ea2ddb46987311b1580f9670619"
         `);
         await queryRunner.query(`
             DROP TABLE "public"."pull_payment"

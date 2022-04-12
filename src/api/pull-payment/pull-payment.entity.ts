@@ -1,11 +1,10 @@
-import { Entity, PrimaryColumn, Column, ManyToOne, JoinColumn } from 'typeorm'
-import { BMSubscription } from '../bm-subscription/bm-subscription.entity'
+import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm'
 import { DateAudit } from '../shared/entity/date-audit.entity'
 
 @Entity()
 export class PullPayment extends DateAudit {
-  @PrimaryColumn('varchar', { length: 255 })
-  pullPaymentID: string
+  @PrimaryGeneratedColumn('uuid')
+  id: string
 
   @Column('varchar', { length: 255 })
   subscriptionID: string

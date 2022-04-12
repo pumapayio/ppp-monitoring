@@ -2,10 +2,10 @@ import { IsEmail, IsNotEmpty } from 'class-validator'
 
 export class CreateBMSubscriptionDto {
   @IsNotEmpty()
-  subscriptionID: string
+  subscriptionId: string
 
   @IsNotEmpty()
-  billingModelID: string
+  billingModelId: string
 
   @IsNotEmpty()
   subscriber: string

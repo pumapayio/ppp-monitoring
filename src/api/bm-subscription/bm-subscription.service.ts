@@ -32,7 +32,7 @@ export class BMSubscriptionService {
   public async update(
     _subscription: UpdateBMSubscriptionDto,
   ): Promise<BMSubscription> {
-    const subscription = await this.retrieveById(_subscription.subscriptionID)
+    const subscription = await this.retrieveById(_subscription.subscriptionId)
     if (subscription) {
       Object.assign(subscription, _subscription)
       return await this.bmSubscriptionRepository.save(subscription)

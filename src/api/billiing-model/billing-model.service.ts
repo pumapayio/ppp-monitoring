@@ -22,7 +22,7 @@ export class BillingModelService {
     return createBillingModel
   }
 
-  public async retreiveById(billingModelID: string): Promise<BillingModel> {
-    return await this.billingModelRepository.findOne(billingModelID)
+  public async retreiveById(billingModelId: string): Promise<BillingModel> {
+    return await this.billingModelRepository.findOne(billingModelId)
   }
 }

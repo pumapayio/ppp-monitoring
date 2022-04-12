@@ -5,6 +5,7 @@ import {
   ManyToOne,
   JoinColumn,
   PrimaryColumn,
+  PrimaryGeneratedColumn,
 } from 'typeorm'
 import { BillingModel } from '../billiing-model/billing-model.entity'
 import { PullPayment } from '../pull-payment/pull-payment.entity'
@@ -12,22 +13,22 @@ import { DateAudit } from '../shared/entity/date-audit.entity'
 
 @Entity()
 export class BMSubscription extends DateAudit {
-  @PrimaryColumn('varchar', { length: 255 })
-  subscriptionID: string
+  @PrimaryGeneratedColumn('uuid')
+  id: string
 
   @OneToMany('PullPayment', 'subscription')
   pullPayments: PullPayment[]
 
   @Column('varchar', { length: 255 })
-  billingModelID: string
+  billingModelId: string
 
   @ManyToOne('BillingModel', 'subscriptions', {
     onDelete: 'CASCADE',
     nullable: false,
   })
   @JoinColumn({
-    name: 'billingModelID',
-    referencedColumnName: 'billingModelID',
+    name: 'id',
+    referencedColumnName: 'id',
   })
   billingModel: BillingModel
 

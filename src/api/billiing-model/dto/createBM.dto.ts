@@ -2,7 +2,7 @@ import { IsNotEmpty, IsEmail } from 'class-validator'
 
 export class CreateBMDto {
   @IsNotEmpty()
-  billingModelID: string
+  billingModelId: string
 
   @IsNotEmpty()
   name: string
@@ -16,6 +16,6 @@ export class CreateBMDto {
   @IsNotEmpty()
   token: string
 
-  frequency: string
-  numberOfPayments: string
+  frequency?: string
+  numberOfPayments?: string
 }
