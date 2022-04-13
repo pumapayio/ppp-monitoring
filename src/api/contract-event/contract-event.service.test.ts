@@ -25,7 +25,7 @@
 //         abi: JSON.stringify(data[0].abi),
 //         networkId: data[0].networkId,
 //         lastSyncedBlock: data[0].blockNumber,
-//         isSyncing: false,
+//         syncStatus: false,
 //         syncHistorical: false,
 //       } as ContractEvent),
 //     )

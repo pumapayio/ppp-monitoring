@@ -1,4 +1,5 @@
 import { IsNotEmpty } from 'class-validator'
+import { ContractEventSyncStatus } from '../contract-event-status'
 
 export class UpdateContractEventDto {
   @IsNotEmpty()
@@ -9,7 +10,8 @@ export class UpdateContractEventDto {
   address?: string
   abi?: string
   networkId?: number
-  lastSyncedBlock?: number
-  isSyncing?: boolean
+  syncStatus?: ContractEventSyncStatus
   syncHistorical?: boolean
+  lastSyncedBlock?: number
+  lastSyncedTxHash?: string
 }

@@ -4,7 +4,8 @@ import { ContractEventService } from 'src/api/contract-event/contract-event.serv
 import { SmartContractNames } from 'src/utils/blockchain'
 import { SinglePullPaymentBMCreatedEventMonitoring } from './event-monitoring/single-pull-payment/bm-created-event.service'
 import { SinglePullPaymentBMEditedEventMonitoring } from './event-monitoring/single-pull-payment/bm-edited-event.service'
-import { SinglePullPaymentPPExectutedEventMonitoring } from './event-monitoring/single-pull-payment/pp-executed-event.service'
+import { SingleBMSubscriptionEventMonitoring } from './event-monitoring/single-pull-payment/bm-subscription-event.service'
+import { SinglePPExectutionEventMonitoring } from './event-monitoring/single-pull-payment/pp-executed-event.service'
 
 @Injectable()
 export class MonitoringService {
@@ -12,7 +13,8 @@ export class MonitoringService {
     private contractEventService: ContractEventService,
     private singlePullPaymentBMCreatedEventService: SinglePullPaymentBMCreatedEventMonitoring,
     private singlePullPaymentBMEditedEventService: SinglePullPaymentBMEditedEventMonitoring,
-    private singlePullPaymentPPExectutedEventMonitoring: SinglePullPaymentPPExectutedEventMonitoring,
+    private singlePullPaymentPPExectutedEventMonitoring: SingleBMSubscriptionEventMonitoring,
+    private singlePPExectutionEventMonitoring: SinglePPExectutionEventMonitoring,
   ) {}
 
   public monitorEvents(networkId: number) {
@@ -62,6 +64,35 @@ export class MonitoringService {
       ContractEventTypes.NewSubscription,
       networkId,
     )
+
+    for (let event of events) {
+      switch (event.contractName) {
+        case String(SmartContractNames.singlePP): {
+          this.singlePullPaymentPPExectutedEventMonitoring.monitor(event)
+          break
+        }
+        case String(SmartContractNames.singleDynamicPP): {
+          // console.log(event.contractName)
+          break
+        }
+        case String(SmartContractNames.recurringDynamicPP): {
+          // console.log(event.contractName)
+          break
+        }
+        case String(SmartContractNames.recurringPPFreeTrial): {
+          // console.log(event.contractName)
+          break
+        }
+        case String(SmartContractNames.recurringPPPaidTrial): {
+          // console.log(event.contractName)
+          break
+        }
+        case String(SmartContractNames.recurringDynamicPP): {
+          // console.log(event.contractName)
+          break
+        }
+      }
+    }
   }
 
   private async monitorPullPaymentExecutionEvents(networkId: number) {
@@ -73,7 +104,7 @@ export class MonitoringService {
     for (let event of events) {
       switch (event.contractName) {
         case String(SmartContractNames.singlePP): {
-          this.singlePullPaymentPPExectutedEventMonitoring.monitor(event)
+          this.singlePPExectutionEventMonitoring.monitor(event)
           break
         }
         case String(SmartContractNames.singleDynamicPP): {

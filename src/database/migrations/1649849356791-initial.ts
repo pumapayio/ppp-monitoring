@@ -1,7 +1,7 @@
 import {MigrationInterface, QueryRunner} from "typeorm";
 
-export class initial1649773570911 implements MigrationInterface {
-    name = 'initial1649773570911'
+export class initial1649849356791 implements MigrationInterface {
+    name = 'initial1649849356791'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`
@@ -45,11 +45,20 @@ export class initial1649773570911 implements MigrationInterface {
                 "payee" character varying(255) NOT NULL,
                 "name" character varying(255) NOT NULL,
                 "amount" character varying(255) NOT NULL,
-                "token" character varying(255) NOT NULL,
+                "sellingToken" character varying(255) NOT NULL,
+                "settlementToken" character varying(255) NOT NULL,
                 "frequency" character varying(255),
                 "numberOfPayments" character varying(255),
                 CONSTRAINT "UQ_2e6e39d90689d350eb98f5c6223" UNIQUE ("billingModelId"),
                 CONSTRAINT "PK_6e0f970ffe341139eede9006038" PRIMARY KEY ("id")
+            )
+        `);
+        await queryRunner.query(`
+            CREATE TYPE "public"."contract_event_syncstatus_enum" AS ENUM(
+                'Unprocessed',
+                'ProcessingPastEvents',
+                'ProcessingFutureEvents',
+                'Processed'
             )
         `);
         await queryRunner.query(`
@@ -64,9 +73,10 @@ export class initial1649773570911 implements MigrationInterface {
                 "address" character varying(42) NOT NULL,
                 "abi" character varying NOT NULL,
                 "networkId" character varying NOT NULL,
-                "lastSyncedBlock" integer NOT NULL,
-                "isSyncing" boolean NOT NULL,
+                "syncStatus" "public"."contract_event_syncstatus_enum" NOT NULL DEFAULT 'Unprocessed',
                 "syncHistorical" boolean NOT NULL,
+                "lastSyncedBlock" integer NOT NULL,
+                "lastSyncedTxHash" character varying(66),
                 CONSTRAINT "PK_ae4dd77ab08b3ffce5adf5742ae" PRIMARY KEY ("id")
             )
         `);
@@ -89,6 +99,9 @@ export class initial1649773570911 implements MigrationInterface {
         `);
         await queryRunner.query(`
             DROP TABLE "public"."contract_event"
+        `);
+        await queryRunner.query(`
+            DROP TYPE "public"."contract_event_syncstatus_enum"
         `);
         await queryRunner.query(`
             DROP TABLE "public"."billing_model"

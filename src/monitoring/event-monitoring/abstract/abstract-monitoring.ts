@@ -1,29 +1,20 @@
-import { Injectable, Logger } from '@nestjs/common'
+import { Logger } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
-import { BillingModelService } from 'src/api/billiing-model/billing-model.service'
-import {
-  serializeBMDetails,
-  UnserializedBillingModel,
-} from 'src/api/billiing-model/interface/UnserializedBMDetails'
 import { ContractEventSyncStatus } from 'src/api/contract-event/contract-event-status'
 import { ContractEventTypes } from 'src/api/contract-event/contract-event-types'
 import { ContractEvent } from 'src/api/contract-event/contract-event.entity'
 import { ContractEventService } from 'src/api/contract-event/contract-event.service'
-import { ContractEventLog, SmartContractNames } from 'src/utils/blockchain'
+import { SmartContractNames, ContractEventLog } from 'src/utils/blockchain'
 import { sleep } from 'src/utils/sleep'
 import { Web3Helper } from 'src/utils/web3Connector/web3Helper'
 
-@Injectable()
-export class SinglePullPaymentBMCreatedEventMonitoring {
-  private readonly logger = new Logger(
-    SinglePullPaymentBMCreatedEventMonitoring.name,
-  )
+export class BaseMonitoring {
+  private readonly logger = new Logger(BaseMonitoring.name)
 
   constructor(
     private config: ConfigService,
     private web3Helper: Web3Helper,
     private contractEventService: ContractEventService,
-    private billingModelService: BillingModelService,
   ) {}
 
   public async monitor(event: ContractEvent): Promise<void> {
@@ -57,30 +48,26 @@ export class SinglePullPaymentBMCreatedEventMonitoring {
     currentBlockNumber: number,
   ) {
     this.logger.log(
-      `Monitoring BM Created future events. Starting block: ${currentBlockNumber}`,
+      `Monitoring PP Execution future events. Starting block: ${currentBlockNumber}`,
     )
     try {
-      await this.contractEventService.update({
-        id: event.id,
-        syncStatus: ContractEventSyncStatus.ProcessingFutureEvents,
-      })
-
       const contract = await this.web3Helper.getContractInstance(
         event.networkId,
         event.address,
         SmartContractNames[event.contractName],
         true,
       )
-      contract.events[ContractEventTypes.BillingModelCreated]({
+      // We handle pull payment executions as new subscription for single billing models
+      contract.events[ContractEventTypes.NewSubscription]({
         from: event.address,
         fromBlock: currentBlockNumber,
       })
         .on('data', async (eventLog: ContractEventLog) => {
           try {
-            await this.handleEventLog(contract, event, eventLog)
+            await this.handleEventLog(contract, eventLog)
           } catch (error) {
             this.logger.debug(
-              `Failed to handle billing model creation event. Reason: ${error.message}`,
+              `Failed to handle pull payment execution event. Reason: ${error.message}`,
             )
           }
         })
@@ -93,7 +80,7 @@ export class SinglePullPaymentBMCreatedEventMonitoring {
         })
     } catch (error) {
       this.logger.debug(
-        `Failed to monitor billing model creation future events. Reason: ${error.message}`,
+        `Failed to monitor pull payment execution future events. Reason: ${error.message}`,
       )
       await sleep(10000) // Sleep 10 seconds and start again monitoring events
       this.monitorFutureEvents(event, currentBlockNumber)
@@ -105,7 +92,7 @@ export class SinglePullPaymentBMCreatedEventMonitoring {
     currentBlockNumber: number,
   ) {
     this.logger.log(
-      `Processing BM Created past events. Latest block: ${currentBlockNumber} - Start Block ${event.lastSyncedBlock}`,
+      `Processing PP Executed past events. Latest block: ${currentBlockNumber} - Start Block ${event.lastSyncedBlock}`,
     )
     try {
       let startBlock = event.lastSyncedBlock
@@ -125,14 +112,14 @@ export class SinglePullPaymentBMCreatedEventMonitoring {
             : currentBlockNumber,
         )
         this.logger.log(
-          `Fetching BM Created past events for ${event.contractName}.`,
+          `Fetching PP Executed past events for ${event.contractName}.`,
         )
         this.logger.log(
           `Starting block: ${startBlock} - End Block: ${toBlock} - Network: ${event.networkId}`,
         )
 
         const pastEvents = await contract.getPastEvents(
-          String(ContractEventTypes.BillingModelCreated),
+          String(ContractEventTypes.NewSubscription),
           {
             fromBlock: startBlock,
             toBlock: toBlock,
@@ -140,7 +127,7 @@ export class SinglePullPaymentBMCreatedEventMonitoring {
           },
         )
         this.logger.log(
-          `Found ${pastEvents.length} BM Created past events for ${event.contractName}.`,
+          `Found ${pastEvents.length} PP Executed past events for ${event.contractName}.`,
         )
 
         const bundleThreshold = 20 // handle 20 events per iteration
@@ -149,7 +136,7 @@ export class SinglePullPaymentBMCreatedEventMonitoring {
           for (const pastEvent of pastEvents) {
             bundledPromises.push(
               new Promise(async (resolve) => {
-                resolve(await this.handleEventLog(contract, event, pastEvent))
+                resolve(await this.handleEventLog(contract, pastEvent))
               }),
             )
             startBlock = Number(pastEvent.blockNumber)
@@ -181,7 +168,7 @@ export class SinglePullPaymentBMCreatedEventMonitoring {
       }
     } catch (error) {
       this.logger.debug(
-        `Failed to process billing model creation past events. Reason: ${error.message}`,
+        `Failed to process pull payment execution past events. Reason: ${error.message}`,
       )
       await sleep(10000) // Sleep 10 seconds and start again monitoring events
       this.processPastEvents(event, currentBlockNumber)
@@ -190,20 +177,7 @@ export class SinglePullPaymentBMCreatedEventMonitoring {
 
   private async handleEventLog(
     contract: any,
-    contractEvent: ContractEvent,
     eventLog: ContractEventLog,
-  ) {
-    const web3Utils = this.web3Helper.getWeb3Utils(contractEvent.networkId)
-    const unserializedBillingModel: UnserializedBillingModel = await contract.methods
-      .getBillingModel(eventLog.returnValues.billingModelID)
-      .call()
-    const billinModelDetails = serializeBMDetails(
-      eventLog.returnValues.billingModelID,
-      unserializedBillingModel,
-      web3Utils,
-    )
-    billinModelDetails.billingModelId = eventLog.returnValues.billingModelID
-
-    await this.billingModelService.create(billinModelDetails)
-  }
+    contractEvent?: ContractEvent,
+  ) {}
 }

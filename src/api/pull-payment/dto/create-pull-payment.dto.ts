@@ -2,10 +2,10 @@ import { IsNotEmpty } from 'class-validator'
 
 export class CreatePullPaymentDto {
   @IsNotEmpty()
-  pullPaymentID: string
+  pullPaymentId: string
 
   @IsNotEmpty()
-  subscriptionID: string
+  bmSubscriptionId: string
 
   @IsNotEmpty()
   paymentAmount: string

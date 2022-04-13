@@ -16,8 +16,7 @@ export class CreateContractEvents implements Seeder {
             contractEvent.abi = JSON.stringify(contract.abi)
             contractEvent.networkId = contract.networkId
             contractEvent.lastSyncedBlock = contract.blockNumber
-            contractEvent.isSyncing = false
-            contractEvent.syncHistorical = false
+            contractEvent.syncHistorical = event.syncHistorical
 
             return contractEvent
           })

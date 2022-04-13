@@ -1,4 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common'
+import { ConfigService } from '@nestjs/config'
 
 const Web3 = require('web3')
 
@@ -8,7 +9,8 @@ export class Web3Connector {
   private static instance: Web3Connector
   private static web3Providers: any = {}
   private static web3HttpProviders: any = {}
-
+  private static config: ConfigService
+  // JSON.parse(this.config.get('blockchain.supportedNetworks')).map(
   private constructor() {
     Web3Connector.logger = new Logger('Web3Connector')
   }
@@ -31,7 +33,7 @@ export class Web3Connector {
 
   public static instantiateWsProvider(networkID: number, rpcURL: string) {
     if (!Web3Connector.web3Providers[networkID]) {
-      const web3 = new Web3()
+      let web3 = new Web3()
       const eventProvider = new Web3.providers.WebsocketProvider(rpcURL, {
         timeout: 60000, // ms
         clientConfig: {
@@ -74,7 +76,8 @@ export class Web3Connector {
       })
 
       web3.setProvider(eventProvider)
-
+      // We can do monitoring based on the "executor mode"
+      web3 = Web3Connector.setupDefaultAccount(web3)
       this.web3Providers[networkID] = web3
     } else {
       Web3Connector.logger.log(
@@ -85,12 +88,24 @@ export class Web3Connector {
 
   public static instantiateHttpProvider(networkID: number, rpcUrl: string) {
     if (!Web3Connector.web3HttpProviders[networkID]) {
-      const web3 = new Web3(new Web3.providers.HttpProvider(rpcUrl))
+      let web3 = new Web3(new Web3.providers.HttpProvider(rpcUrl))
+      web3 = Web3Connector.setupDefaultAccount(web3)
       this.web3HttpProviders[networkID] = web3
     } else {
       Web3Connector.logger.log(
         `Web3 Http Provider connnected already for network ${networkID}!!`,
       )
     }
+  }
+
+  private static setupDefaultAccount(web3) {
+    // TODO: If there is no executor key, don't let the application to start
+    // The above depends on the "executor mode"
+    const privateKey = process.env.EXECUTOR_PRIVATE_KEY
+    const account = web3.eth.accounts.privateKeyToAccount('0x' + privateKey)
+    web3.eth.accounts.wallet.add(account)
+    web3.eth.defaultAccount = account.address
+
+    return web3
   }
 }

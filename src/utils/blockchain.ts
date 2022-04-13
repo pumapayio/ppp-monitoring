@@ -37,6 +37,7 @@ export interface ContractEventLog {
     | any
     | BillingModelCreatedEvent
     | NewSubscriptionEvent
+    | SinglePPNewSubscriptionEvent
     | BillingModelEditedEvent
   event: ContractEventTypes
   signature: string
@@ -56,6 +57,10 @@ export interface NewSubscriptionEvent {
   billingModelID: string
   subscriptionID: string
   payee: string
+}
+
+export interface SinglePPNewSubscriptionEvent extends NewSubscriptionEvent {
+  pullPaymentID: string
 }
 
 export interface BillingModelEditedEvent {
@@ -99,41 +104,41 @@ export class BlockchainGlobals {
     const smartContractAddresses = {
       [SmartContractNames.executor]: {
         // TODO: Update the contract addresses for BSC mainnet
-        [ChainId.BSC_MAINNET]: '0x91Caf788aC830B86e7F1F58636f969d035D430e0',
-        [ChainId.BSC_TESTNET]: '0x91Caf788aC830B86e7F1F58636f969d035D430e0',
+        [ChainId.BSC_MAINNET]: '0xf3DFdD67B71e376F25eeb9AD0810ae6Ed1b6C2f2',
+        [ChainId.BSC_TESTNET]: '0xf3DFdD67B71e376F25eeb9AD0810ae6Ed1b6C2f2',
       },
       [SmartContractNames.coreRegistry]: {
         // TODO: Update the contract addresses for BSC mainnet
-        [ChainId.BSC_MAINNET]: '0xF9F90e84605dd7435374d6D7e54487153807F038',
-        [ChainId.BSC_TESTNET]: '0xF9F90e84605dd7435374d6D7e54487153807F038',
+        [ChainId.BSC_MAINNET]: '0x042ff2864379bA7DaA3CF8056Da8b0a26fC30a91',
+        [ChainId.BSC_TESTNET]: '0x042ff2864379bA7DaA3CF8056Da8b0a26fC30a91',
       },
       [SmartContractNames.ppRegistry]: {
-        [ChainId.BSC_MAINNET]: '0x882B601889DC24D4D39c6ae4b68c04E87712571A',
-        [ChainId.BSC_TESTNET]: '0x882B601889DC24D4D39c6ae4b68c04E87712571A',
+        [ChainId.BSC_MAINNET]: '0x0dB6e41dC4e9a35A06C39925AC4e5116a6c9B81b',
+        [ChainId.BSC_TESTNET]: '0x0dB6e41dC4e9a35A06C39925AC4e5116a6c9B81b',
       },
       [SmartContractNames.singlePP]: {
-        [ChainId.BSC_MAINNET]: '0x3cf90aFd39cF1a093993C1a8cCfB6C7e3c3732Aa',
-        [ChainId.BSC_TESTNET]: '0x3cf90aFd39cF1a093993C1a8cCfB6C7e3c3732Aa',
+        [ChainId.BSC_MAINNET]: '0x54E9AAE440949Df2f38B9beE32F5927c5165775B',
+        [ChainId.BSC_TESTNET]: '0x54E9AAE440949Df2f38B9beE32F5927c5165775B',
       },
       [SmartContractNames.singleDynamicPP]: {
-        [ChainId.BSC_MAINNET]: '0x558fbb9d3DC8e856DA50fD65faBBD8aA2Ff00218',
-        [ChainId.BSC_TESTNET]: '0x558fbb9d3DC8e856DA50fD65faBBD8aA2Ff00218',
+        [ChainId.BSC_MAINNET]: '0x332ecA38B2270cCA73695FD2EDfc7F8d85bF5a84',
+        [ChainId.BSC_TESTNET]: '0x332ecA38B2270cCA73695FD2EDfc7F8d85bF5a84',
       },
       [SmartContractNames.recurringPP]: {
-        [ChainId.BSC_MAINNET]: '0x65795187B842240e22A3A716EB1090a8A2e47D8C',
-        [ChainId.BSC_TESTNET]: '0x65795187B842240e22A3A716EB1090a8A2e47D8C',
+        [ChainId.BSC_MAINNET]: '0xA8Cb69dB2678beEC2fa0b24520bEC21D24A4181A',
+        [ChainId.BSC_TESTNET]: '0xA8Cb69dB2678beEC2fa0b24520bEC21D24A4181A',
       },
       [SmartContractNames.recurringPPFreeTrial]: {
-        [ChainId.BSC_MAINNET]: '0x007323d32DCca52F5cd70859C5EEc94306ce43B5',
-        [ChainId.BSC_TESTNET]: '0x007323d32DCca52F5cd70859C5EEc94306ce43B5',
+        [ChainId.BSC_MAINNET]: '0x0f7f9bc34DF6b8Dd699297C6561634e7A8F34B26',
+        [ChainId.BSC_TESTNET]: '0x0f7f9bc34DF6b8Dd699297C6561634e7A8F34B26',
       },
       [SmartContractNames.recurringPPPaidTrial]: {
-        [ChainId.BSC_MAINNET]: '0x421112a1E58f345D56371D7721F1CE1b02447a9F',
-        [ChainId.BSC_TESTNET]: '0x421112a1E58f345D56371D7721F1CE1b02447a9F',
+        [ChainId.BSC_MAINNET]: '0xDB727d306e4de2D26d481e6C076F8732C0b49B88',
+        [ChainId.BSC_TESTNET]: '0xDB727d306e4de2D26d481e6C076F8732C0b49B88',
       },
       [SmartContractNames.recurringDynamicPP]: {
-        [ChainId.BSC_MAINNET]: '0x9ff2E032D165143C5f0C472fB2a8aB3acF254a04',
-        [ChainId.BSC_TESTNET]: '0x9ff2E032D165143C5f0C472fB2a8aB3acF254a04',
+        [ChainId.BSC_MAINNET]: '0x919bf289D2a7799E5318a9F92E02b7fAAEDe7184',
+        [ChainId.BSC_TESTNET]: '0x919bf289D2a7799E5318a9F92E02b7fAAEDe7184',
       },
     }
     return smartContractAddresses[`${contractType}`][networkID]
@@ -148,7 +153,7 @@ export class BlockchainGlobals {
       // Default to BSC Testnet
       default:
         // TODO: We must have a list of providers to connect to
-        return ['https://data-seed-prebsc-1-s1.binance.org:8545/']
+        return ['https://data-seed-prebsc-1-s2.binance.org:8545/']
     }
   }
 
