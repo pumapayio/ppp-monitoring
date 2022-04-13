@@ -17,11 +17,11 @@ export class MonitoringService {
     private singlePPExectutionEventMxonitoring: SinglePPExectutionEventMonitoring,
   ) {}
 
-  public monitorEvents(networkId: string) {
-    this.monitorBMCreationEvents(networkId)
-    this.monitorNewSubscriptionEvents(networkId)
-    this.monitorPullPaymentExecutionEvents(networkId)
-    this.monitorBMUpdatedEvents(networkId)
+  public async monitorEvents(networkId: string) {
+    await this.monitorBMCreationEvents(networkId)
+    await this.monitorNewSubscriptionEvents(networkId)
+    await this.monitorPullPaymentExecutionEvents(networkId)
+    await this.monitorBMUpdatedEvents(networkId)
   }
 
   private async monitorBMCreationEvents(networkId: string) {
@@ -32,7 +32,7 @@ export class MonitoringService {
     for (let event of events) {
       switch (event.contract.contractName) {
         case String(SmartContractNames.singlePP): {
-          this.singlePullPaymentBMCreatedEventService.monitor(event)
+          await this.singlePullPaymentBMCreatedEventService.monitor(event)
           break
         }
         case String(SmartContractNames.singleDynamicPP): {
@@ -68,7 +68,7 @@ export class MonitoringService {
     for (let event of events) {
       switch (event.contract.contractName) {
         case String(SmartContractNames.singlePP): {
-          this.singlePullPaymentPPExectutedEventMonitoring.monitor(event)
+          await this.singlePullPaymentPPExectutedEventMonitoring.monitor(event)
           break
         }
         case String(SmartContractNames.singleDynamicPP): {
@@ -104,7 +104,7 @@ export class MonitoringService {
     for (let event of events) {
       switch (event.contract.contractName) {
         case String(SmartContractNames.singlePP): {
-          this.singlePPExectutionEventMxonitoring.monitor(event)
+          await this.singlePPExectutionEventMxonitoring.monitor(event)
           break
         }
         case String(SmartContractNames.singleDynamicPP): {
@@ -140,7 +140,7 @@ export class MonitoringService {
     for (let event of events) {
       switch (event.contract.contractName) {
         case String(SmartContractNames.singlePP): {
-          this.singlePullPaymentBMEditedEventService.monitor(event)
+          await this.singlePullPaymentBMEditedEventService.monitor(event)
           break
         }
         case String(SmartContractNames.singleDynamicPP): {

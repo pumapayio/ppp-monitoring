@@ -1,27 +1,17 @@
 import { Injectable, Logger } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { BMSubscriptionService } from 'src/api/bm-subscription/bm-subscription.service'
-import {
-  serializeBMSubscription,
-  UnserializedBMSubscription,
-} from 'src/api/bm-subscription/bm-subscription.serializer'
-import { ContractEventSyncStatus } from 'src/api/contract-event/contract-event-status'
-import { ContractEventTypes } from 'src/api/contract-event/contract-event-types'
 import { ContractEvent } from 'src/api/contract-event/contract-event.entity'
 import { ContractEventService } from 'src/api/contract-event/contract-event.service'
-import {
-  serializePullPayment,
-  UnserializedPullPayment,
-} from 'src/api/pull-payment/pull-payment.serializer'
 import { PullPaymentService } from 'src/api/pull-payment/pull-payment.service'
-import { ContractEventLog, SmartContractNames } from 'src/utils/blockchain'
-import { sleep } from 'src/utils/sleep'
+import { ContractEventLog } from 'src/utils/blockchain'
 import { Web3Helper } from 'src/utils/web3Connector/web3Helper'
+import { BaseMonitoring } from '../base-monitoring/base-monitoring'
+import { BMSubscriptionEventHandler } from './bm-subscription-event.handler'
 
 @Injectable()
 export class SingleBMSubscriptionEventMonitoring {
   private readonly logger = new Logger(SingleBMSubscriptionEventMonitoring.name)
-  private readonly WS_CONNECTION: boolean = true
 
   constructor(
     private config: ConfigService,
@@ -33,22 +23,17 @@ export class SingleBMSubscriptionEventMonitoring {
 
   public async monitor(event: ContractEvent): Promise<void> {
     try {
-      const web3 = this.web3Helper.getWeb3Instance(event.networkId)
-      const currentBlockNumber = Number(await web3.eth.getBlockNumber())
-      if (
-        event.syncHistorical &&
-        Number(currentBlockNumber) > event.lastSyncedBlock
-      ) {
-        await this.contractEventService.update({
-          id: event.id,
-          syncStatus: ContractEventSyncStatus.ProcessingPastEvents,
-        })
-
-        await this.processPastEvents(event, currentBlockNumber)
-      }
-
-      // In any case, we start monitoring for future events
-      this.monitorFutureEvents(event, currentBlockNumber)
+      const baseMonitoring = new BaseMonitoring(
+        this.config,
+        this.web3Helper,
+        this.contractEventService,
+      )
+      await baseMonitoring.monitor(
+        event,
+        this.bmSubscriptionsService,
+        this.handleEventLog,
+        this.pullPaymentService,
+      )
     } catch (error) {
       this.logger.debug(
         `Failed to handle billing model creation events. Reason: ${error.message}`,
@@ -56,188 +41,26 @@ export class SingleBMSubscriptionEventMonitoring {
     }
   }
 
-  private async monitorFutureEvents(
-    event: ContractEvent,
-    currentBlockNumber: number,
-  ) {
-    this.logger.log(
-      `Monitoring PP Execution future events. Starting block: ${currentBlockNumber}`,
-    )
-    try {
-      await this.contractEventService.update({
-        id: event.id,
-        syncStatus: ContractEventSyncStatus.ProcessingFutureEvents,
-      })
-
-      const contract = await this.web3Helper.getContractInstance(
-        event.networkId,
-        event.contractAddress,
-        SmartContractNames[event.contract.contractName],
-        this.WS_CONNECTION,
-      )
-      // We handle pull payment executions as new subscription for single billing models
-      contract.events[ContractEventTypes.NewSubscription]({
-        from: event.contractAddress,
-        fromBlock: currentBlockNumber,
-      })
-        .on('data', async (eventLog: ContractEventLog) => {
-          try {
-            await this.handleEventLog(contract, event, eventLog)
-          } catch (error) {
-            this.logger.debug(
-              `Failed to handle pull payment execution event. Reason: ${error.message}`,
-            )
-          }
-        })
-        .on('error', async (error, receipt) => {
-          this.logger.error(
-            `Something went wrong with fetching the event`,
-            error,
-            receipt,
-          )
-        })
-    } catch (error) {
-      this.logger.debug(
-        `Failed to monitor pull payment execution future events. Reason: ${error.message}`,
-      )
-      await sleep(10000) // Sleep 10 seconds and start again monitoring events
-      this.monitorFutureEvents(event, currentBlockNumber)
-    }
-  }
-
-  private async processPastEvents(
-    event: ContractEvent,
-    currentBlockNumber: number,
-  ) {
-    this.logger.log(
-      `Processing PP Executed past events. Latest block: ${currentBlockNumber} - Start Block ${event.lastSyncedBlock}`,
-    )
-    try {
-      let startBlock = event.lastSyncedBlock
-      const blockScanThreshold = this.config.get(
-        'blockchain.blockScanThreshold',
-      )
-      const contract = await this.web3Helper.getContractInstance(
-        event.networkId,
-        event.contractAddress,
-        SmartContractNames[event.contract.contractName],
-      )
-
-      while (startBlock < currentBlockNumber) {
-        const toBlock = Number(
-          startBlock + blockScanThreshold < currentBlockNumber
-            ? startBlock + blockScanThreshold
-            : currentBlockNumber,
-        )
-        this.logger.log(
-          `Fetching PP Executed past events for ${event.contract.contractName}.`,
-        )
-        this.logger.log(
-          `Starting block: ${startBlock} - End Block: ${toBlock} - Network: ${event.networkId}`,
-        )
-
-        const pastEvents = await contract.getPastEvents(
-          String(ContractEventTypes.NewSubscription),
-          {
-            fromBlock: startBlock,
-            toBlock: toBlock,
-            topics: [event.topic],
-          },
-        )
-        this.logger.log(
-          `Found ${pastEvents.length} PP Executed past events for ${event.contract.contractName}.`,
-        )
-
-        const bundleThreshold = 20 // handle 20 events per iteration
-        if (pastEvents && pastEvents.length) {
-          const bundledPromises = []
-          for (const pastEvent of pastEvents) {
-            bundledPromises.push(
-              new Promise(async (resolve) => {
-                resolve(await this.handleEventLog(contract, event, pastEvent))
-              }),
-            )
-            startBlock = Number(pastEvent.blockNumber)
-            if (bundledPromises.length === bundleThreshold) {
-              await Promise.all(bundledPromises.splice(0, bundleThreshold))
-              await this.contractEventService.update({
-                id: event.id,
-                lastSyncedTxHash: pastEvent.transactionHash,
-                lastSyncedBlock: pastEvent.blockNumber,
-              })
-            }
-          }
-          await Promise.all(bundledPromises.splice(0, bundleThreshold))
-          await this.contractEventService.update({
-            id: event.id,
-            lastSyncedTxHash: pastEvents[pastEvents.length - 1].transactionHash,
-            lastSyncedBlock: pastEvents[pastEvents.length - 1].blockNumber,
-          })
-        }
-        startBlock = Number(
-          startBlock + blockScanThreshold < currentBlockNumber
-            ? startBlock + blockScanThreshold
-            : currentBlockNumber,
-        )
-        await this.contractEventService.update({
-          id: event.id,
-          lastSyncedBlock: startBlock,
-        })
-      }
-    } catch (error) {
-      this.logger.debug(
-        `Failed to process pull payment execution past events. Reason: ${error.message}`,
-      )
-      await sleep(10000) // Sleep 10 seconds and start again monitoring events
-      this.processPastEvents(event, currentBlockNumber)
-    }
-  }
-
   private async handleEventLog(
     contract: any,
     event: ContractEvent,
     eventLog: ContractEventLog,
-  ) {
-    await this.handleBMCreation(contract, event, eventLog)
-    await this.handlePPCreation(contract, event, eventLog)
-  }
-
-  private async handleBMCreation(
-    contract: any,
-    event: ContractEvent,
-    eventLog: ContractEventLog,
-  ) {
-    const unserializedSubscription: UnserializedBMSubscription = await contract.methods
-      .getSubscription(eventLog.returnValues.subscriptionID)
-      .call()
-    const serializedSubscription = serializeBMSubscription(
-      eventLog.returnValues.billingModelID,
-      eventLog.returnValues.subscriptionID,
-      event.contractAddress,
-      event.networkId,
-      unserializedSubscription,
+    entityService: BMSubscriptionService,
+    web3Helper: Web3Helper,
+    secondEntityService: PullPaymentService,
+  ): Promise<void> {
+    const eventHandler = new BMSubscriptionEventHandler()
+    await eventHandler.handleBMCreation(
+      contract,
+      event,
+      eventLog,
+      entityService,
     )
-
-    await this.bmSubscriptionsService.create(serializedSubscription)
-  }
-
-  private async handlePPCreation(
-    contract: any,
-    event: ContractEvent,
-    eventLog: ContractEventLog,
-  ) {
-    const unserializedPullPayment: UnserializedPullPayment = await contract.methods
-      .getPullPayment(eventLog.returnValues.pullPaymentID)
-      .call()
-    const serializedPullPayment = serializePullPayment(
-      eventLog.returnValues.pullPaymentID,
-      eventLog.returnValues.subscriptionID,
-      eventLog.returnValues.billingModelID,
-      event.contractAddress,
-      event.networkId,
-      unserializedPullPayment,
+    await eventHandler.handlePPCreation(
+      contract,
+      event,
+      eventLog,
+      secondEntityService,
     )
-
-    await this.pullPaymentService.create(serializedPullPayment)
   }
 }
