@@ -1,4 +1,11 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm'
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  JoinColumn,
+  ManyToOne,
+} from 'typeorm'
+import { Contract } from '../contract/contract.entity'
 import { DateAudit } from '../shared/entity/date-audit.entity'
 import { ContractEventSyncStatus } from './contract-event-status'
 
@@ -12,18 +19,6 @@ export class ContractEvent extends DateAudit {
 
   @Column('varchar', { length: 255 })
   topic: string
-
-  @Column('varchar', { length: 255 })
-  contractName: string
-
-  @Column('varchar', { length: 42 })
-  address: string
-
-  @Column('varchar')
-  abi: string
-
-  @Column('varchar')
-  networkId: number
 
   @Column({
     type: 'enum',
@@ -40,4 +35,26 @@ export class ContractEvent extends DateAudit {
 
   @Column('varchar', { default: null, length: 66 })
   lastSyncedTxHash: string
+
+  @Column('varchar', { length: 42 })
+  contractAddress: string
+
+  @Column('varchar')
+  networkId: string
+
+  @ManyToOne((type) => Contract, {
+    onDelete: 'CASCADE',
+    nullable: false,
+  })
+  @JoinColumn([
+    {
+      name: 'contractAddress',
+      referencedColumnName: 'address',
+    },
+    {
+      name: 'networkId',
+      referencedColumnName: 'networkId',
+    },
+  ])
+  contract: Contract
 }

@@ -18,7 +18,7 @@ export class CreateContractEventDto {
   abi: string
 
   @IsNotEmpty()
-  networkId: number
+  networkId: string
 
   @IsNotEmpty()
   syncStatus: ContractEventSyncStatus

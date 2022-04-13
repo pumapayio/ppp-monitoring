@@ -8,6 +8,12 @@ export class CreatePullPaymentDto {
   bmSubscriptionId: string
 
   @IsNotEmpty()
+  contractAddress: string
+
+  @IsNotEmpty()
+  networkId: string
+
+  @IsNotEmpty()
   paymentAmount: string
 
   @IsNotEmpty()

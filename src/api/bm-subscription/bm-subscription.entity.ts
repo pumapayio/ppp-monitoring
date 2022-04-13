@@ -5,12 +5,14 @@ import {
   ManyToOne,
   JoinColumn,
   PrimaryGeneratedColumn,
+  Unique,
 } from 'typeorm'
 import { BillingModel } from '../billiing-model/billing-model.entity'
 import { PullPayment } from '../pull-payment/pull-payment.entity'
 import { DateAudit } from '../shared/entity/date-audit.entity'
 
 @Entity()
+@Unique(['billingModelId', 'bmSubscriptionId', 'networkId', 'contractAddress'])
 export class BMSubscription extends DateAudit {
   @PrimaryGeneratedColumn('uuid')
   id: string
@@ -20,6 +22,12 @@ export class BMSubscription extends DateAudit {
 
   @Column('varchar', { length: 255 })
   billingModelId: string
+
+  @Column('varchar', { length: 42 })
+  contractAddress: string
+
+  @Column('varchar', { length: 42 })
+  networkId: string
 
   @Column('varchar', { length: 255 })
   subscriber: string
@@ -46,10 +54,20 @@ export class BMSubscription extends DateAudit {
     onDelete: 'CASCADE',
     nullable: false,
   })
-  @JoinColumn({
-    name: 'billingModelId',
-    referencedColumnName: 'billingModelId',
-  })
+  @JoinColumn([
+    {
+      name: 'billingModelId',
+      referencedColumnName: 'billingModelId',
+    },
+    {
+      name: 'networkId',
+      referencedColumnName: 'networkId',
+    },
+    {
+      name: 'contractAddress',
+      referencedColumnName: 'contractAddress',
+    },
+  ])
   billingModel: BillingModel
 
   @OneToMany((type) => PullPayment, (pullPayment) => pullPayment.bmSubscription)

@@ -14,153 +14,153 @@ export class MonitoringService {
     private singlePullPaymentBMCreatedEventService: SinglePullPaymentBMCreatedEventMonitoring,
     private singlePullPaymentBMEditedEventService: SinglePullPaymentBMEditedEventMonitoring,
     private singlePullPaymentPPExectutedEventMonitoring: SingleBMSubscriptionEventMonitoring,
-    private singlePPExectutionEventMonitoring: SinglePPExectutionEventMonitoring,
+    private singlePPExectutionEventMxonitoring: SinglePPExectutionEventMonitoring,
   ) {}
 
-  public monitorEvents(networkId: number) {
+  public monitorEvents(networkId: string) {
     this.monitorBMCreationEvents(networkId)
     this.monitorNewSubscriptionEvents(networkId)
     this.monitorPullPaymentExecutionEvents(networkId)
     this.monitorBMUpdatedEvents(networkId)
   }
 
-  private async monitorBMCreationEvents(networkId: number) {
+  private async monitorBMCreationEvents(networkId: string) {
     const events = await this.contractEventService.retrieveContractEventByType(
       ContractEventTypes.BillingModelCreated,
       networkId,
     )
     for (let event of events) {
-      switch (event.contractName) {
+      switch (event.contract.contractName) {
         case String(SmartContractNames.singlePP): {
           this.singlePullPaymentBMCreatedEventService.monitor(event)
           break
         }
         case String(SmartContractNames.singleDynamicPP): {
-          // console.log(event.contractName)
+          // console.log(event.contract.contractName)
           break
         }
         case String(SmartContractNames.recurringDynamicPP): {
-          // console.log(event.contractName)
+          // console.log(event.contract.contractName)
           break
         }
         case String(SmartContractNames.recurringPPFreeTrial): {
-          // console.log(event.contractName)
+          // console.log(event.contract.contractName)
           break
         }
         case String(SmartContractNames.recurringPPPaidTrial): {
-          // console.log(event.contractName)
+          // console.log(event.contract.contractName)
           break
         }
         case String(SmartContractNames.recurringDynamicPP): {
-          // console.log(event.contractName)
+          // console.log(event.contract.contractName)
           break
         }
       }
     }
   }
 
-  private async monitorNewSubscriptionEvents(networkId: number) {
+  private async monitorNewSubscriptionEvents(networkId: string) {
     const events = await this.contractEventService.retrieveContractEventByType(
       ContractEventTypes.NewSubscription,
       networkId,
     )
 
     for (let event of events) {
-      switch (event.contractName) {
+      switch (event.contract.contractName) {
         case String(SmartContractNames.singlePP): {
           this.singlePullPaymentPPExectutedEventMonitoring.monitor(event)
           break
         }
         case String(SmartContractNames.singleDynamicPP): {
-          // console.log(event.contractName)
+          // console.log(event.contract.contractName)
           break
         }
         case String(SmartContractNames.recurringDynamicPP): {
-          // console.log(event.contractName)
+          // console.log(event.contract.contractName)
           break
         }
         case String(SmartContractNames.recurringPPFreeTrial): {
-          // console.log(event.contractName)
+          // console.log(event.contract.contractName)
           break
         }
         case String(SmartContractNames.recurringPPPaidTrial): {
-          // console.log(event.contractName)
+          // console.log(event.contract.contractName)
           break
         }
         case String(SmartContractNames.recurringDynamicPP): {
-          // console.log(event.contractName)
+          // console.log(event.contract.contractName)
           break
         }
       }
     }
   }
 
-  private async monitorPullPaymentExecutionEvents(networkId: number) {
+  private async monitorPullPaymentExecutionEvents(networkId: string) {
     const events = await this.contractEventService.retrieveContractEventByType(
       ContractEventTypes.PullPaymentExecuted,
       networkId,
     )
 
     for (let event of events) {
-      switch (event.contractName) {
+      switch (event.contract.contractName) {
         case String(SmartContractNames.singlePP): {
-          this.singlePPExectutionEventMonitoring.monitor(event)
+          this.singlePPExectutionEventMxonitoring.monitor(event)
           break
         }
         case String(SmartContractNames.singleDynamicPP): {
-          // console.log(event.contractName)
+          // console.log(event.contract.contractName)
           break
         }
         case String(SmartContractNames.recurringDynamicPP): {
-          // console.log(event.contractName)
+          // console.log(event.contract.contractName)
           break
         }
         case String(SmartContractNames.recurringPPFreeTrial): {
-          // console.log(event.contractName)
+          // console.log(event.contract.contractName)
           break
         }
         case String(SmartContractNames.recurringPPPaidTrial): {
-          // console.log(event.contractName)
+          // console.log(event.contract.contractName)
           break
         }
         case String(SmartContractNames.recurringDynamicPP): {
-          // console.log(event.contractName)
+          // console.log(event.contract.contractName)
           break
         }
       }
     }
   }
 
-  private async monitorBMUpdatedEvents(networkId: number) {
+  private async monitorBMUpdatedEvents(networkId: string) {
     const events = await this.contractEventService.retrieveContractEventByType(
       ContractEventTypes.BillingModelEdited,
       networkId,
     )
 
     for (let event of events) {
-      switch (event.contractName) {
+      switch (event.contract.contractName) {
         case String(SmartContractNames.singlePP): {
           this.singlePullPaymentBMEditedEventService.monitor(event)
           break
         }
         case String(SmartContractNames.singleDynamicPP): {
-          // console.log(event.contractName)
+          // console.log(event.contract.contractName)
           break
         }
         case String(SmartContractNames.recurringDynamicPP): {
-          // console.log(event.contractName)
+          // console.log(event.contract.contractName)
           break
         }
         case String(SmartContractNames.recurringPPFreeTrial): {
-          // console.log(event.contractName)
+          // console.log(event.contract.contractName)
           break
         }
         case String(SmartContractNames.recurringPPPaidTrial): {
-          // console.log(event.contractName)
+          // console.log(event.contract.contractName)
           break
         }
         case String(SmartContractNames.recurringDynamicPP): {
-          // console.log(event.contractName)
+          // console.log(event.contract.contractName)
           break
         }
       }

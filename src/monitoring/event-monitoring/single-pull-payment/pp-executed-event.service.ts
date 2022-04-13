@@ -61,13 +61,13 @@ export class SinglePPExectutionEventMonitoring {
 
       const contract = await this.web3Helper.getContractInstance(
         event.networkId,
-        event.address,
-        SmartContractNames[event.contractName],
+        event.contractAddress,
+        SmartContractNames[event.contract.contractName],
         this.WS_CONNECTION,
       )
       // We handle pull payment executions as new subscription for single billing models
       contract.events[ContractEventTypes.NewSubscription]({
-        from: event.address,
+        from: event.contractAddress,
         fromBlock: currentBlockNumber,
       })
         .on('data', async (eventLog: ContractEventLog) => {
@@ -109,8 +109,8 @@ export class SinglePPExectutionEventMonitoring {
       )
       const contract = await this.web3Helper.getContractInstance(
         event.networkId,
-        event.address,
-        SmartContractNames[event.contractName],
+        event.contractAddress,
+        SmartContractNames[event.contract.contractName],
       )
 
       while (startBlock < currentBlockNumber) {
@@ -120,7 +120,7 @@ export class SinglePPExectutionEventMonitoring {
             : currentBlockNumber,
         )
         this.logger.log(
-          `Fetching PP Executed past events for ${event.contractName}.`,
+          `Fetching PP Executed past events for ${event.contract.contractName}.`,
         )
         this.logger.log(
           `Starting block: ${startBlock} - End Block: ${toBlock} - Network: ${event.networkId}`,
@@ -135,7 +135,7 @@ export class SinglePPExectutionEventMonitoring {
           },
         )
         this.logger.log(
-          `Found ${pastEvents.length} PP Executed past events for ${event.contractName}.`,
+          `Found ${pastEvents.length} PP Executed past events for ${event.contract.contractName}.`,
         )
 
         const bundleThreshold = 20 // handle 20 events per iteration

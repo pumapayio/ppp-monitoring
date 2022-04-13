@@ -2,13 +2,13 @@ import { Injectable } from '@nestjs/common'
 import { ContractEventTypes } from 'src/api/contract-event/contract-event-types'
 
 export enum ChainId {
-  MAINNET = 1,
-  ROPSTEN = 3,
-  RINKEBY = 4,
-  GÖRLI = 5,
-  KOVAN = 42,
-  BSC_MAINNET = 56,
-  BSC_TESTNET = 97,
+  MAINNET = '1',
+  ROPSTEN = '3',
+  RINKEBY = '4',
+  GÖRLI = '5',
+  KOVAN = '42',
+  BSC_MAINNET = '56',
+  BSC_TESTNET = '97',
 }
 
 export enum SmartContractNames {
@@ -98,7 +98,7 @@ export class BlockchainGlobals {
   }
 
   public static GET_CONTRACT_ADDRESS(
-    networkID: number,
+    networkId: number,
     contractType: SmartContractNames,
   ): string {
     const smartContractAddresses = {
@@ -141,11 +141,11 @@ export class BlockchainGlobals {
         [ChainId.BSC_TESTNET]: '0x919bf289D2a7799E5318a9F92E02b7fAAEDe7184',
       },
     }
-    return smartContractAddresses[`${contractType}`][networkID]
+    return smartContractAddresses[`${contractType}`][networkId]
   }
 
-  public static GET_RPC_URL(networkID: number): string[] {
-    switch (networkID) {
+  public static GET_RPC_URL(networkId: string): string[] {
+    switch (networkId) {
       case ChainId.BSC_MAINNET:
         // TODO: We must have a list of providers to connect to
         return ['https://bsc-dataseed.binance.org/']
@@ -157,8 +157,8 @@ export class BlockchainGlobals {
     }
   }
 
-  public static GET_RPC_WS_URL(networkID: number): string[] {
-    switch (networkID) {
+  public static GET_RPC_WS_URL(networkId: string): string[] {
+    switch (networkId) {
       case ChainId.BSC_MAINNET:
         // TODO: We must have a list of providers to connect to
         return [

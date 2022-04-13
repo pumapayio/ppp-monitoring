@@ -23,16 +23,16 @@ export class Web3Connector {
     return Web3Connector.instance
   }
 
-  public static getWeb3WsProvider(networkID: number) {
-    return Web3Connector.web3Providers[networkID]
+  public static getWeb3WsProvider(networkId: string) {
+    return Web3Connector.web3Providers[networkId]
   }
 
-  public static getWeb3HttpProvider(networkID: number) {
-    return Web3Connector.web3HttpProviders[networkID]
+  public static getWeb3HttpProvider(networkId: string) {
+    return Web3Connector.web3HttpProviders[networkId]
   }
 
-  public static instantiateWsProvider(networkID: number, rpcURL: string) {
-    if (!Web3Connector.web3Providers[networkID]) {
+  public static instantiateWsProvider(networkId: string, rpcURL: string) {
+    if (!Web3Connector.web3Providers[networkId]) {
       let web3 = new Web3()
       const eventProvider = new Web3.providers.WebsocketProvider(rpcURL, {
         timeout: 60000, // ms
@@ -55,45 +55,45 @@ export class Web3Connector {
 
       eventProvider.on('connect', () => {
         Web3Connector.logger.log(
-          `Web3 connnected for network ${networkID} on ${rpcURL}!!`,
+          `Web3 connnected for network ${networkId} on ${rpcURL}!!`,
         )
       })
       eventProvider.on('error', () => {
         Web3Connector.logger.error(
-          `Web3 connection error for network ${networkID}!`,
+          `Web3 connection error for network ${networkId}!`,
         )
       })
       eventProvider.on('end', () => {
         Web3Connector.logger.warn(
-          `Web3 connection ended for network ${networkID}!`,
+          `Web3 connection ended for network ${networkId}!`,
         )
       })
 
       eventProvider.on('close', () => {
         Web3Connector.logger.warn(
-          `Web3 connection closed for network ${networkID}!`,
+          `Web3 connection closed for network ${networkId}!`,
         )
       })
 
       web3.setProvider(eventProvider)
       // We can do monitoring based on the "executor mode"
       web3 = Web3Connector.setupDefaultAccount(web3)
-      this.web3Providers[networkID] = web3
+      this.web3Providers[networkId] = web3
     } else {
       Web3Connector.logger.log(
-        `Web3 WS Provider connnected already for network ${networkID}!!`,
+        `Web3 WS Provider connnected already for network ${networkId}!!`,
       )
     }
   }
 
-  public static instantiateHttpProvider(networkID: number, rpcUrl: string) {
-    if (!Web3Connector.web3HttpProviders[networkID]) {
+  public static instantiateHttpProvider(networkId: string, rpcUrl: string) {
+    if (!Web3Connector.web3HttpProviders[networkId]) {
       let web3 = new Web3(new Web3.providers.HttpProvider(rpcUrl))
       web3 = Web3Connector.setupDefaultAccount(web3)
-      this.web3HttpProviders[networkID] = web3
+      this.web3HttpProviders[networkId] = web3
     } else {
       Web3Connector.logger.log(
-        `Web3 Http Provider connnected already for network ${networkID}!!`,
+        `Web3 Http Provider connnected already for network ${networkId}!!`,
       )
     }
   }

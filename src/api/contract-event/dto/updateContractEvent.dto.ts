@@ -9,7 +9,7 @@ export class UpdateContractEventDto {
   contractName?: string
   address?: string
   abi?: string
-  networkId?: number
+  networkId?: string
   syncStatus?: ContractEventSyncStatus
   syncHistorical?: boolean
   lastSyncedBlock?: number

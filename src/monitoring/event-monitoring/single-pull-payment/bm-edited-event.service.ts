@@ -4,7 +4,7 @@ import { BillingModelService } from 'src/api/billiing-model/billing-model.servic
 import {
   serializeBMDetails,
   UnserializedBillingModel,
-} from 'src/api/billiing-model/interface/UnserializedBMDetails'
+} from 'src/api/billiing-model/billing-model.serializer'
 import { ContractEventSyncStatus } from 'src/api/contract-event/contract-event-status'
 import { ContractEventTypes } from 'src/api/contract-event/contract-event-types'
 import { ContractEvent } from 'src/api/contract-event/contract-event.entity'
@@ -66,12 +66,12 @@ export class SinglePullPaymentBMEditedEventMonitoring {
       })
       const contract = await this.web3Helper.getContractInstance(
         event.networkId,
-        event.address,
-        SmartContractNames[event.contractName],
+        event.contractAddress,
+        SmartContractNames[event.contract.contractName],
         true,
       )
       contract.events[ContractEventTypes.BillingModelEdited]({
-        from: event.address,
+        from: event.contractAddress,
         fromBlock: currentBlockNumber,
       })
         .on('data', async (eventLog: ContractEventLog) => {
@@ -117,8 +117,8 @@ export class SinglePullPaymentBMEditedEventMonitoring {
       )
       const contract = await this.web3Helper.getContractInstance(
         event.networkId,
-        event.address,
-        SmartContractNames[event.contractName],
+        event.contractAddress,
+        SmartContractNames[event.contract.contractName],
       )
 
       while (startBlock < currentBlockNumber) {
@@ -128,7 +128,7 @@ export class SinglePullPaymentBMEditedEventMonitoring {
             : currentBlockNumber,
         )
         this.logger.log(
-          `Fetching BM Edited past events for ${event.contractName}.`,
+          `Fetching BM Edited past events for ${event.contract.contractName}.`,
         )
         this.logger.log(
           `Starting block: ${startBlock} - End Block: ${toBlock} - Network: ${event.networkId}`,
@@ -143,7 +143,7 @@ export class SinglePullPaymentBMEditedEventMonitoring {
           },
         )
         this.logger.log(
-          `Found ${pastEvents.length} BM Edited past events for ${event.contractName}.`,
+          `Found ${pastEvents.length} BM Edited past events for ${event.contract.contractName}.`,
         )
         const bundleThreshold = 20 // handle 20 events per iteration
         if (pastEvents && pastEvents.length) {
@@ -192,7 +192,7 @@ export class SinglePullPaymentBMEditedEventMonitoring {
 
   private async handleEventLog(
     contract: any,
-    contractEvent: ContractEvent,
+    event: ContractEvent,
     eventLog: ContractEventLog,
   ) {
     // ==================================================================
@@ -212,12 +212,14 @@ export class SinglePullPaymentBMEditedEventMonitoring {
     //   payee: eventData.newPayee,
     // }
     // console.log(updateBM)
-    const web3Utils = this.web3Helper.getWeb3Utils(contractEvent.networkId)
+    const web3Utils = this.web3Helper.getWeb3Utils(event.networkId)
     const unserializedBillingModel: UnserializedBillingModel = await contract.methods
       .getBillingModel(eventLog.returnValues.billingModelID)
       .call()
     const updateBM = serializeBMDetails(
       eventLog.returnValues.billingModelID,
+      event.contractAddress,
+      event.networkId,
       unserializedBillingModel,
       web3Utils,
     )

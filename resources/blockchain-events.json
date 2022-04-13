@@ -8,7 +8,7 @@
       {
         "eventName": "BillingModelCreated",
         "topic": "0x7ea8b0018bcc6626a6b34111b5862a6221580ea86756f215b67c7b72022c38fe",
-        "syncHistorical": false
+        "syncHistorical": true
       },
       {
         "eventName": "NewSubscription",
@@ -23,7 +23,7 @@
       {
         "eventName": "BillingModelEdited",
         "topic": "0xaca554e1e566a091d5eef840bd1356f90e5bd2610e7b6e6156fff2c899aaa38d",
-        "syncHistorical": false
+        "syncHistorical": true
       }
     ],
     "abi": [

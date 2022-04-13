@@ -29,13 +29,14 @@ export class ContractEventService {
 
   public async retrieveContractEventByType(
     eventType: ContractEventTypes,
-    networkId: number,
+    networkId: string,
   ): Promise<ContractEvent[]> {
     const contractEvents = await this.contractEventRepository.find({
       where: {
         networkId,
         eventName: eventType,
       },
+      relations: ['contract'],
       order: {
         createdAt: 'ASC',
       },

@@ -5,6 +5,12 @@ export class CreateBMDto {
   billingModelId: string
 
   @IsNotEmpty()
+  contractAddress: string
+
+  @IsNotEmpty()
+  networkId: string
+
+  @IsNotEmpty()
   name: string
 
   @IsNotEmpty()

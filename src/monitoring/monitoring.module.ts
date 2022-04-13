@@ -15,8 +15,8 @@ export class MonitoringModule {
     private monitoringService: MonitoringService,
   ) {
     JSON.parse(this.config.get('blockchain.supportedNetworks')).map(
-      (networkID) => {
-        this.monitoringService.monitorEvents(networkID)
+      (networkId) => {
+        this.monitoringService.monitorEvents(String(networkId))
       },
     )
   }

@@ -8,6 +8,12 @@ export class CreateBMSubscriptionDto {
   billingModelId: string
 
   @IsNotEmpty()
+  contractAddress: string
+
+  @IsNotEmpty()
+  networkId: string
+
+  @IsNotEmpty()
   subscriber: string
 
   @IsNotEmpty()
@@ -19,13 +25,4 @@ export class CreateBMSubscriptionDto {
   cancelTimestamp?: string
   nextPaymentTimestamp?: string
   lastPaymentTimestamp?: string
-
-  // billingModelId: string
-  // bmSubscriptionId: string
-  // subscriber: string
-  // paymentAmount: string
-  // settlementToken: string
-  // paymentToken: string
-  // token: string // we keep this here for now until we figure out how we will handle the token names in general
-  // pullPaymentIDs: string[]
 }

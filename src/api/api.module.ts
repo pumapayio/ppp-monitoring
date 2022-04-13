@@ -7,6 +7,7 @@ import { BillingModelModule } from './billiing-model/billing-model.module'
 import { BMSubscriptionModule } from './bm-subscription/bm-subscription.module'
 import { PullPaymentModule } from './pull-payment/pull-payment.module'
 import { ContractEventModule } from './contract-event/contract-event.module'
+import { ContractModule } from './contract/contract.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { ContractEventModule } from './contract-event/contract-event.module'
     BMSubscriptionModule,
     PullPaymentModule,
     ContractEventModule,
+    ContractModule,
   ],
   exports: [
     BillingModelModule,
