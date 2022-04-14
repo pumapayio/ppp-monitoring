@@ -28,6 +28,8 @@ export class BillingModelService {
   public async update(_billingModel: UpdateBMDto): Promise<BillingModel> {
     const billingModel = await this.retrieveByBlockchainId(
       _billingModel.billingModelId,
+      _billingModel.contractAddress,
+      _billingModel.networkId,
     )
     if (billingModel) {
       Object.assign(billingModel, _billingModel)
@@ -43,10 +45,14 @@ export class BillingModelService {
 
   public async retrieveByBlockchainId(
     billingModelId: string,
+    contractAddress: string,
+    networkId: string,
   ): Promise<BillingModel> {
     return await this.billingModelRepository.findOne({
       where: {
         billingModelId,
+        contractAddress,
+        networkId,
       },
     })
   }

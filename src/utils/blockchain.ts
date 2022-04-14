@@ -72,6 +72,8 @@ export interface BillingModelEditedEvent {
   newPayee: string
 }
 
+export interface PullPayementExecutionEvent {}
+
 @Injectable()
 export class BlockchainGlobals {
   constructor() {}
@@ -153,7 +155,7 @@ export class BlockchainGlobals {
       // Default to BSC Testnet
       default:
         // TODO: We must have a list of providers to connect to
-        return ['https://data-seed-prebsc-1-s2.binance.org:8545/']
+        return ['https://data-seed-prebsc-2-s3.binance.org:8545/']
     }
   }
 

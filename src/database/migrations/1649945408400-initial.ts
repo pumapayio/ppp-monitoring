@@ -1,7 +1,7 @@
 import {MigrationInterface, QueryRunner} from "typeorm";
 
-export class initial1649886812707 implements MigrationInterface {
-    name = 'initial1649886812707'
+export class initial1649945408400 implements MigrationInterface {
+    name = 'initial1649945408400'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`
@@ -40,11 +40,10 @@ export class initial1649886812707 implements MigrationInterface {
                 "subscriber" character varying(255) NOT NULL,
                 "paymentToken" character varying(255) NOT NULL,
                 "numberOfPayments" character varying(255),
-                "startTimestamp" character varying(255),
-                "cancelTimestamp" character varying(255),
-                "nextPaymentTimestamp" character varying(255),
-                "lastPaymentTimestamp" character varying(255),
-                CONSTRAINT "UQ_ca8fa48f33d9f4a6413c8b78d51" UNIQUE ("bmSubscriptionId"),
+                "startTimestamp" character varying(11),
+                "cancelTimestamp" character varying(11),
+                "nextPaymentTimestamp" character varying(11),
+                "lastPaymentTimestamp" character varying(11),
                 CONSTRAINT "UQ_f1d0e5646065bcc273687029c86" UNIQUE (
                     "billingModelId",
                     "bmSubscriptionId",

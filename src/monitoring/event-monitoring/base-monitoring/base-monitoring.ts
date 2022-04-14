@@ -1,5 +1,6 @@
 import { Logger } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
+import { Subscription } from 'rxjs'
 import { BillingModelService } from 'src/api/billiing-model/billing-model.service'
 import { BMSubscriptionService } from 'src/api/bm-subscription/bm-subscription.service'
 import { ContractEventSyncStatus } from 'src/api/contract-event/contract-event-status'
@@ -57,8 +58,7 @@ export class BaseMonitoring {
           id: event.id,
           syncStatus: ContractEventSyncStatus.ProcessingPastEvents,
         })
-
-        this.processPastEvents(
+        await this.processPastEvents(
           event,
           currentBlockNumber,
           handleEventLog,
@@ -66,8 +66,15 @@ export class BaseMonitoring {
           secondEntityService,
         )
       }
-
-      this.monitorFutureEvents(
+      const monitoringSubscription = await this.monitorFutureEvents(
+        event,
+        currentBlockNumber,
+        handleEventLog,
+        entityService,
+        secondEntityService,
+      )
+      this.ensureFutureEventMonitoring(
+        monitoringSubscription,
         event,
         currentBlockNumber,
         handleEventLog,
@@ -87,7 +94,7 @@ export class BaseMonitoring {
     handleEventLog: Function,
     entityService: any,
     secondEntityService: any,
-  ) {
+  ): Promise<any> {
     this.logger.log(
       `Monitoring ${event.eventName} future events. Starting block: ${currentBlockNumber}`,
     )
@@ -99,7 +106,7 @@ export class BaseMonitoring {
         true,
       )
       // We handle pull payment executions as new subscription for single billing models
-      contract.events[event.eventName]({
+      return contract.events[event.eventName]({
         from: event.contractAddress,
         fromBlock: currentBlockNumber,
       })
@@ -119,11 +126,11 @@ export class BaseMonitoring {
               this.web3Helper,
               secondEntityService,
             )
-            console.log(eventLog.blockNumber)
             await this.contractEventService.update({
               id: event.id,
-              lastSyncedBlock: eventLog.blockNumber,
+              lastSyncedBlock: Number(eventLog.blockNumber) + 1,
             })
+            return true
           } catch (error) {
             this.logger.debug(
               `Failed to handle ${event.eventName} event. Reason: ${error.message}`,
@@ -158,7 +165,7 @@ export class BaseMonitoring {
     handleEventLog: Function,
     entityService: any,
     secondEntityService: any,
-  ) {
+  ): Promise<void> {
     this.logger.log(
       `Processing ${event.eventName} events. Latest block: ${currentBlockNumber} - Start Block ${event.lastSyncedBlock}`,
     )
@@ -202,7 +209,6 @@ export class BaseMonitoring {
         if (pastEvents && pastEvents.length) {
           const bundledPromises = []
           for (const pastEvent of pastEvents) {
-            console.log(pastEvent)
             bundledPromises.push(
               new Promise(async (resolve) => {
                 resolve(
@@ -223,7 +229,7 @@ export class BaseMonitoring {
               await this.contractEventService.update({
                 id: event.id,
                 lastSyncedTxHash: pastEvent.transactionHash,
-                lastSyncedBlock: pastEvent.blockNumber,
+                lastSyncedBlock: Number(pastEvent.blockNumber) + 1,
               })
             }
           }
@@ -231,7 +237,8 @@ export class BaseMonitoring {
           await this.contractEventService.update({
             id: event.id,
             lastSyncedTxHash: pastEvents[pastEvents.length - 1].transactionHash,
-            lastSyncedBlock: pastEvents[pastEvents.length - 1].blockNumber,
+            lastSyncedBlock:
+              Number(pastEvents[pastEvents.length - 1].blockNumber) + 1,
           })
         }
         startBlock = Number(
@@ -239,7 +246,6 @@ export class BaseMonitoring {
             ? startBlock + blockScanThreshold
             : currentBlockNumber,
         )
-        console.log('startBlock', startBlock)
         await this.contractEventService.update({
           id: event.id,
           lastSyncedBlock: startBlock,
@@ -257,6 +263,34 @@ export class BaseMonitoring {
         entityService,
         secondEntityService,
       )
+    }
+  }
+
+  private async ensureFutureEventMonitoring(
+    monitoringSubscription: any,
+    event: ContractEvent,
+    currentBlockNumber: number,
+    handleEventLog: Function,
+    entityService: any,
+    secondEntityService: any,
+  ): Promise<void> {
+    console.log(typeof monitoringSubscription)
+    await sleep(15000) // give 15 seconds for the ws connection to be established
+    // if there is no connection id, it means that we never managed to connect
+    while (!this.connectionId) {
+      console.log(
+        `no connection id, trying again... ${event.eventName} ${this.connectionId}`,
+      )
+      // monitoringSubscription.
+      monitoringSubscription.unsubscribe()
+      await this.monitorFutureEvents(
+        event,
+        currentBlockNumber,
+        handleEventLog,
+        entityService,
+        secondEntityService,
+      )
+      await sleep(15000) // give 15 seconds before we try to connect again
     }
   }
 }

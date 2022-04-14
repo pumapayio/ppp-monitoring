@@ -5,6 +5,12 @@ export class UpdateBMDto {
   billingModelId: string
 
   @IsNotEmpty()
+  contractAddress: string
+
+  @IsNotEmpty()
+  networkId: string
+
+  @IsNotEmpty()
   payee: string
 
   @IsNotEmpty()

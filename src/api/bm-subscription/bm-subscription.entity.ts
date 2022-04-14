@@ -17,7 +17,7 @@ export class BMSubscription extends DateAudit {
   @PrimaryGeneratedColumn('uuid')
   id: string
 
-  @Column('varchar', { length: 255, unique: true })
+  @Column('varchar', { length: 255 })
   bmSubscriptionId: string
 
   @Column('varchar', { length: 255 })
@@ -38,16 +38,16 @@ export class BMSubscription extends DateAudit {
   @Column('varchar', { length: 255, nullable: true })
   numberOfPayments: string
 
-  @Column('varchar', { length: 255, nullable: true })
+  @Column('varchar', { length: 11, nullable: true })
   startTimestamp: string
 
-  @Column('varchar', { length: 255, nullable: true })
+  @Column('varchar', { length: 11, nullable: true })
   cancelTimestamp: string
 
-  @Column('varchar', { length: 255, nullable: true })
+  @Column('varchar', { length: 11, nullable: true })
   nextPaymentTimestamp: string
 
-  @Column('varchar', { length: 255, nullable: true })
+  @Column('varchar', { length: 11, nullable: true })
   lastPaymentTimestamp: string
 
   @ManyToOne((type) => BillingModel, {
