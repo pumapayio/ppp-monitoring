@@ -22,10 +22,9 @@ export class ExecutorService {
         await this.bmSubscriptionsService.retrieveUpcomingSubscriptions()
 
       for (let upcomingSubscription of upcomingSubscriptions) {
-        console.log(upcomingSubscription)
+        console.log('upcomingSubscription', upcomingSubscription)
         this.executePullPayment(
           upcomingSubscription.networkId,
-          upcomingSubscription.contractAddress,
           upcomingSubscription.billingModel.contract.contractName,
           upcomingSubscription.bmSubscriptionId,
         )
@@ -40,11 +39,14 @@ export class ExecutorService {
 
   private async executePullPayment(
     networkId: string,
-    contractAddress: string,
     billingModelType: string,
     bmSubscriptionId: string,
   ) {
-    console.log(billingModelType, bmSubscriptionId)
+    console.log(
+      'billingModelType, bmSubscriptionId',
+      billingModelType,
+      bmSubscriptionId,
+    )
     try {
       const contract = await this.web3Helper.getContractInstance(
         networkId,
@@ -58,7 +60,7 @@ export class ExecutorService {
       const estimatedGas = await contract.methods
         .execute(billingModelType, bmSubscriptionId)
         .estimateGas()
-      console.log(estimatedGas)
+      console.log('estimatedGas', estimatedGas)
       console.log('web3.eth.defaultAccount', web3.eth.defaultAccount)
       await contract.methods
         .execute(billingModelType, bmSubscriptionId)

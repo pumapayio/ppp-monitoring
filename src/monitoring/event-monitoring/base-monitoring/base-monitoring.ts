@@ -275,8 +275,9 @@ export class BaseMonitoring {
     await sleep(15000)
     // if there is no connection id, it means that we never managed to connect
     while (!this.connectionId) {
-      console.log(
-        `no connection id, trying again... ${event.eventName} ${this.connectionId}`,
+      // TODO: Fix this part so that we really try to connect again ...
+      this.logger.log(
+        `No connection id yet, trying again... ${event.eventName} ${this.connectionId}`,
       )
       // so, we try to connect again
       await this.monitorFutureEvents(
