@@ -6,6 +6,7 @@ import {
   JoinColumn,
   ManyToOne,
   Unique,
+  Index,
 } from 'typeorm'
 import { BMSubscription } from '../bm-subscription/bm-subscription.entity'
 import { Contract } from '../contract/contract.entity'
@@ -17,12 +18,15 @@ export class BillingModel extends DateAudit {
   @PrimaryGeneratedColumn('uuid')
   id: string
 
+  @Index()
   @Column('varchar', { length: 255 })
   billingModelId: string
 
+  @Index()
   @Column('varchar', { length: 42 })
   contractAddress: string
 
+  @Index()
   @Column('varchar', { length: 42 })
   networkId: string
 

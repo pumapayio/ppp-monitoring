@@ -1,6 +1,5 @@
 import { Logger } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
-import { Subscription } from 'rxjs'
 import { BillingModelService } from 'src/api/billiing-model/billing-model.service'
 import { BMSubscriptionService } from 'src/api/bm-subscription/bm-subscription.service'
 import { ContractEventSyncStatus } from 'src/api/contract-event/contract-event-status'
@@ -66,7 +65,7 @@ export class BaseMonitoring {
           secondEntityService,
         )
       }
-      const monitoringSubscription = await this.monitorFutureEvents(
+      await this.monitorFutureEvents(
         event,
         currentBlockNumber,
         handleEventLog,
@@ -74,7 +73,6 @@ export class BaseMonitoring {
         secondEntityService,
       )
       this.ensureFutureEventMonitoring(
-        monitoringSubscription,
         event,
         currentBlockNumber,
         handleEventLog,
@@ -267,22 +265,20 @@ export class BaseMonitoring {
   }
 
   private async ensureFutureEventMonitoring(
-    monitoringSubscription: any,
     event: ContractEvent,
     currentBlockNumber: number,
     handleEventLog: Function,
     entityService: any,
     secondEntityService: any,
   ): Promise<void> {
-    console.log(typeof monitoringSubscription)
-    await sleep(15000) // give 15 seconds for the ws connection to be established
+    // give 15 seconds for the ws connection to be established
+    await sleep(15000)
     // if there is no connection id, it means that we never managed to connect
     while (!this.connectionId) {
       console.log(
         `no connection id, trying again... ${event.eventName} ${this.connectionId}`,
       )
-      // monitoringSubscription.
-      monitoringSubscription.unsubscribe()
+      // so, we try to connect again
       await this.monitorFutureEvents(
         event,
         currentBlockNumber,
@@ -290,7 +286,8 @@ export class BaseMonitoring {
         entityService,
         secondEntityService,
       )
-      await sleep(15000) // give 15 seconds before we try to connect again
+      // we give 15 seconds before we check again a connection is establised
+      await sleep(15000)
     }
   }
 }

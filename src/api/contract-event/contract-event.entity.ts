@@ -4,6 +4,7 @@ import {
   PrimaryGeneratedColumn,
   JoinColumn,
   ManyToOne,
+  Index,
 } from 'typeorm'
 import { Contract } from '../contract/contract.entity'
 import { DateAudit } from '../shared/entity/date-audit.entity'
@@ -39,6 +40,7 @@ export class ContractEvent extends DateAudit {
   @Column('varchar', { length: 42 })
   contractAddress: string
 
+  @Index()
   @Column('varchar')
   networkId: string
 

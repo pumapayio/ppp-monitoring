@@ -6,6 +6,7 @@ import {
   JoinColumn,
   PrimaryGeneratedColumn,
   Unique,
+  Index,
 } from 'typeorm'
 import { BillingModel } from '../billiing-model/billing-model.entity'
 import { PullPayment } from '../pull-payment/pull-payment.entity'
@@ -17,15 +18,19 @@ export class BMSubscription extends DateAudit {
   @PrimaryGeneratedColumn('uuid')
   id: string
 
+  @Index()
   @Column('varchar', { length: 255 })
   bmSubscriptionId: string
 
+  @Index()
   @Column('varchar', { length: 255 })
   billingModelId: string
 
+  @Index()
   @Column('varchar', { length: 42 })
   contractAddress: string
 
+  @Index()
   @Column('varchar', { length: 42 })
   networkId: string
 
@@ -44,6 +49,7 @@ export class BMSubscription extends DateAudit {
   @Column('varchar', { length: 11, nullable: true })
   cancelTimestamp: string
 
+  @Index()
   @Column('varchar', { length: 11, nullable: true })
   nextPaymentTimestamp: string
 

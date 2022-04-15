@@ -100,7 +100,7 @@ export class BlockchainGlobals {
   }
 
   public static GET_CONTRACT_ADDRESS(
-    networkId: number,
+    networkId: string,
     contractType: SmartContractNames,
   ): string {
     const smartContractAddresses = {

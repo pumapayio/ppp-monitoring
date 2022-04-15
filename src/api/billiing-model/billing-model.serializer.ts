@@ -1,12 +1,13 @@
 import { BigNumber } from 'bignumber.js'
 import { CreateBMDto } from './dto/createBM.dto'
-import { UpdateBMDto } from './dto/updateBM.dto'
 
 // Unserialized entity means whatever objects we retrieve from the blockchain
 export interface UnserializedBillingModel {
   payee: string
   name: string
   amount: BigNumber
+  frequency: BigNumber
+  numberOfPayments: string
   settlementToken: string
   subscriptionIDs: string[]
 }
@@ -27,6 +28,8 @@ export function serializeBMDetails(
     amount: String(bmDetails.amount),
     settlementToken: bmDetails.settlementToken,
     sellingToken: bmDetails.settlementToken,
+    numberOfPayments: bmDetails.numberOfPayments,
+    frequency: String(bmDetails.frequency),
     subscriptionIDs: bmDetails.subscriptionIDs,
   } as CreateBMDto
 }

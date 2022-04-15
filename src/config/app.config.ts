@@ -7,10 +7,10 @@ export default () => ({
   | This values are defined in the package.json.
   |
   */
-  name: require("../../package.json").name,
-  title: require("../../package.json").title,
-  description: require("../../package.json").description,
-  version: require("../../package.json").version,
+  name: require('../../package.json').name,
+  title: require('../../package.json').title,
+  description: require('../../package.json').description,
+  version: require('../../package.json').version,
 
   /*
   |--------------------------------------------------------------------------
@@ -44,5 +44,17 @@ export default () => ({
   | This value defines the url to our web client.
   |
   */
-  clientUrl: process.env.CLIENT_URL || "http://localhost:8080/tournament",
+  clientUrl: process.env.CLIENT_URL || 'http://localhost:8080/tournament',
+
+  /*
+  |--------------------------------------------------------------------------
+  | Scheduler Interval
+  |--------------------------------------------------------------------------
+  |
+  | This value defines how often we scan our DB for upcoming pull payment executions 
+  | Default Value is every 5 minutes (300 seconds)
+  | WARNING: schedulerInterval must be in line with process.env.SCEDULER_CRON_EXPRESSION
+  |
+  */
+  schedulerInterval: process.env.SCEDULER_INTERVAL_IN_SEC || 300, // 5 mins
 })

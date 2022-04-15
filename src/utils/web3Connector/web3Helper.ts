@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common'
-import Web3 from 'web3'
 import { BlockchainGlobals, SmartContractNames } from '../blockchain'
 import { SmartContractReader } from '../smartContractReader'
 import { Web3Connector } from './web3Connector'
+import Web3 from 'web3'
 
 @Injectable()
 export class Web3Helper {

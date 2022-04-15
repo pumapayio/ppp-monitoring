@@ -2,7 +2,7 @@ import { IsNotEmpty } from 'class-validator'
 
 export class UpdateBMSubscriptionDto {
   @IsNotEmpty()
-  subscriptionId: string
+  bmSubscriptionId: string
 
   billingModelId?: string
   subscriber?: string

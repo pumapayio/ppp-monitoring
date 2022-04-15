@@ -4,6 +4,7 @@ import {
   PrimaryGeneratedColumn,
   OneToMany,
   Unique,
+  Index,
 } from 'typeorm'
 import { BillingModel } from '../billiing-model/billing-model.entity'
 import { ContractEvent } from '../contract-event/contract-event.entity'
@@ -21,6 +22,7 @@ export class Contract extends DateAudit {
   @Column('varchar', { length: 42 })
   address: string
 
+  @Index()
   @Column('varchar')
   networkId: string
 

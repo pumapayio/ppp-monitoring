@@ -1,7 +1,7 @@
 import {MigrationInterface, QueryRunner} from "typeorm";
 
-export class initial1649945408400 implements MigrationInterface {
-    name = 'initial1649945408400'
+export class initial1650025383256 implements MigrationInterface {
+    name = 'initial1650025383256'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`
@@ -26,6 +26,21 @@ export class initial1649945408400 implements MigrationInterface {
                 ),
                 CONSTRAINT "PK_f7e1a32a34f74fc4255658e1f86" PRIMARY KEY ("id")
             )
+        `);
+        await queryRunner.query(`
+            CREATE INDEX "IDX_ef145addd8487cb2d5d8c12c5d" ON "public"."pull_payment" ("billingModelId")
+        `);
+        await queryRunner.query(`
+            CREATE INDEX "IDX_ecfe86d1e0eb32e864b311fc25" ON "public"."pull_payment" ("bmSubscriptionId")
+        `);
+        await queryRunner.query(`
+            CREATE INDEX "IDX_84aead5472ccc4d07d5feef37b" ON "public"."pull_payment" ("pullPaymentId")
+        `);
+        await queryRunner.query(`
+            CREATE INDEX "IDX_9e879bbcb6ccb39de80cee11d9" ON "public"."pull_payment" ("contractAddress")
+        `);
+        await queryRunner.query(`
+            CREATE INDEX "IDX_08639f9a0949046b830eb9bb9f" ON "public"."pull_payment" ("networkId")
         `);
         await queryRunner.query(`
             CREATE TABLE "public"."bm_subscription" (
@@ -54,6 +69,21 @@ export class initial1649945408400 implements MigrationInterface {
             )
         `);
         await queryRunner.query(`
+            CREATE INDEX "IDX_ca8fa48f33d9f4a6413c8b78d5" ON "public"."bm_subscription" ("bmSubscriptionId")
+        `);
+        await queryRunner.query(`
+            CREATE INDEX "IDX_3972833ba03ebd2165cee8c307" ON "public"."bm_subscription" ("billingModelId")
+        `);
+        await queryRunner.query(`
+            CREATE INDEX "IDX_31eecd5115d3237d08ad9ff80e" ON "public"."bm_subscription" ("contractAddress")
+        `);
+        await queryRunner.query(`
+            CREATE INDEX "IDX_d576b3f839d40fbd7b31c69370" ON "public"."bm_subscription" ("networkId")
+        `);
+        await queryRunner.query(`
+            CREATE INDEX "IDX_f015450739bda6fbf34a1dcddf" ON "public"."bm_subscription" ("nextPaymentTimestamp")
+        `);
+        await queryRunner.query(`
             CREATE TYPE "public"."contract_event_syncstatus_enum" AS ENUM(
                 'Unprocessed',
                 'ProcessingPastEvents',
@@ -79,6 +109,9 @@ export class initial1649945408400 implements MigrationInterface {
             )
         `);
         await queryRunner.query(`
+            CREATE INDEX "IDX_0a395eab38dfd222fdc23f4444" ON "public"."contract_event" ("networkId")
+        `);
+        await queryRunner.query(`
             CREATE TABLE "public"."contract" (
                 "created_at" TIMESTAMP NOT NULL DEFAULT now(),
                 "updated_at" TIMESTAMP NOT NULL DEFAULT now(),
@@ -91,6 +124,9 @@ export class initial1649945408400 implements MigrationInterface {
                 CONSTRAINT "UQ_ab7bd258144580776f32a7d3c34" UNIQUE ("address", "networkId"),
                 CONSTRAINT "PK_6206b6a65d200d15180a49d3c95" PRIMARY KEY ("id")
             )
+        `);
+        await queryRunner.query(`
+            CREATE INDEX "IDX_e219808ce5e3e8451af9c6b0f3" ON "public"."contract" ("networkId")
         `);
         await queryRunner.query(`
             CREATE TABLE "public"."billing_model" (
@@ -111,6 +147,15 @@ export class initial1649945408400 implements MigrationInterface {
                 CONSTRAINT "UQ_b64d0a0ee3bb60bdd10092d8be1" UNIQUE ("billingModelId", "networkId", "contractAddress"),
                 CONSTRAINT "PK_6e0f970ffe341139eede9006038" PRIMARY KEY ("id")
             )
+        `);
+        await queryRunner.query(`
+            CREATE INDEX "IDX_2e6e39d90689d350eb98f5c622" ON "public"."billing_model" ("billingModelId")
+        `);
+        await queryRunner.query(`
+            CREATE INDEX "IDX_53e495b7fbc1577555a49ab527" ON "public"."billing_model" ("contractAddress")
+        `);
+        await queryRunner.query(`
+            CREATE INDEX "IDX_3f89860724cd1df4bb582fc73e" ON "public"."billing_model" ("networkId")
         `);
         await queryRunner.query(`
             ALTER TABLE "public"."pull_payment"
@@ -154,10 +199,25 @@ export class initial1649945408400 implements MigrationInterface {
             ALTER TABLE "public"."pull_payment" DROP CONSTRAINT "FK_7626e51274c007ede88e4713ee9"
         `);
         await queryRunner.query(`
+            DROP INDEX "public"."IDX_3f89860724cd1df4bb582fc73e"
+        `);
+        await queryRunner.query(`
+            DROP INDEX "public"."IDX_53e495b7fbc1577555a49ab527"
+        `);
+        await queryRunner.query(`
+            DROP INDEX "public"."IDX_2e6e39d90689d350eb98f5c622"
+        `);
+        await queryRunner.query(`
             DROP TABLE "public"."billing_model"
         `);
         await queryRunner.query(`
+            DROP INDEX "public"."IDX_e219808ce5e3e8451af9c6b0f3"
+        `);
+        await queryRunner.query(`
             DROP TABLE "public"."contract"
+        `);
+        await queryRunner.query(`
+            DROP INDEX "public"."IDX_0a395eab38dfd222fdc23f4444"
         `);
         await queryRunner.query(`
             DROP TABLE "public"."contract_event"
@@ -166,7 +226,37 @@ export class initial1649945408400 implements MigrationInterface {
             DROP TYPE "public"."contract_event_syncstatus_enum"
         `);
         await queryRunner.query(`
+            DROP INDEX "public"."IDX_f015450739bda6fbf34a1dcddf"
+        `);
+        await queryRunner.query(`
+            DROP INDEX "public"."IDX_d576b3f839d40fbd7b31c69370"
+        `);
+        await queryRunner.query(`
+            DROP INDEX "public"."IDX_31eecd5115d3237d08ad9ff80e"
+        `);
+        await queryRunner.query(`
+            DROP INDEX "public"."IDX_3972833ba03ebd2165cee8c307"
+        `);
+        await queryRunner.query(`
+            DROP INDEX "public"."IDX_ca8fa48f33d9f4a6413c8b78d5"
+        `);
+        await queryRunner.query(`
             DROP TABLE "public"."bm_subscription"
+        `);
+        await queryRunner.query(`
+            DROP INDEX "public"."IDX_08639f9a0949046b830eb9bb9f"
+        `);
+        await queryRunner.query(`
+            DROP INDEX "public"."IDX_9e879bbcb6ccb39de80cee11d9"
+        `);
+        await queryRunner.query(`
+            DROP INDEX "public"."IDX_84aead5472ccc4d07d5feef37b"
+        `);
+        await queryRunner.query(`
+            DROP INDEX "public"."IDX_ecfe86d1e0eb32e864b311fc25"
+        `);
+        await queryRunner.query(`
+            DROP INDEX "public"."IDX_ef145addd8487cb2d5d8c12c5d"
         `);
         await queryRunner.query(`
             DROP TABLE "public"."pull_payment"

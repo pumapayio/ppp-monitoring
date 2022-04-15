@@ -1,9 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
-import {
-  serializeBMSubscription,
-  UnserializedBMSubscription,
-} from 'src/api/bm-subscription/bm-subscription.serializer'
 import { BMSubscriptionService } from 'src/api/bm-subscription/bm-subscription.service'
 import { ContractEvent } from 'src/api/contract-event/contract-event.entity'
 import { ContractEventService } from 'src/api/contract-event/contract-event.service'
@@ -11,6 +7,7 @@ import { PullPaymentService } from 'src/api/pull-payment/pull-payment.service'
 import { ContractEventLog } from 'src/utils/blockchain'
 import { Web3Helper } from 'src/utils/web3Connector/web3Helper'
 import { BaseMonitoring } from '../base-monitoring/base-monitoring'
+import { RecurringBMEventHandler } from './recurring-bm-event.handler'
 
 @Injectable()
 export class RecurringBMSubscriptionEventMonitoring {
@@ -51,21 +48,13 @@ export class RecurringBMSubscriptionEventMonitoring {
     event: ContractEvent,
     eventLog: ContractEventLog,
     entityService: BMSubscriptionService,
-    web3Helper: Web3Helper,
-    secondEntityService: PullPaymentService,
   ): Promise<void> {
-    const unserializedSubscription: UnserializedBMSubscription =
-      await contract.methods
-        .getSubscription(eventLog.returnValues.subscriptionID)
-        .call()
-    const serializedSubscription = serializeBMSubscription(
-      eventLog.returnValues.billingModelID,
-      eventLog.returnValues.subscriptionID,
-      event.contractAddress,
-      event.networkId,
-      unserializedSubscription,
+    const eventHandler = new RecurringBMEventHandler()
+    await eventHandler.handleBMCreation(
+      contract,
+      event,
+      eventLog,
+      entityService,
     )
-
-    await entityService.create(serializedSubscription)
   }
 }

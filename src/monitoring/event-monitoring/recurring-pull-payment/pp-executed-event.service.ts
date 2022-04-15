@@ -1,15 +1,13 @@
 import { Injectable, Logger } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
+import { BMSubscriptionService } from 'src/api/bm-subscription/bm-subscription.service'
 import { ContractEvent } from 'src/api/contract-event/contract-event.entity'
 import { ContractEventService } from 'src/api/contract-event/contract-event.service'
-import {
-  serializePullPayment,
-  UnserializedPullPayment,
-} from 'src/api/pull-payment/pull-payment.serializer'
 import { PullPaymentService } from 'src/api/pull-payment/pull-payment.service'
 import { ContractEventLog } from 'src/utils/blockchain'
 import { Web3Helper } from 'src/utils/web3Connector/web3Helper'
 import { BaseMonitoring } from '../base-monitoring/base-monitoring'
+import { RecurringBMEventHandler } from './recurring-bm-event.handler'
 
 @Injectable()
 export class RecurringPPExectutionEventMonitoring {
@@ -21,6 +19,7 @@ export class RecurringPPExectutionEventMonitoring {
     private config: ConfigService,
     private web3Helper: Web3Helper,
     private contractEventService: ContractEventService,
+    private bmSubscriptionService: BMSubscriptionService,
     private pullPaymentService: PullPaymentService,
   ) {}
 
@@ -33,8 +32,9 @@ export class RecurringPPExectutionEventMonitoring {
       )
       await baseMonitoring.monitor(
         event,
-        this.pullPaymentService,
+        this.bmSubscriptionService,
         this.handleEventLog,
+        this.pullPaymentService,
       )
     } catch (error) {
       this.logger.debug(
@@ -47,23 +47,22 @@ export class RecurringPPExectutionEventMonitoring {
     contract: any,
     event: ContractEvent,
     eventLog: ContractEventLog,
-    entityService: PullPaymentService,
+    entityService: BMSubscriptionService,
     web3Helper: Web3Helper,
+    secondEntityService: PullPaymentService,
   ): Promise<void> {
-    const unserializedPullPayment: UnserializedPullPayment =
-      await contract.methods
-        .getPullPayment(eventLog.returnValues.pullPaymentID)
-        .call()
-
-    const pullPaymentDetails = serializePullPayment(
-      eventLog.returnValues.pullPaymentID,
-      eventLog.returnValues.subscriptionID,
-      eventLog.returnValues.billingModelID,
-      event.contractAddress,
-      event.networkId,
-      unserializedPullPayment,
+    const eventHandler = new RecurringBMEventHandler()
+    await eventHandler.updateBMForPullPaymentExecution(
+      contract,
+      event,
+      eventLog,
+      entityService,
     )
-
-    await entityService.create(pullPaymentDetails)
+    await eventHandler.handlePPCreation(
+      contract,
+      event,
+      eventLog,
+      secondEntityService,
+    )
   }
 }
