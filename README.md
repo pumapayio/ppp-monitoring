@@ -1,40 +1,19 @@
-<p align="center">
-  <a href="https://copa-api.now.sh/" target="blank">
-    <img src="resources/image/banner.png" alt="COPA Logo" />
-  </a>
-</p>
-
-<p>
-<a href="https://travis-ci.org/copa-ch/copa-backend"><img src="https://travis-ci.org/copa-ch/copa-backend.svg?branch=master" alt="travis-ci" /></a>
-<a href="https://github.com/semantic-release/semantic-release"><img src="https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg" alt="Sematic-Release" /></a>
-</p>
+# Executor Node - PPP v3.0
 
 ## Description
 
-This app manages your tournaments and generates the schedules.
-
-## Documentation
-
-The API documentation is generated with Swagger.
-[API Documnentation](https://copa-api.now.sh/docs/)
+This app monitors, stores and trigger the execution of pull payments
 
 ## Installation
 
-We recommand using [Homebrew](https://brew.sh/index_de) on your MAC or chocco on windows.
+### Pre-requisites
 
-Install the following prerequisites with `brew`
+- [NodeJS](https://nodejs.org/en/download/)
+- [Yarn](https://classic.yarnpkg.com/lang/en/docs/install/)
+- [Docker](https://docs.docker.com/desktop/)
+- [Docker Comppose](https://docs.docker.com/compose/install/)
 
-```bash
-# install NodeJS
-brew install node
-
-# install yarn
-brew install yarn
-
-# install mysql database
-brew install mysql
-
-```
+We recommand using [Homebrew](https://brew.sh/index_de) on your MAC or [choco](https://chocolatey.org/install) on windows.
 
 Now we can install our dependencies with the following command.
 
@@ -45,16 +24,19 @@ $ yarn install
 ### Create your .ENV file
 
 Copy the `.env.examle` and rename it to `.env`. In this file collects all the global configurations.
+NOTE: `NODE_ENV` specifies which env file will be used when launcing the app.
+Example: In case of `NODE_ENV=dev` the app will use `env.dev` file
 
 ### Database setup
 
-Create a database with the name `copa`. Then run `yarn run db:setup`. This will migrate the database and seed some data into it.
+We have setup the local DB using docker-compose to make it easier
 
-### Mail setup
+```bash
+# starts the docker image and have it running in the background (-d)
+$ docker-compose up -d postgres
+```
 
-Change the vairables in the `.env` to correct mail server and user credentials.
-
-## Running the app
+## Running the app - YARN
 
 ```bash
 # development
@@ -65,6 +47,19 @@ $ yarn run start:dev
 
 # production mode
 $ yarn run start:prod
+```
+
+## Running the app - Docker
+
+```bash
+# builds the docker image
+$ docker-compose build
+
+# starts the app
+$ docker-compose up -d
+
+# print logs of  the app
+$ docker-compose logs -f executor-node
 ```
 
 ## Testing the app
@@ -79,3 +74,5 @@ $ yarn run test:e2e
 # test coverage
 $ yarn run test:cov
 ```
+
+NOTE: The app currently doesn't have any tests
