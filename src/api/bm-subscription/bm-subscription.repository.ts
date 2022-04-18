@@ -11,6 +11,7 @@ export class BMSubscriptionRepository extends Repository<BMSubscription> {
       relations: ['billingModel', 'billingModel.contract'],
       where: {
         nextPaymentTimestamp: LessThanOrEqual(startTimestamp),
+        numberOfPayments: GreaterThan(0),
       },
       order: {
         nextPaymentTimestamp: 'ASC',
@@ -34,4 +35,9 @@ export class BMSubscriptionRepository extends Repository<BMSubscription> {
 
     return bmSubscriptions
   }
+}
+function GreaterThan(
+  arg0: number,
+): any | string | import('typeorm').FindOperator<string> {
+  throw new Error('Function not implemented.')
 }

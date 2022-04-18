@@ -24,7 +24,9 @@ $ yarn install
 ### Create your .ENV file
 
 Copy the `.env.examle` and rename it to `.env`. In this file collects all the global configurations.
+
 NOTE: `NODE_ENV` specifies which env file will be used when launcing the app.
+
 Example: In case of `NODE_ENV=dev` the app will use `env.dev` file
 
 ### Database setup

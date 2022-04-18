@@ -58,7 +58,7 @@ export class BMSubscriptionService {
     )
     if (subscription) {
       Object.assign(subscription, _subscription)
-      console.log(subscription)
+
       return await this.bmSubscriptionRepository.save(subscription)
     }
     return null
