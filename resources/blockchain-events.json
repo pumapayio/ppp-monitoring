@@ -369,6 +369,11 @@
                 "internalType": "address",
                 "name": "paymentToken",
                 "type": "address"
+              },
+              {
+                "internalType": "uint256",
+                "name": "creationTime",
+                "type": "uint256"
               }
             ],
             "internalType": "struct ISinglePullPayment.SwappableBillingModel",
@@ -416,6 +421,11 @@
                 "internalType": "uint256[]",
                 "name": "subscriptionIDs",
                 "type": "uint256[]"
+              },
+              {
+                "internalType": "uint256",
+                "name": "creationTime",
+                "type": "uint256"
               }
             ],
             "internalType": "struct ISinglePullPayment.BillingModelData",
@@ -966,6 +976,11 @@
                 "internalType": "uint256[]",
                 "name": "subscriptionIDs",
                 "type": "uint256[]"
+              },
+              {
+                "internalType": "uint256",
+                "name": "creationTime",
+                "type": "uint256"
               }
             ],
             "internalType": "struct ISingleDynamicPullPayment.BillingModelData",
@@ -1673,6 +1688,11 @@
                 "internalType": "uint256",
                 "name": "numberOfPayments",
                 "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "creationTime",
+                "type": "uint256"
               }
             ],
             "internalType": "struct IPullPayment.SwappableBillingModel",
@@ -1730,6 +1750,11 @@
                 "internalType": "uint256[]",
                 "name": "subscriptionIDs",
                 "type": "uint256[]"
+              },
+              {
+                "internalType": "uint256",
+                "name": "creationTime",
+                "type": "uint256"
               }
             ],
             "internalType": "struct IPullPayment.BillingModelData",
@@ -2444,6 +2469,11 @@
                 "internalType": "uint256",
                 "name": "numberOfPayments",
                 "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "creationTime",
+                "type": "uint256"
               }
             ],
             "internalType": "struct IRecurringPPWithFreeTrial.SwappableBillingModel",
@@ -2506,6 +2536,11 @@
                 "internalType": "uint256[]",
                 "name": "subscriptionIDs",
                 "type": "uint256[]"
+              },
+              {
+                "internalType": "uint256",
+                "name": "creationTime",
+                "type": "uint256"
               }
             ],
             "internalType": "struct IRecurringPPWithFreeTrial.BillingModelData",
@@ -3284,6 +3319,11 @@
                 "internalType": "uint256",
                 "name": "numberOfPayments",
                 "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "creationTime",
+                "type": "uint256"
               }
             ],
             "internalType": "struct IRecurringPPWithPaidTrial.SwappableBillingModel",
@@ -3351,6 +3391,11 @@
                 "internalType": "uint256[]",
                 "name": "subscriptionIDs",
                 "type": "uint256[]"
+              },
+              {
+                "internalType": "uint256",
+                "name": "creationTime",
+                "type": "uint256"
               }
             ],
             "internalType": "struct IRecurringPPWithPaidTrial.BillingModelData",
@@ -4089,6 +4134,11 @@
                 "internalType": "uint256[]",
                 "name": "subscriptionIDs",
                 "type": "uint256[]"
+              },
+              {
+                "internalType": "uint256",
+                "name": "creationTime",
+                "type": "uint256"
               }
             ],
             "internalType": "struct IRecurringDynamicPullPayment.BillingModelData",

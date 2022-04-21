@@ -283,6 +283,11 @@
             "internalType": "uint256[]",
             "name": "subscriptionIDs",
             "type": "uint256[]"
+          },
+          {
+            "internalType": "uint256",
+            "name": "creationTime",
+            "type": "uint256"
           }
         ],
         "internalType": "struct ISingleDynamicPullPayment.BillingModelData",

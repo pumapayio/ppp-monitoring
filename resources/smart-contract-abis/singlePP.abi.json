@@ -341,6 +341,11 @@
             "internalType": "address",
             "name": "paymentToken",
             "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "creationTime",
+            "type": "uint256"
           }
         ],
         "internalType": "struct ISinglePullPayment.SwappableBillingModel",
@@ -388,6 +393,11 @@
             "internalType": "uint256[]",
             "name": "subscriptionIDs",
             "type": "uint256[]"
+          },
+          {
+            "internalType": "uint256",
+            "name": "creationTime",
+            "type": "uint256"
           }
         ],
         "internalType": "struct ISinglePullPayment.BillingModelData",

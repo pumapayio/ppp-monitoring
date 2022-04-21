@@ -450,6 +450,11 @@
             "internalType": "uint256",
             "name": "numberOfPayments",
             "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "creationTime",
+            "type": "uint256"
           }
         ],
         "internalType": "struct IPullPayment.SwappableBillingModel",
@@ -507,6 +512,11 @@
             "internalType": "uint256[]",
             "name": "subscriptionIDs",
             "type": "uint256[]"
+          },
+          {
+            "internalType": "uint256",
+            "name": "creationTime",
+            "type": "uint256"
           }
         ],
         "internalType": "struct IPullPayment.BillingModelData",
