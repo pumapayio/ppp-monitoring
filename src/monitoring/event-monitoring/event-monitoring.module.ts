@@ -11,25 +11,31 @@ import { RecurringPullPaymentBMCreatedEventMonitoring } from './recurring-pull-p
 import { RecurringBMSubscriptionEventMonitoring } from './recurring-pull-payment/bm-subscription-event.service'
 import { RecurringPPExectutionEventMonitoring } from './recurring-pull-payment/pp-executed-event.service'
 import { RecurringPullPaymentBMEditedEventMonitoring } from './recurring-pull-payment/bm-edited-event.service'
+import { SinglePullPaymentEventHandler } from './single-pull-payment/single-pull-payment.event-handler'
+import { RecurringPullPaymentEventHandler } from './recurring-pull-payment/recurring-pull-payment.event-handler'
 
 @Module({
   providers: [
     SinglePullPaymentBMCreatedEventMonitoring,
     SinglePullPaymentBMEditedEventMonitoring,
     SingleBMSubscriptionEventMonitoring,
+    SinglePullPaymentEventHandler,
     RecurringPullPaymentBMCreatedEventMonitoring,
     RecurringPullPaymentBMEditedEventMonitoring,
     RecurringBMSubscriptionEventMonitoring,
     RecurringPPExectutionEventMonitoring,
+    RecurringPullPaymentEventHandler,
   ],
   exports: [
     SinglePullPaymentBMCreatedEventMonitoring,
     SingleBMSubscriptionEventMonitoring,
     SinglePullPaymentBMEditedEventMonitoring,
+    SinglePullPaymentEventHandler,
     RecurringPullPaymentBMCreatedEventMonitoring,
     RecurringPullPaymentBMEditedEventMonitoring,
     RecurringBMSubscriptionEventMonitoring,
     RecurringPPExectutionEventMonitoring,
+    RecurringPullPaymentEventHandler,
   ],
   imports: [
     ContractEventModule,

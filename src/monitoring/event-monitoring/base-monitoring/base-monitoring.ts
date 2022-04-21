@@ -1,14 +1,13 @@
 import { Logger } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
-import { BillingModelService } from 'src/api/billiing-model/billing-model.service'
-import { BMSubscriptionService } from 'src/api/bm-subscription/bm-subscription.service'
 import { ContractEventSyncStatus } from 'src/api/contract-event/contract-event-status'
 import { ContractEvent } from 'src/api/contract-event/contract-event.entity'
 import { ContractEventService } from 'src/api/contract-event/contract-event.service'
-import { PullPaymentService } from 'src/api/pull-payment/pull-payment.service'
 import { SmartContractNames, ContractEventLog } from 'src/utils/blockchain'
 import { sleep } from 'src/utils/sleep'
 import { Web3Helper } from 'src/utils/web3Connector/web3Helper'
+import { RecurringPullPaymentEventHandler } from '../recurring-pull-payment/recurring-pull-payment.event-handler'
+import { SinglePullPaymentEventHandler } from '../single-pull-payment/single-pull-payment.event-handler'
 
 export class BaseMonitoring {
   private readonly logger = new Logger(BaseMonitoring.name)
@@ -19,31 +18,19 @@ export class BaseMonitoring {
     private web3Helper: Web3Helper,
     private contractEventService: ContractEventService,
   ) {}
-
   public async monitor(
     event: ContractEvent,
-    entityService:
-      | BillingModelService
-      | BMSubscriptionService
-      | PullPaymentService,
+    eventHandler:
+      | SinglePullPaymentEventHandler
+      | RecurringPullPaymentEventHandler,
     handleEventLog: (
       contract: any,
       event: ContractEvent,
       eventLog: ContractEventLog,
-      entityService?:
-        | BillingModelService
-        | BMSubscriptionService
-        | PullPaymentService,
-      web3Helper?: Web3Helper,
-      secondEntityService?:
-        | BillingModelService
-        | BMSubscriptionService
-        | PullPaymentService,
+      eventHandler:
+        | SinglePullPaymentEventHandler
+        | RecurringPullPaymentEventHandler,
     ) => Promise<void>,
-    secondEntityService?:
-      | BillingModelService
-      | BMSubscriptionService
-      | PullPaymentService,
   ): Promise<void> {
     try {
       const web3 = this.web3Helper.getWeb3Instance(event.networkId)
@@ -61,23 +48,20 @@ export class BaseMonitoring {
           event,
           currentBlockNumber,
           handleEventLog,
-          entityService,
-          secondEntityService,
+          eventHandler,
         )
       }
       await this.monitorFutureEvents(
         event,
         currentBlockNumber,
         handleEventLog,
-        entityService,
-        secondEntityService,
+        eventHandler,
       )
       this.ensureFutureEventMonitoring(
         event,
         currentBlockNumber,
         handleEventLog,
-        entityService,
-        secondEntityService,
+        eventHandler,
       )
     } catch (error) {
       this.logger.debug(
@@ -90,8 +74,9 @@ export class BaseMonitoring {
     event: ContractEvent,
     currentBlockNumber: number,
     handleEventLog: Function,
-    entityService: any,
-    secondEntityService: any,
+    eventHandler:
+      | SinglePullPaymentEventHandler
+      | RecurringPullPaymentEventHandler,
   ): Promise<any> {
     this.logger.log(
       `Monitoring ${event.eventName} future events. Starting block: ${currentBlockNumber}`,
@@ -111,22 +96,15 @@ export class BaseMonitoring {
         .on('connected', (connectionId) => {
           this.connectionId = connectionId
           this.logger.debug(
-            `Connected to WS for ${event.eventName} event. Connection_Id: ${connectionId}`,
+            `Connected to WS for ${event.eventName} event and ${event.contract.contractName} contract. Connection_Id: ${connectionId}`,
           )
         })
         .on('data', async (eventLog: ContractEventLog) => {
           try {
-            await handleEventLog(
-              contract,
-              event,
-              eventLog,
-              entityService,
-              this.web3Helper,
-              secondEntityService,
-            )
+            await handleEventLog(contract, event, eventLog, eventHandler)
             await this.contractEventService.update({
               id: event.id,
-              lastSyncedBlock: Number(eventLog.blockNumber) + 1,
+              lastSyncedBlock: eventLog.blockNumber,
             })
             return true
           } catch (error) {
@@ -151,8 +129,7 @@ export class BaseMonitoring {
         event,
         currentBlockNumber,
         handleEventLog,
-        entityService,
-        secondEntityService,
+        eventHandler,
       )
     }
   }
@@ -161,14 +138,15 @@ export class BaseMonitoring {
     event: ContractEvent,
     currentBlockNumber: number,
     handleEventLog: Function,
-    entityService: any,
-    secondEntityService: any,
+    eventHandler:
+      | SinglePullPaymentEventHandler
+      | RecurringPullPaymentEventHandler,
   ): Promise<void> {
     this.logger.log(
       `Processing ${event.eventName} events. Latest block: ${currentBlockNumber} - Start Block ${event.lastSyncedBlock}`,
     )
     try {
-      let startBlock = event.lastSyncedBlock
+      let startBlock = Number(event.lastSyncedBlock) - 1
       const blockScanThreshold = this.config.get(
         'blockchain.blockScanThreshold',
       )
@@ -190,15 +168,16 @@ export class BaseMonitoring {
         this.logger.log(
           `Starting block: ${startBlock} - End Block: ${toBlock} - Network: ${event.networkId}`,
         )
-
+        console.log(event.eventName)
         const pastEvents = await contract.getPastEvents(
           String(event.eventName),
           {
             fromBlock: startBlock,
             toBlock: toBlock,
-            topics: [event.topic],
           },
         )
+        console.log(event.topic)
+        console.log(pastEvents)
         this.logger.log(
           `Found ${pastEvents.length} ${event.eventName} past events for ${event.contract.contractName}.`,
         )
@@ -214,9 +193,7 @@ export class BaseMonitoring {
                     contract,
                     event,
                     pastEvent,
-                    entityService,
-                    this.web3Helper,
-                    secondEntityService,
+                    eventHandler,
                   ),
                 )
               }),
@@ -227,7 +204,7 @@ export class BaseMonitoring {
               await this.contractEventService.update({
                 id: event.id,
                 lastSyncedTxHash: pastEvent.transactionHash,
-                lastSyncedBlock: Number(pastEvent.blockNumber) + 1,
+                lastSyncedBlock: pastEvent.blockNumber,
               })
             }
           }
@@ -235,8 +212,7 @@ export class BaseMonitoring {
           await this.contractEventService.update({
             id: event.id,
             lastSyncedTxHash: pastEvents[pastEvents.length - 1].transactionHash,
-            lastSyncedBlock:
-              Number(pastEvents[pastEvents.length - 1].blockNumber) + 1,
+            lastSyncedBlock: pastEvents[pastEvents.length - 1].blockNumber,
           })
         }
         startBlock = Number(
@@ -258,8 +234,7 @@ export class BaseMonitoring {
         event,
         currentBlockNumber,
         handleEventLog,
-        entityService,
-        secondEntityService,
+        eventHandler,
       )
     }
   }
@@ -268,8 +243,9 @@ export class BaseMonitoring {
     event: ContractEvent,
     currentBlockNumber: number,
     handleEventLog: Function,
-    entityService: any,
-    secondEntityService: any,
+    eventHandler:
+      | SinglePullPaymentEventHandler
+      | RecurringPullPaymentEventHandler,
   ): Promise<void> {
     // give 15 seconds for the ws connection to be established
     await sleep(15000)
@@ -284,8 +260,7 @@ export class BaseMonitoring {
         event,
         currentBlockNumber,
         handleEventLog,
-        entityService,
-        secondEntityService,
+        eventHandler,
       )
       // we give 15 seconds before we check again a connection is establised
       await sleep(15000)

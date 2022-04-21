@@ -1,5 +1,11 @@
 import { now } from 'moment'
-import { EntityRepository, LessThanOrEqual, Repository } from 'typeorm'
+import {
+  EntityRepository,
+  Equal,
+  LessThanOrEqual,
+  MoreThan,
+  Repository,
+} from 'typeorm'
 import { BillingModel } from '../billiing-model/billing-model.entity'
 import { BMSubscription } from './bm-subscription.entity'
 
@@ -11,7 +17,8 @@ export class BMSubscriptionRepository extends Repository<BMSubscription> {
       relations: ['billingModel', 'billingModel.contract'],
       where: {
         nextPaymentTimestamp: LessThanOrEqual(startTimestamp),
-        numberOfPayments: GreaterThan(0),
+        cancelTimestamp: Equal(0),
+        numberOfPayments: MoreThan(0),
       },
       order: {
         nextPaymentTimestamp: 'ASC',
@@ -35,9 +42,4 @@ export class BMSubscriptionRepository extends Repository<BMSubscription> {
 
     return bmSubscriptions
   }
-}
-function GreaterThan(
-  arg0: number,
-): any | string | import('typeorm').FindOperator<string> {
-  throw new Error('Function not implemented.')
 }

@@ -1,13 +1,11 @@
 import { Injectable, Logger } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
-import { BMSubscriptionService } from 'src/api/bm-subscription/bm-subscription.service'
 import { ContractEvent } from 'src/api/contract-event/contract-event.entity'
 import { ContractEventService } from 'src/api/contract-event/contract-event.service'
-import { PullPaymentService } from 'src/api/pull-payment/pull-payment.service'
 import { ContractEventLog } from 'src/utils/blockchain'
 import { Web3Helper } from 'src/utils/web3Connector/web3Helper'
 import { BaseMonitoring } from '../base-monitoring/base-monitoring'
-import { BMSubscriptionEventHandler } from './bm-subscription-event.handler'
+import { SinglePullPaymentEventHandler } from './single-pull-payment.event-handler'
 
 @Injectable()
 export class SingleBMSubscriptionEventMonitoring {
@@ -16,9 +14,8 @@ export class SingleBMSubscriptionEventMonitoring {
   constructor(
     private config: ConfigService,
     private web3Helper: Web3Helper,
+    private eventHandler: SinglePullPaymentEventHandler,
     private contractEventService: ContractEventService,
-    private bmSubscriptionsService: BMSubscriptionService,
-    private pullPaymentService: PullPaymentService,
   ) {}
 
   public async monitor(event: ContractEvent): Promise<void> {
@@ -30,9 +27,8 @@ export class SingleBMSubscriptionEventMonitoring {
       )
       await baseMonitoring.monitor(
         event,
-        this.bmSubscriptionsService,
+        this.eventHandler,
         this.handleEventLog,
-        this.pullPaymentService,
       )
     } catch (error) {
       this.logger.debug(
@@ -45,22 +41,9 @@ export class SingleBMSubscriptionEventMonitoring {
     contract: any,
     event: ContractEvent,
     eventLog: ContractEventLog,
-    entityService: BMSubscriptionService,
-    web3Helper: Web3Helper,
-    secondEntityService: PullPaymentService,
+    eventHandler: SinglePullPaymentEventHandler,
   ): Promise<void> {
-    const eventHandler = new BMSubscriptionEventHandler()
-    await eventHandler.handleBMCreation(
-      contract,
-      event,
-      eventLog,
-      entityService,
-    )
-    await eventHandler.handlePPCreation(
-      contract,
-      event,
-      eventLog,
-      secondEntityService,
-    )
+    await eventHandler.handleBMSubscriptionCreation(contract, event, eventLog)
+    await eventHandler.handlePPCreation(contract, event, eventLog)
   }
 }

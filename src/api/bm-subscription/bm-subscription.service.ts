@@ -45,6 +45,22 @@ export class BMSubscriptionService {
     return await this.bmSubscriptionRepository.findAllToBeExecuted()
   }
 
+  public async retrieveByBlockchainId(
+    billingModelId: string,
+    bmSubscriptionId: string,
+    contractAddress: string,
+    networkId: string,
+  ): Promise<BMSubscription> {
+    return await this.bmSubscriptionRepository.findOne({
+      where: {
+        billingModelId,
+        bmSubscriptionId,
+        contractAddress,
+        networkId,
+      },
+    })
+  }
+
   public async update(
     _subscription: UpdateBMSubscriptionDto,
     networkId: string,

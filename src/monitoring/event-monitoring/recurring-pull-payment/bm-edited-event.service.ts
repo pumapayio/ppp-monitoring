@@ -10,6 +10,7 @@ import { ContractEventService } from 'src/api/contract-event/contract-event.serv
 import { ContractEventLog } from 'src/utils/blockchain'
 import { Web3Helper } from 'src/utils/web3Connector/web3Helper'
 import { BaseMonitoring } from '../base-monitoring/base-monitoring'
+import { RecurringPullPaymentEventHandler } from './recurring-pull-payment.event-handler'
 
 @Injectable()
 export class RecurringPullPaymentBMEditedEventMonitoring {
@@ -20,8 +21,8 @@ export class RecurringPullPaymentBMEditedEventMonitoring {
   constructor(
     private config: ConfigService,
     private web3Helper: Web3Helper,
+    private eventHandler: RecurringPullPaymentEventHandler,
     private contractEventService: ContractEventService,
-    private billingModelService: BillingModelService,
   ) {}
 
   public async monitor(event: ContractEvent): Promise<void> {
@@ -33,7 +34,7 @@ export class RecurringPullPaymentBMEditedEventMonitoring {
       )
       await baseMonitoring.monitor(
         event,
-        this.billingModelService,
+        this.eventHandler,
         this.handleEventLog,
       )
     } catch (error) {
@@ -47,38 +48,8 @@ export class RecurringPullPaymentBMEditedEventMonitoring {
     contract: any,
     event: ContractEvent,
     eventLog: ContractEventLog,
-    entityService: BillingModelService,
-    web3Helper: Web3Helper,
+    eventHandler: RecurringPullPaymentEventHandler,
   ) {
-    // ==================================================================
-    // TODO: This approach is better as we don't make another call to retreive the bm details
-    // from the blokchain - need to figure out why we are getting `Invalid UTF-8 detected` and
-    // `Invalid continuation byte` errors though with this approach
-    // ==================================================================
-    // const web3Utils = this.web3Helper.getWeb3Utils(event.networkId)
-    // const eventData: BillingModelEditedEvent = eventLog.returnValues
-    // console.log(eventData)
-    // const updateBM: UpdateBMDto = {
-    //   billingModelId: eventData.billingModelID,
-    //   name: web3Utils.hexToUtf8(eventData.newName),
-    //   amount: eventData.amount,
-    //   sellingToken: eventData.settlementToken,
-    //   settlementToken: eventData.settlementToken,
-    //   payee: eventData.newPayee,
-    // }
-    const web3Utils = web3Helper.getWeb3Utils(event.networkId)
-    const unserializedBillingModel: UnserializedBillingModel =
-      await contract.methods
-        .getBillingModel(eventLog.returnValues.billingModelID)
-        .call()
-    const updateBM = serializeBMDetails(
-      eventLog.returnValues.billingModelID,
-      event.contractAddress,
-      event.networkId,
-      unserializedBillingModel,
-      web3Utils,
-    )
-
-    await entityService.update(updateBM)
+    await eventHandler.handleBMEditEvent(contract, event, eventLog)
   }
 }

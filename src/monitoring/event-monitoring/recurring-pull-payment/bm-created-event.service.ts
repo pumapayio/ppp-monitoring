@@ -1,15 +1,11 @@
 import { Injectable, Logger } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
-import { BillingModelService } from 'src/api/billiing-model/billing-model.service'
-import {
-  serializeBMDetails,
-  UnserializedBillingModel,
-} from 'src/api/billiing-model/billing-model.serializer'
 import { ContractEvent } from 'src/api/contract-event/contract-event.entity'
 import { ContractEventService } from 'src/api/contract-event/contract-event.service'
 import { ContractEventLog } from 'src/utils/blockchain'
 import { Web3Helper } from 'src/utils/web3Connector/web3Helper'
 import { BaseMonitoring } from '../base-monitoring/base-monitoring'
+import { RecurringPullPaymentEventHandler } from './recurring-pull-payment.event-handler'
 
 @Injectable()
 export class RecurringPullPaymentBMCreatedEventMonitoring {
@@ -20,8 +16,8 @@ export class RecurringPullPaymentBMCreatedEventMonitoring {
   constructor(
     private config: ConfigService,
     private web3Helper: Web3Helper,
+    private eventHandler: RecurringPullPaymentEventHandler,
     private contractEventService: ContractEventService,
-    private billingModelService: BillingModelService,
   ) {}
 
   public async monitor(event: ContractEvent): Promise<void> {
@@ -33,7 +29,7 @@ export class RecurringPullPaymentBMCreatedEventMonitoring {
       )
       await baseMonitoring.monitor(
         event,
-        this.billingModelService,
+        this.eventHandler,
         this.handleEventLog,
       )
     } catch (error) {
@@ -47,22 +43,8 @@ export class RecurringPullPaymentBMCreatedEventMonitoring {
     contract: any,
     event: ContractEvent,
     eventLog: ContractEventLog,
-    entityService: BillingModelService,
-    web3Helper: Web3Helper,
+    eventHandler: RecurringPullPaymentEventHandler,
   ): Promise<void> {
-    const web3Utils = web3Helper.getWeb3Utils(event.networkId)
-    const unserializedBillingModel: UnserializedBillingModel =
-      await contract.methods
-        .getBillingModel(eventLog.returnValues.billingModelID)
-        .call()
-    const billinModelDetails = serializeBMDetails(
-      eventLog.returnValues.billingModelID,
-      event.contractAddress,
-      event.networkId,
-      unserializedBillingModel,
-      web3Utils,
-    )
-
-    await entityService.create(billinModelDetails)
+    await eventHandler.handleBMCreation(contract, event, eventLog)
   }
 }

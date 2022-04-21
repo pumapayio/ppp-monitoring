@@ -1,6 +1,9 @@
 import { IsNotEmpty } from 'class-validator'
 
 export class CreateBMSubscriptionDto {
+  // to be used in case we want to do create or update
+  id?: string
+
   @IsNotEmpty()
   bmSubscriptionId: string
 

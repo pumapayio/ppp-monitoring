@@ -1,15 +1,11 @@
 import { Injectable, Logger } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
-import { BillingModelService } from 'src/api/billiing-model/billing-model.service'
-import {
-  serializeBMDetails,
-  UnserializedBillingModel,
-} from 'src/api/billiing-model/billing-model.serializer'
 import { ContractEvent } from 'src/api/contract-event/contract-event.entity'
 import { ContractEventService } from 'src/api/contract-event/contract-event.service'
 import { ContractEventLog } from 'src/utils/blockchain'
 import { Web3Helper } from 'src/utils/web3Connector/web3Helper'
 import { BaseMonitoring } from '../base-monitoring/base-monitoring'
+import { SinglePullPaymentEventHandler } from './single-pull-payment.event-handler'
 
 @Injectable()
 export class SinglePullPaymentBMEditedEventMonitoring {
@@ -20,8 +16,8 @@ export class SinglePullPaymentBMEditedEventMonitoring {
   constructor(
     private config: ConfigService,
     private web3Helper: Web3Helper,
+    private eventHandler: SinglePullPaymentEventHandler,
     private contractEventService: ContractEventService,
-    private billingModelService: BillingModelService,
   ) {}
 
   public async monitor(event: ContractEvent): Promise<void> {
@@ -33,7 +29,7 @@ export class SinglePullPaymentBMEditedEventMonitoring {
       )
       await baseMonitoring.monitor(
         event,
-        this.billingModelService,
+        this.eventHandler,
         this.handleEventLog,
       )
     } catch (error) {
@@ -47,39 +43,12 @@ export class SinglePullPaymentBMEditedEventMonitoring {
     contract: any,
     event: ContractEvent,
     eventLog: ContractEventLog,
-    entityService: BillingModelService,
-    web3Helper: Web3Helper,
+    eventHandler: SinglePullPaymentEventHandler,
   ) {
-    // ==================================================================
-    // TODO: This approach is better as we don't make another call to retreive the bm details
-    // from the blokchain - need to figure out why we are getting `Invalid UTF-8 detected` and
-    // `Invalid continuation byte` errors though with this approach
-    // ==================================================================
-    // const web3Utils = this.web3Helper.getWeb3Utils(event.networkId)
-    // const eventData: BillingModelEditedEvent = eventLog.returnValues
-    // console.log(eventData)
-    // const updateBM: UpdateBMDto = {
-    //   billingModelId: eventData.billingModelID,
-    //   name: web3Utils.hexToUtf8(eventData.newName),
-    //   amount: eventData.amount,
-    //   sellingToken: eventData.settlementToken,
-    //   settlementToken: eventData.settlementToken,
-    //   payee: eventData.newPayee,
-    // }
-    // console.log(updateBM)
-    const web3Utils = web3Helper.getWeb3Utils(event.networkId)
-    const unserializedBillingModel: UnserializedBillingModel = await contract.methods
-      .getBillingModel(eventLog.returnValues.billingModelID)
-      .call()
-    const updateBM = serializeBMDetails(
+    await eventHandler.handleBMCreateOrEditEvent(
       eventLog.returnValues.billingModelID,
-      event.contractAddress,
-      event.networkId,
-      unserializedBillingModel,
-      web3Utils,
+      contract,
+      event,
     )
-    updateBM.billingModelId = eventLog.returnValues.billingModelID
-
-    await entityService.update(updateBM)
   }
 }

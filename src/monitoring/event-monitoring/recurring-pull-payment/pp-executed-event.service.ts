@@ -1,13 +1,11 @@
 import { Injectable, Logger } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
-import { BMSubscriptionService } from 'src/api/bm-subscription/bm-subscription.service'
 import { ContractEvent } from 'src/api/contract-event/contract-event.entity'
 import { ContractEventService } from 'src/api/contract-event/contract-event.service'
-import { PullPaymentService } from 'src/api/pull-payment/pull-payment.service'
 import { ContractEventLog } from 'src/utils/blockchain'
 import { Web3Helper } from 'src/utils/web3Connector/web3Helper'
 import { BaseMonitoring } from '../base-monitoring/base-monitoring'
-import { RecurringBMEventHandler } from './recurring-bm-event.handler'
+import { RecurringPullPaymentEventHandler } from './recurring-pull-payment.event-handler'
 
 @Injectable()
 export class RecurringPPExectutionEventMonitoring {
@@ -18,9 +16,8 @@ export class RecurringPPExectutionEventMonitoring {
   constructor(
     private config: ConfigService,
     private web3Helper: Web3Helper,
+    private eventHandler: RecurringPullPaymentEventHandler,
     private contractEventService: ContractEventService,
-    private bmSubscriptionService: BMSubscriptionService,
-    private pullPaymentService: PullPaymentService,
   ) {}
 
   public async monitor(event: ContractEvent): Promise<void> {
@@ -32,9 +29,8 @@ export class RecurringPPExectutionEventMonitoring {
       )
       await baseMonitoring.monitor(
         event,
-        this.bmSubscriptionService,
+        this.eventHandler,
         this.handleEventLog,
-        this.pullPaymentService,
       )
     } catch (error) {
       this.logger.debug(
@@ -47,22 +43,13 @@ export class RecurringPPExectutionEventMonitoring {
     contract: any,
     event: ContractEvent,
     eventLog: ContractEventLog,
-    entityService: BMSubscriptionService,
-    web3Helper: Web3Helper,
-    secondEntityService: PullPaymentService,
+    eventHandler: RecurringPullPaymentEventHandler,
   ): Promise<void> {
-    const eventHandler = new RecurringBMEventHandler()
     await eventHandler.updateBMForPullPaymentExecution(
       contract,
       event,
       eventLog,
-      entityService,
     )
-    await eventHandler.handlePPCreation(
-      contract,
-      event,
-      eventLog,
-      secondEntityService,
-    )
+    await eventHandler.handlePPCreation(contract, event, eventLog)
   }
 }

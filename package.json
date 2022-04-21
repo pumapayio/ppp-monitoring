@@ -1,5 +1,5 @@
 {
-  "name": "ppp-executor-node",
+  "name": "@pumapay/ppp-executor-node",
   "title": "PPP Executor Node",
   "version": "0.0.1",
   "description": "Pull Payment Protocol V3.0 Executor Node",

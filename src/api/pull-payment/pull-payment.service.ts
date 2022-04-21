@@ -23,4 +23,22 @@ export class PullPaymentService {
   public async retrieveById(pullPaymentID: string): Promise<PullPayment> {
     return await this.pullPaymentRepository.findOne(pullPaymentID)
   }
+
+  public async retrieveByBlockchainId(
+    billingModelId: string,
+    bmSubscriptionId: string,
+    pullPaymentId: string,
+    contractAddress: string,
+    networkId: string,
+  ): Promise<PullPayment> {
+    return await this.pullPaymentRepository.findOne({
+      where: {
+        billingModelId,
+        bmSubscriptionId,
+        pullPaymentId,
+        contractAddress,
+        networkId,
+      },
+    })
+  }
 }
