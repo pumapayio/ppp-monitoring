@@ -1,9 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common'
-import { ConfigService } from '@nestjs/config'
 import { ContractEvent } from 'src/api/contract-event/contract-event.entity'
-import { ContractEventService } from 'src/api/contract-event/contract-event.service'
 import { ContractEventLog } from 'src/utils/blockchain'
-import { Web3Helper } from 'src/utils/web3Connector/web3Helper'
 import { BaseMonitoring } from '../base-monitoring/base-monitoring'
 import { RecurringPullPaymentEventHandler } from './recurring-pull-payment.event-handler'
 
@@ -14,20 +11,13 @@ export class RecurringBMSubscriptionEventMonitoring {
   )
 
   constructor(
-    private config: ConfigService,
-    private web3Helper: Web3Helper,
+    private baseMonitoring: BaseMonitoring,
     private eventHandler: RecurringPullPaymentEventHandler,
-    private contractEventService: ContractEventService,
   ) {}
 
   public async monitor(event: ContractEvent): Promise<void> {
     try {
-      const baseMonitoring = new BaseMonitoring(
-        this.config,
-        this.web3Helper,
-        this.contractEventService,
-      )
-      await baseMonitoring.monitor(
+      await this.baseMonitoring.monitor(
         event,
         this.eventHandler,
         this.handleEventLog,

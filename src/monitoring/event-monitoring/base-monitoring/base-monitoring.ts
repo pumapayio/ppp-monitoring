@@ -1,4 +1,4 @@
-import { Logger } from '@nestjs/common'
+import { Injectable, Logger } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { ContractEventSyncStatus } from 'src/api/contract-event/contract-event-status'
 import { ContractEvent } from 'src/api/contract-event/contract-event.entity'
@@ -9,6 +9,7 @@ import { Web3Helper } from 'src/utils/web3Connector/web3Helper'
 import { RecurringPullPaymentEventHandler } from '../recurring-pull-payment/recurring-pull-payment.event-handler'
 import { SinglePullPaymentEventHandler } from '../single-pull-payment/single-pull-payment.event-handler'
 
+@Injectable()
 export class BaseMonitoring {
   private readonly logger = new Logger(BaseMonitoring.name)
   private connectionId: string
