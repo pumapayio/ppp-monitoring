@@ -1234,6 +1234,11 @@
         "eventName": "BillingModelEdited",
         "topic": "0xaca554e1e566a091d5eef840bd1356f90e5bd2610e7b6e6156fff2c899aaa38d",
         "syncHistorical": true
+      },
+      {
+        "eventName": "SubscriptionCancelled",
+        "topic": "0x1ec5df4e04c32fc9d865e6093ef51424092254a8458a2c8b4943a8a93a70832d",
+        "syncHistorical": false
       }
     ],
     "abi": [
@@ -2033,6 +2038,11 @@
       {
         "eventName": "BillingModelEdited",
         "topic": "0xaca554e1e566a091d5eef840bd1356f90e5bd2610e7b6e6156fff2c899aaa38d",
+        "syncHistorical": false
+      },
+      {
+        "eventName": "SubscriptionCancelled",
+        "topic": "0x1ec5df4e04c32fc9d865e6093ef51424092254a8458a2c8b4943a8a93a70832d",
         "syncHistorical": false
       }
     ],
@@ -2873,6 +2883,11 @@
       {
         "eventName": "BillingModelEdited",
         "topic": "0xaca554e1e566a091d5eef840bd1356f90e5bd2610e7b6e6156fff2c899aaa38d",
+        "syncHistorical": false
+      },
+      {
+        "eventName": "SubscriptionCancelled",
+        "topic": "0x1ec5df4e04c32fc9d865e6093ef51424092254a8458a2c8b4943a8a93a70832d",
         "syncHistorical": false
       }
     ],
@@ -3728,6 +3743,11 @@
       {
         "eventName": "BillingModelEdited",
         "topic": "0xaca554e1e566a091d5eef840bd1356f90e5bd2610e7b6e6156fff2c899aaa38d",
+        "syncHistorical": false
+      },
+      {
+        "eventName": "SubscriptionCancelled",
+        "topic": "0x1ec5df4e04c32fc9d865e6093ef51424092254a8458a2c8b4943a8a93a70832d",
         "syncHistorical": false
       }
     ],

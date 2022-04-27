@@ -14,6 +14,7 @@ import { RecurringPullPaymentBMEditedEventMonitoring } from './recurring-pull-pa
 import { SinglePullPaymentEventHandler } from './single-pull-payment/single-pull-payment.event-handler'
 import { RecurringPullPaymentEventHandler } from './recurring-pull-payment/recurring-pull-payment.event-handler'
 import { BaseMonitoring } from './base-monitoring/base-monitoring'
+import { SubscriptionCancelledEventMonitoring } from './recurring-pull-payment/subscription-cancelled-event.service'
 
 @Module({
   providers: [
@@ -27,6 +28,7 @@ import { BaseMonitoring } from './base-monitoring/base-monitoring'
     RecurringBMSubscriptionEventMonitoring,
     RecurringPPExecutionEventMonitoring,
     RecurringPullPaymentEventHandler,
+    SubscriptionCancelledEventMonitoring,
   ],
   exports: [
     BaseMonitoring,
@@ -39,6 +41,7 @@ import { BaseMonitoring } from './base-monitoring/base-monitoring'
     RecurringBMSubscriptionEventMonitoring,
     RecurringPPExecutionEventMonitoring,
     RecurringPullPaymentEventHandler,
+    SubscriptionCancelledEventMonitoring,
   ],
   imports: [
     ContractEventModule,

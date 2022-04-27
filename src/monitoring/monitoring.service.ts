@@ -9,6 +9,7 @@ import { RecurringPPExecutionEventMonitoring } from './event-monitoring/recurrin
 import { SinglePullPaymentBMCreatedEventMonitoring } from './event-monitoring/single-pull-payment/bm-created-event.service'
 import { SinglePullPaymentBMEditedEventMonitoring } from './event-monitoring/single-pull-payment/bm-edited-event.service'
 import { SingleBMSubscriptionEventMonitoring } from './event-monitoring/single-pull-payment/bm-subscription-event.service'
+import { SubscriptionCancelledEventMonitoring } from './event-monitoring/recurring-pull-payment/subscription-cancelled-event.service'
 
 @Injectable()
 export class MonitoringService {
@@ -23,6 +24,7 @@ export class MonitoringService {
     private recurringPullPaymentBMEditedEventMonitoring: RecurringPullPaymentBMEditedEventMonitoring,
     private recurringBMSubscriptionEventMonitoring: RecurringBMSubscriptionEventMonitoring,
     private recurringPPExecutionEventMonitoring: RecurringPPExecutionEventMonitoring,
+    private bmSubscriptionCancelledEventMonitoring: SubscriptionCancelledEventMonitoring,
   ) {}
 
   public async monitorEvents(networkId: string) {
@@ -30,6 +32,7 @@ export class MonitoringService {
     await this.monitorNewSubscriptionEvents(networkId)
     await this.monitorPullPaymentExecutionEvents(networkId)
     await this.monitorBMUpdatedEvents(networkId)
+    await this.monitorSubscriptionCancelledEvents(networkId)
   }
 
   private async monitorBMCreationEvents(networkId: string) {
@@ -172,6 +175,30 @@ export class MonitoringService {
         }
         case String(SmartContractNames.recurringDynamicPP): {
           // console.log(event.contract.contractName)
+          break
+        }
+      }
+    }
+  }
+
+  private async monitorSubscriptionCancelledEvents(networkId: string) {
+    const events = await this.contractEventService.retrieveContractEventByType(
+      ContractEventTypes.SubscriptionCancelled,
+      networkId,
+    )
+
+    for (let event of events) {
+      switch (event.contract.contractName) {
+        case String(SmartContractNames.recurringPP):
+        case String(SmartContractNames.recurringPPFreeTrial):
+        case String(SmartContractNames.recurringPPPaidTrial):
+        case String(SmartContractNames.recurringDynamicPP): {
+          await this.bmSubscriptionCancelledEventMonitoring.monitor(event)
+          break
+        }
+        case String(SmartContractNames.singlePP):
+        case String(SmartContractNames.singleDynamicPP):
+        default: {
           break
         }
       }
