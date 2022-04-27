@@ -71,7 +71,6 @@ export class RecurringPullPaymentEventHandler {
     event: ContractEvent,
     checkDb = true,
   ) {
-    console.log('handling bm creation event...')
     const bmSubscriptionDetails = await this.constructBMSubscriptionDetails(
       billingModelId,
       subscriptionId,
@@ -79,7 +78,6 @@ export class RecurringPullPaymentEventHandler {
       event,
       checkDb,
     )
-    console.log('bmSubscriptionDetails...', bmSubscriptionDetails)
     await this.handleMissingBMRecord(billingModelId, contract, event)
 
     await this.bmSubscriptionsService.create(bmSubscriptionDetails)
@@ -91,7 +89,6 @@ export class RecurringPullPaymentEventHandler {
     eventLog: ContractEventLog,
     checkDb = true,
   ) {
-    console.log('handling pp creation event...')
     const pullPaymentDetails = await this.constructPullPaymentDetails(
       eventLog.returnValues.billingModelID,
       eventLog.returnValues.subscriptionID,
@@ -100,7 +97,6 @@ export class RecurringPullPaymentEventHandler {
       event,
       checkDb,
     )
-    console.log('pullPaymentDetails...', pullPaymentDetails)
     await this.handleMissingBMSubscriptionRecord(
       eventLog.returnValues.billingModelID,
       eventLog.returnValues.subscriptionID,
@@ -135,7 +131,6 @@ export class RecurringPullPaymentEventHandler {
         event.contractAddress,
         event.networkId,
       )
-      console.log('constructBMDetails dbRecord.id', dbRecord?.id)
       if (dbRecord) billingModelDetails.id = dbRecord.id
     }
 
@@ -166,7 +161,6 @@ export class RecurringPullPaymentEventHandler {
         event.contractAddress,
         event.networkId,
       )
-      console.log('constructBMSubscriptionDetails dbRecord.id', dbRecord?.id)
       if (dbRecord) serializedSubscription.id = dbRecord.id
     }
 
@@ -200,7 +194,6 @@ export class RecurringPullPaymentEventHandler {
         event.contractAddress,
         event.networkId,
       )
-      console.log('constructPullPaymentDetails dbRecord.id', dbRecord?.id)
       if (dbRecord) pullPaymentDetails.id = dbRecord.id
     }
 
@@ -235,7 +228,6 @@ export class RecurringPullPaymentEventHandler {
       event.contractAddress,
       event.networkId,
     )
-    console.log('handleMissingBMSubscriptionRecord...', dbRecord)
     if (dbRecord) return
     // no need to check from the db as we just did above
     // and we know that the record doesn't exist
