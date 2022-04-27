@@ -1,5 +1,8 @@
 # Executor Node - PPP v3.0
 
+[![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/)
+
+
 ## Description
 
 This app monitors, stores and trigger the execution of pull payments
