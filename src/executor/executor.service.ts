@@ -45,22 +45,22 @@ export class ExecutorService {
     bmSubscriptionId: string,
     billingModelId: string,
   ) {
+    const contract = await this.web3Helper.getContractInstance(
+      networkId,
+      BlockchainGlobals.GET_CONTRACT_ADDRESS(
+        networkId,
+        SmartContractNames.executor,
+      ),
+      SmartContractNames.executor,
+    )
+
+    const web3 = this.web3Helper.getWeb3Instance(networkId)
     console.log(
       'billingModelType, bmSubscriptionId',
       billingModelType,
       bmSubscriptionId,
     )
     try {
-      const contract = await this.web3Helper.getContractInstance(
-        networkId,
-        BlockchainGlobals.GET_CONTRACT_ADDRESS(
-          networkId,
-          SmartContractNames.executor,
-        ),
-        SmartContractNames.executor,
-      )
-
-      const web3 = this.web3Helper.getWeb3Instance(networkId)
       const estimatedGas = await contract.methods
         .execute(billingModelType, bmSubscriptionId)
         .estimateGas()
