@@ -41,8 +41,10 @@ export class BMSubscriptionService {
     })
   }
 
-  public async retrieveUpcomingSubscriptions(): Promise<BMSubscription[]> {
-    return await this.bmSubscriptionRepository.findAllToBeExecuted()
+  public async retrieveUpcomingSubscriptions(
+    networkId: string,
+  ): Promise<BMSubscription[]> {
+    return await this.bmSubscriptionRepository.findAllToBeExecuted(networkId)
   }
 
   public async retrieveByBlockchainId(

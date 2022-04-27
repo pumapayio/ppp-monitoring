@@ -11,14 +11,17 @@ import { BMSubscription } from './bm-subscription.entity'
 
 @EntityRepository(BMSubscription)
 export class BMSubscriptionRepository extends Repository<BMSubscription> {
-  public async findAllToBeExecuted(): Promise<BMSubscription[]> {
-    const startTimestamp = Math.floor(now() / 1000) // convert miliseconds to second
+  public async findAllToBeExecuted(
+    networkId: string,
+  ): Promise<BMSubscription[]> {
+    const startTimestamp = Math.floor(now() / 1000) // convert milliseconds to second
     const bmSubscriptions = await this.find({
       relations: ['billingModel', 'billingModel.contract'],
       where: {
         nextPaymentTimestamp: LessThanOrEqual(startTimestamp),
         cancelTimestamp: Equal(0),
         numberOfPayments: MoreThan(0),
+        networkId,
       },
       order: {
         nextPaymentTimestamp: 'ASC',

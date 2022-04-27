@@ -1,8 +1,9 @@
 import { Injectable, Logger } from '@nestjs/common'
-import { Cron, CronExpression } from '@nestjs/schedule'
 import { BMSubscriptionService } from 'src/api/bm-subscription/bm-subscription.service'
 import { BlockchainGlobals, SmartContractNames } from 'src/utils/blockchain'
 import { Web3Helper } from 'src/utils/web3Connector/web3Helper'
+import Web3 from 'web3'
+import { Contract } from 'web3-eth-contract'
 
 @Injectable()
 export class ExecutorService {
@@ -13,25 +14,37 @@ export class ExecutorService {
     private bmSubscriptionsService: BMSubscriptionService,
   ) {}
 
-  @Cron(process.env.SCEDULER_CRON_EXPRESSION || CronExpression.EVERY_5_MINUTES)
-  public async processUpcomingPullPaymentExecutions() {
-    this.logger.debug(`Processing upcoming pull payment executions`)
-
+  public async processUpcomingPullPaymentExecutions(networkId: string) {
+    this.logger.debug(
+      `Processing upcoming pull payment executions on network ${networkId}`,
+    )
+    const web3 = this.web3Helper.getWeb3Instance(networkId)
     try {
       // We first need to retrieve upcoming pull payment executions
       const upcomingSubscriptions =
-        await this.bmSubscriptionsService.retrieveUpcomingSubscriptions()
-
-      for (let upcomingSubscription of upcomingSubscriptions) {
-        console.log('upcomingSubscription', upcomingSubscription)
-        await this.executePullPayment(
-          upcomingSubscription.networkId,
-          upcomingSubscription.billingModel.contract.contractName,
-          upcomingSubscription.bmSubscriptionId,
-          upcomingSubscription.billingModelId,
+        await this.bmSubscriptionsService.retrieveUpcomingSubscriptions(
+          networkId,
         )
+
+      if (upcomingSubscriptions.length > 0) {
+        const contract = await this.web3Helper.getContractInstance(
+          networkId,
+          BlockchainGlobals.GET_CONTRACT_ADDRESS(
+            networkId,
+            SmartContractNames.executor,
+          ),
+          SmartContractNames.executor,
+        )
+        for (let upcomingSubscription of upcomingSubscriptions) {
+          await this.executePullPayment(
+            web3,
+            contract,
+            upcomingSubscription.billingModel.contract.contractName,
+            upcomingSubscription.bmSubscriptionId,
+            upcomingSubscription.billingModelId,
+          )
+        }
       }
-      // Then for each upcoming one, we must call the 'execute()' on the correct smart contract
     } catch (error) {
       this.logger.debug(
         `Failed to process upcoming pull payment executions. Reason: ${error.message}`,
@@ -40,26 +53,12 @@ export class ExecutorService {
   }
 
   private async executePullPayment(
-    networkId: string,
+    web3: Web3,
+    contract: Contract,
     billingModelType: string,
     bmSubscriptionId: string,
     billingModelId: string,
   ) {
-    const contract = await this.web3Helper.getContractInstance(
-      networkId,
-      BlockchainGlobals.GET_CONTRACT_ADDRESS(
-        networkId,
-        SmartContractNames.executor,
-      ),
-      SmartContractNames.executor,
-    )
-
-    const web3 = this.web3Helper.getWeb3Instance(networkId)
-    console.log(
-      'billingModelType, bmSubscriptionId',
-      billingModelType,
-      bmSubscriptionId,
-    )
     try {
       const estimatedGas = await contract.methods
         .execute(billingModelType, bmSubscriptionId)
@@ -77,20 +76,17 @@ export class ExecutorService {
           nonce: pendingNonce,
         })
         .on('transactionHash', (hash) => {
-          console.log('transactionHash', hash)
+          this.logger.debug('tx hash', hash)
         })
-        // .on('confirmation', (confirmationNumber, receipt) => {
-        //   console.log('confirmation', confirmationNumber)
-        // })
         .on('receipt', (receipt) => {
-          console.log('receipt', receipt.transactionHash)
+          this.logger.debug('tx hash', receipt.transactionHash)
         })
         .on('error', (error, receipt) => {
-          console.log(error, receipt)
+          // If the transaction was rejected by the network with a receipt, the second parameter will be the receipt.
+          this.logger.debug('tx hash', receipt.transactionHash)
           this.logger.error(
             `Pull payment execution TX failed. <BM_TYPE-BM_ID-SUB_ID>=<${billingModelType}-${billingModelId}-${bmSubscriptionId}>. Reason: ${error.message}`,
           )
-          // If the transaction was rejected by the network with a receipt, the second parameter will be the receipt.
         })
     } catch (error) {
       this.logger.error(

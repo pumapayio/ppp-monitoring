@@ -169,7 +169,6 @@ export class BaseMonitoring {
         this.logger.log(
           `Starting block: ${startBlock} - End Block: ${toBlock} - Network: ${event.networkId}`,
         )
-        console.log(event.eventName)
         const pastEvents = await contract.getPastEvents(
           String(event.eventName),
           {
@@ -177,8 +176,7 @@ export class BaseMonitoring {
             toBlock: toBlock,
           },
         )
-        console.log(event.topic)
-        console.log(pastEvents)
+
         this.logger.log(
           `Found ${pastEvents.length} ${event.eventName} past events for ${event.contract.contractName}.`,
         )

@@ -35,7 +35,6 @@ export class RecurringBMSubscriptionEventMonitoring {
     eventLog: ContractEventLog,
     eventHandler: RecurringPullPaymentEventHandler,
   ): Promise<void> {
-    console.log('bm subscription event service')
     await eventHandler.handleBMSubscriptionCreateOrEditEvent(
       eventLog.returnValues.billingModelID,
       eventLog.returnValues.subscriptionID,
