@@ -35,6 +35,10 @@ export class RecurringPullPaymentBMCreatedEventMonitoring {
     eventLog: ContractEventLog,
     eventHandler: RecurringPullPaymentEventHandler,
   ): Promise<void> {
-    await eventHandler.handleBMCreation(contract, event, eventLog)
+    await eventHandler.handleBMCreateOrEditEvent(
+      eventLog.returnValues.billingModelID,
+      contract,
+      event,
+    )
   }
 }

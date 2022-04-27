@@ -188,15 +188,19 @@ export class BaseMonitoring {
           const bundledPromises = []
           for (const pastEvent of pastEvents) {
             bundledPromises.push(
-              new Promise(async (resolve) => {
-                resolve(
-                  await handleEventLog(
-                    contract,
-                    event,
-                    pastEvent,
-                    eventHandler,
-                  ),
-                )
+              new Promise(async (resolve, reject) => {
+                try {
+                  resolve(
+                    await handleEventLog(
+                      contract,
+                      event,
+                      pastEvent,
+                      eventHandler,
+                    ),
+                  )
+                } catch (error) {
+                  reject(error)
+                }
               }),
             )
             startBlock = Number(pastEvent.blockNumber)

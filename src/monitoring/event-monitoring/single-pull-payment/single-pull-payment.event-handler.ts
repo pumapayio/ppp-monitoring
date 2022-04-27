@@ -129,8 +129,8 @@ export class SinglePullPaymentEventHandler {
       event.networkId,
     )
     if (dbRecord) return
-    // no need to check from the db as we just did above and we knowo that
-    // the record doesn't exist
+    // no need to check from the db as we just did above
+    // and we know that the record doesn't exist
     await this.handleBMCreateOrEditEvent(billingModelId, contract, event, false)
   }
 }

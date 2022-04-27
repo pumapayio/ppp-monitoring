@@ -35,6 +35,10 @@ export class RecurringPullPaymentBMEditedEventMonitoring {
     eventLog: ContractEventLog,
     eventHandler: RecurringPullPaymentEventHandler,
   ) {
-    await eventHandler.handleBMEditEvent(contract, event, eventLog)
+    await eventHandler.handleBMCreateOrEditEvent(
+      eventLog.returnValues.billingModelID,
+      contract,
+      event,
+    )
   }
 }

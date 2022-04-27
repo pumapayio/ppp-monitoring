@@ -35,11 +35,7 @@ export class RecurringPPExectutionEventMonitoring {
     eventLog: ContractEventLog,
     eventHandler: RecurringPullPaymentEventHandler,
   ): Promise<void> {
-    await eventHandler.updateBMForPullPaymentExecution(
-      contract,
-      event,
-      eventLog,
-    )
+    console.log('pp event service')
     await eventHandler.handlePPCreation(contract, event, eventLog)
   }
 }
