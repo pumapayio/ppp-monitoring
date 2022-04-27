@@ -16,17 +16,11 @@ export class RecurringPullPaymentBMCreatedEventMonitoring {
   ) {}
 
   public async monitor(event: ContractEvent): Promise<void> {
-    try {
-      await this.baseMonitoring.monitor(
-        event,
-        this.eventHandler,
-        this.handleEventLog,
-      )
-    } catch (error) {
-      this.logger.debug(
-        `Failed to handle billing model creation events. Reason: ${error.message}`,
-      )
-    }
+    await this.baseMonitoring.monitor(
+      event,
+      this.eventHandler,
+      this.handleEventLog,
+    )
   }
 
   private async handleEventLog(

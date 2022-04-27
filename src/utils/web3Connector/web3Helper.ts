@@ -3,6 +3,7 @@ import { BlockchainGlobals, SmartContractNames } from '../blockchain'
 import { SmartContractReader } from '../smartContractReader'
 import { Web3Connector } from './web3Connector'
 import Web3 from 'web3'
+import * as _ from 'lodash'
 
 @Injectable()
 export class Web3Helper {
@@ -12,16 +13,12 @@ export class Web3Helper {
 
   public getWeb3Instance(networkId: string, useWSProvider = false): Web3 {
     if (useWSProvider) {
-      // TODO: We need to implement logic such that we can rotate the RPC urls
-      // and not always use the one at index 0
-      const rpcUrl = BlockchainGlobals.GET_RPC_WS_URL(networkId)[0]
+      const rpcUrl = _.sample(BlockchainGlobals.GET_RPC_WS_URL(networkId))
       Web3Connector.instantiateWsProvider(networkId, rpcUrl)
 
       return Web3Connector.getWeb3WsProvider(networkId)
     } else {
-      // TODO: We need to implement logic such that we can rotate the RPC urls
-      // and not always use the one at index 0
-      const rpcUrl = BlockchainGlobals.GET_RPC_URL(networkId)[0]
+      const rpcUrl = _.sample(BlockchainGlobals.GET_RPC_URL(networkId))
       Web3Connector.instantiateHttpProvider(networkId, rpcUrl)
 
       return Web3Connector.getWeb3HttpProvider(networkId)

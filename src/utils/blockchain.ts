@@ -152,10 +152,12 @@ export class BlockchainGlobals {
         // TODO: We must have a list of providers to connect to
         return ['https://bsc-dataseed.binance.org/']
       case ChainId.BSC_TESTNET:
-      // Default to BSC Testnet
       default:
-        // TODO: We must have a list of providers to connect to
-        return ['https://data-seed-prebsc-2-s3.binance.org:8545/']
+        return [
+          'https://data-seed-prebsc-1-s1.binance.org:8545/',
+          'https://data-seed-prebsc-1-s2.binance.org:8545/',
+          'https://data-seed-prebsc-2-s3.binance.org:8545/',
+        ]
     }
   }
 
@@ -167,7 +169,6 @@ export class BlockchainGlobals {
           'wss://speedy-nodes-nyc.moralis.io/b45a15b599467a06fc2b10b6/bsc/mainnet/ws',
         ]
       case ChainId.BSC_TESTNET:
-      // Default to BSC Testnet
       default:
         // TODO: We must have a list of providers to connect to
         return [

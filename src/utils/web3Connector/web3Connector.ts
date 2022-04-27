@@ -1,5 +1,4 @@
 import { Injectable, Logger } from '@nestjs/common'
-import { ConfigService } from '@nestjs/config'
 
 const Web3 = require('web3')
 
@@ -9,8 +8,6 @@ export class Web3Connector {
   private static instance: Web3Connector
   private static web3Providers: any = {}
   private static web3HttpProviders: any = {}
-  private static config: ConfigService
-  // JSON.parse(this.config.get('blockchain.supportedNetworks')).map(
   private constructor() {
     Web3Connector.logger = new Logger('Web3Connector')
   }
@@ -55,7 +52,7 @@ export class Web3Connector {
 
       eventProvider.on('connect', () => {
         Web3Connector.logger.log(
-          `Web3 connnected for network ${networkId} on ${rpcURL}!!`,
+          `Web3 connected for network ${networkId} on ${rpcURL}!!`,
         )
       })
       eventProvider.on('error', () => {
@@ -81,7 +78,7 @@ export class Web3Connector {
       this.web3Providers[networkId] = web3
     } else {
       Web3Connector.logger.log(
-        `Web3 WS Provider connnected already for network ${networkId}!!`,
+        `Web3 WS Provider connected already for network ${networkId}!!`,
       )
     }
   }
@@ -93,14 +90,22 @@ export class Web3Connector {
       this.web3HttpProviders[networkId] = web3
     } else {
       Web3Connector.logger.log(
-        `Web3 Http Provider connnected already for network ${networkId}!!`,
+        `Web3 Http Provider connected already for network ${networkId}!!`,
       )
     }
   }
 
   private static setupDefaultAccount(web3) {
-    // TODO: If there is no executor key, don't let the application to start
-    // The above depends on the "executor mode"
+    // TODO: The below depends on the "executor mode" specified in config file
+    // Note: If there is no executor key, don't let the application to start
+    if (
+      process.env.EXECUTOR_PRIVATE_KEY === '' ||
+      process.env.EXECUTOR_PRIVATE_KEY === undefined
+    ) {
+      this.logger.error(`Executor private key is not defined!`)
+      throw new Error(`Executor private key is not defined!`)
+    }
+
     const privateKey = process.env.EXECUTOR_PRIVATE_KEY
     const account = web3.eth.accounts.privateKeyToAccount('0x' + privateKey)
     web3.eth.accounts.wallet.add(account)

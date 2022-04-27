@@ -1,15 +1,15 @@
-import { Logger, ValidationPipe } from "@nestjs/common"
-import { NestFactory } from "@nestjs/core"
-import { NestExpressApplication } from "@nestjs/platform-express"
-import { SwaggerModule, DocumentBuilder } from "@nestjs/swagger"
-import * as compression from "compression"
-import * as rateLimit from "express-rate-limit"
-import * as helmet from "helmet"
-import * as nocache from "nocache"
-import { resolve } from "path"
+import { Logger, ValidationPipe } from '@nestjs/common'
+import { NestFactory } from '@nestjs/core'
+import { NestExpressApplication } from '@nestjs/platform-express'
+import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger'
+import * as compression from 'compression'
+import * as rateLimit from 'express-rate-limit'
+import * as helmet from 'helmet'
+import * as nocache from 'nocache'
+import { resolve } from 'path'
 
-import { AppModule } from "./app.module"
-import { ConfigService } from "@nestjs/config"
+import { AppModule } from './app.module'
+import { ConfigService } from '@nestjs/config'
 
 export async function bootstrap() {
   /*
@@ -50,7 +50,7 @@ export async function bootstrap() {
   )
 
   app.useGlobalPipes(new ValidationPipe())
-  app.useStaticAssets(resolve(__dirname, "..", "resources"))
+  app.useStaticAssets(resolve(__dirname, '..', 'resources'))
 
   /*
   |--------------------------------------------------------------------------
@@ -63,14 +63,14 @@ export async function bootstrap() {
   */
 
   const options = new DocumentBuilder()
-    .setTitle(config.get("app.title"))
-    .setDescription(config.get("app.description"))
-    .setVersion(config.get("app.version"))
-    .addServer(config.get("app.appUrl"))
-    .addTag("API Information", "Basic information about this API")
+    .setTitle(config.get('app.title'))
+    .setDescription(config.get('app.description'))
+    .setVersion(config.get('app.version'))
+    .addServer(config.get('app.appUrl'))
+    .addTag('API Information', 'Basic information about this API')
     .build()
   const document = SwaggerModule.createDocument(app, options)
-  SwaggerModule.setup("docs", app, document)
+  SwaggerModule.setup('docs', app, document)
 
   /*
   |--------------------------------------------------------------------------
@@ -82,9 +82,9 @@ export async function bootstrap() {
   |
   */
 
-  const logger = new Logger("bootstrap")
+  const logger = new Logger('bootstrap')
 
-  await app.listen(config.get("app.port"), () => {
-    logger.log(`Server is listen on http://localhost:${config.get("app.port")}`)
+  await app.listen(config.get('app.port'), () => {
+    logger.log(`Server is listen on http://localhost:${config.get('app.port')}`)
   })
 }

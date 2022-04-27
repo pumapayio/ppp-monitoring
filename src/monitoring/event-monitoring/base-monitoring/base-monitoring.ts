@@ -33,8 +33,8 @@ export class BaseMonitoring {
         | RecurringPullPaymentEventHandler,
     ) => Promise<void>,
   ): Promise<void> {
+    const web3 = this.web3Helper.getWeb3Instance(event.networkId)
     try {
-      const web3 = this.web3Helper.getWeb3Instance(event.networkId)
       const currentBlockNumber = Number(await web3.eth.getBlockNumber())
 
       if (

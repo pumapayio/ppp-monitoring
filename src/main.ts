@@ -1,5 +1,5 @@
-import { bootstrap } from "./bootstrap"
-import { banner } from "./banner"
+import { bootstrap } from './bootstrap'
+import { banner } from './banner'
 
 /*
 |--------------------------------------------------------------------------
