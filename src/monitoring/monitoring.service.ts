@@ -5,7 +5,7 @@ import { SmartContractNames } from 'src/utils/blockchain'
 import { RecurringPullPaymentBMCreatedEventMonitoring } from './event-monitoring/recurring-pull-payment/bm-created-event.service'
 import { RecurringPullPaymentBMEditedEventMonitoring } from './event-monitoring/recurring-pull-payment/bm-edited-event.service'
 import { RecurringBMSubscriptionEventMonitoring } from './event-monitoring/recurring-pull-payment/bm-subscription-event.service'
-import { RecurringPPExectutionEventMonitoring } from './event-monitoring/recurring-pull-payment/pp-executed-event.service'
+import { RecurringPPExecutionEventMonitoring } from './event-monitoring/recurring-pull-payment/pp-executed-event.service'
 import { SinglePullPaymentBMCreatedEventMonitoring } from './event-monitoring/single-pull-payment/bm-created-event.service'
 import { SinglePullPaymentBMEditedEventMonitoring } from './event-monitoring/single-pull-payment/bm-edited-event.service'
 import { SingleBMSubscriptionEventMonitoring } from './event-monitoring/single-pull-payment/bm-subscription-event.service'
@@ -18,11 +18,11 @@ export class MonitoringService {
     private contractEventService: ContractEventService,
     private singlePullPaymentBMCreatedEventService: SinglePullPaymentBMCreatedEventMonitoring,
     private singlePullPaymentBMEditedEventService: SinglePullPaymentBMEditedEventMonitoring,
-    private singlePullPaymentPPExectutedEventMonitoring: SingleBMSubscriptionEventMonitoring,
+    private singleBMSubscriptionEventMonitoring: SingleBMSubscriptionEventMonitoring,
     private recurringPullPaymentBMCreatedEventMonitoring: RecurringPullPaymentBMCreatedEventMonitoring,
     private recurringPullPaymentBMEditedEventMonitoring: RecurringPullPaymentBMEditedEventMonitoring,
     private recurringBMSubscriptionEventMonitoring: RecurringBMSubscriptionEventMonitoring,
-    private recurringPPExectutionEventMonitoring: RecurringPPExectutionEventMonitoring,
+    private recurringPPExecutionEventMonitoring: RecurringPPExecutionEventMonitoring,
   ) {}
 
   public async monitorEvents(networkId: string) {
@@ -76,7 +76,7 @@ export class MonitoringService {
     for (let event of events) {
       switch (event.contract.contractName) {
         case String(SmartContractNames.singlePP): {
-          await this.singlePullPaymentPPExectutedEventMonitoring.monitor(event)
+          await this.singleBMSubscriptionEventMonitoring.monitor(event)
           break
         }
         case String(SmartContractNames.singleDynamicPP): {
@@ -116,7 +116,7 @@ export class MonitoringService {
           break
         }
         case String(SmartContractNames.recurringPP): {
-          await this.recurringPPExectutionEventMonitoring.monitor(event)
+          await this.recurringPPExecutionEventMonitoring.monitor(event)
           break
         }
         case String(SmartContractNames.recurringPPFreeTrial): {

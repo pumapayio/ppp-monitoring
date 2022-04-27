@@ -5,10 +5,8 @@ import { BaseMonitoring } from '../base-monitoring/base-monitoring'
 import { RecurringPullPaymentEventHandler } from './recurring-pull-payment.event-handler'
 
 @Injectable()
-export class RecurringPPExectutionEventMonitoring {
-  private readonly logger = new Logger(
-    RecurringPPExectutionEventMonitoring.name,
-  )
+export class RecurringPPExecutionEventMonitoring {
+  private readonly logger = new Logger(RecurringPPExecutionEventMonitoring.name)
 
   constructor(
     private baseMonitoring: BaseMonitoring,

@@ -41,10 +41,10 @@ export class RecurringPullPaymentEventHandler {
   // - Pull Payment
   // In addition to the above, when it comes to BM Subscription, we also
   // check if the parent BM exist in our DB - if it does, then all good,
-  // otherwise, we retireve the data from the blockchain and we store it
+  // otherwise, we retrieve the data from the blockchain and we store it
   // in our DB.
   // We follow the above for the pull payments as well, i.e. if the
-  // parent BM subscription doesn't existin in our DB, we retrieve it
+  // parent BM subscription doesn't exists in our DB, we retrieve it
   // and store it.
   // The above makes sure that even if a 'parent' event was missed during
   // monitoring, we will retrieve it when we get the 'child' event
@@ -64,7 +64,7 @@ export class RecurringPullPaymentEventHandler {
     await this.billingModelService.create(billingModelDetails)
   }
 
-  public async handleBMSubscriptionCreationEvent(
+  public async handleBMSubscriptionCreateOrEditEvent(
     billingModelId: string,
     subscriptionId: string,
     contract: any,
@@ -97,11 +97,12 @@ export class RecurringPullPaymentEventHandler {
       event,
       checkDb,
     )
-    await this.handleMissingBMSubscriptionRecord(
+    await this.handleBMSubscriptionCreateOrEditEvent(
       eventLog.returnValues.billingModelID,
       eventLog.returnValues.subscriptionID,
       contract,
       event,
+      checkDb,
     )
 
     await this.pullPaymentService.create(pullPaymentDetails)
@@ -214,29 +215,5 @@ export class RecurringPullPaymentEventHandler {
     // no need to check from the db as we just did above
     // and we know that the record doesn't exist
     await this.handleBMCreateOrEditEvent(billingModelId, contract, event, false)
-  }
-
-  private async handleMissingBMSubscriptionRecord(
-    billingModelId: string,
-    bmSubscriptionId: string,
-    contract: any,
-    event: ContractEvent,
-  ) {
-    const dbRecord = await this.bmSubscriptionsService.retrieveByBlockchainId(
-      billingModelId,
-      bmSubscriptionId,
-      event.contractAddress,
-      event.networkId,
-    )
-    if (dbRecord) return
-    // no need to check from the db as we just did above
-    // and we know that the record doesn't exist
-    await this.handleBMSubscriptionCreationEvent(
-      billingModelId,
-      bmSubscriptionId,
-      contract,
-      event,
-      false,
-    )
   }
 }

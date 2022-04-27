@@ -12,7 +12,7 @@ export class ExecutorService {
     private web3Helper: Web3Helper,
     private bmSubscriptionsService: BMSubscriptionService,
   ) {}
-  // TODO: Make the cron job as an app config
+
   @Cron(process.env.SCEDULER_CRON_EXPRESSION || CronExpression.EVERY_5_MINUTES)
   public async processUpcomingPullPaymentExecutions() {
     this.logger.debug(`Processing upcoming pull payment executions`)
@@ -24,7 +24,7 @@ export class ExecutorService {
 
       for (let upcomingSubscription of upcomingSubscriptions) {
         console.log('upcomingSubscription', upcomingSubscription)
-        this.executePullPayment(
+        await this.executePullPayment(
           upcomingSubscription.networkId,
           upcomingSubscription.billingModel.contract.contractName,
           upcomingSubscription.bmSubscriptionId,
@@ -64,7 +64,7 @@ export class ExecutorService {
       const estimatedGas = await contract.methods
         .execute(billingModelType, bmSubscriptionId)
         .estimateGas()
-      const pendingNoce = await web3.eth.getTransactionCount(
+      const pendingNonce = await web3.eth.getTransactionCount(
         web3.eth.defaultAccount,
         'pending',
       )
@@ -74,7 +74,7 @@ export class ExecutorService {
         .send({
           from: web3.eth.defaultAccount,
           gas: estimatedGas,
-          nonce: pendingNoce,
+          nonce: pendingNonce,
         })
         .on('transactionHash', (hash) => {
           console.log('transactionHash', hash)
