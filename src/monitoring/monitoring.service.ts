@@ -49,14 +49,15 @@ export class MonitoringService {
           await this.singlePullPaymentBMCreatedEventService.monitor(event)
           break
         }
+        case String(SmartContractNames.recurringPPFreeTrial):
         case String(SmartContractNames.recurringPP): {
           await this.recurringPullPaymentBMCreatedEventMonitoring.monitor(event)
           break
         }
-        case String(SmartContractNames.recurringPPFreeTrial): {
-          // console.log(event.contract.contractName)
-          break
-        }
+        // case String(SmartContractNames.recurringPPFreeTrial): {
+        //   // console.log(event.contract.contractName)
+        //   break
+        // }
         case String(SmartContractNames.recurringPPPaidTrial): {
           // console.log(event.contract.contractName)
           break
