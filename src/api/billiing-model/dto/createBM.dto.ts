@@ -21,4 +21,7 @@ export class CreateBMDto {
   settlementToken?: string
   frequency?: string
   numberOfPayments?: string
+
+  trialPeriod?: string
+  initialAmount?: string
 }

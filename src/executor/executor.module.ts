@@ -24,7 +24,8 @@ export class ExecutorModule {
           String(networkId),
         )
         const cronInterval =
-          process.env.SCEDULER_CRON_EXPRESSION || CronExpression.EVERY_5_MINUTES
+          process.env.SCHEDULER_CRON_EXPRESSION ||
+          CronExpression.EVERY_5_MINUTES
         const cronJobName = `UpcomingPullPayments_${networkId}`
         const job = new CronJob(cronInterval, () => {
           this.logger.debug(

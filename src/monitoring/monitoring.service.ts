@@ -50,20 +50,10 @@ export class MonitoringService {
           break
         }
         case String(SmartContractNames.recurringPPFreeTrial):
+        case String(SmartContractNames.recurringPPPaidTrial):
+        case String(SmartContractNames.recurringDynamicPP):
         case String(SmartContractNames.recurringPP): {
           await this.recurringPullPaymentBMCreatedEventMonitoring.monitor(event)
-          break
-        }
-        // case String(SmartContractNames.recurringPPFreeTrial): {
-        //   // console.log(event.contract.contractName)
-        //   break
-        // }
-        case String(SmartContractNames.recurringPPPaidTrial): {
-          // console.log(event.contract.contractName)
-          break
-        }
-        case String(SmartContractNames.recurringDynamicPP): {
-          // console.log(event.contract.contractName)
           break
         }
       }
@@ -78,26 +68,22 @@ export class MonitoringService {
 
     for (let event of events) {
       switch (event.contract.contractName) {
+        case String(SmartContractNames.recurringPPFreeTrial):
+        case String(SmartContractNames.recurringPPPaidTrial):
+        case String(SmartContractNames.recurringDynamicPP):
+        case String(SmartContractNames.recurringPP): {
+          await this.recurringBMSubscriptionEventMonitoring.monitor(event)
+          break
+        }
         case String(SmartContractNames.singleDynamicPP):
         case String(SmartContractNames.singlePP): {
           await this.singleBMSubscriptionEventMonitoring.monitor(event)
           break
         }
-        case String(SmartContractNames.recurringPP): {
-          await this.recurringBMSubscriptionEventMonitoring.monitor(event)
-          break
-        }
-        case String(SmartContractNames.recurringPPFreeTrial): {
-          // console.log(event.contract.contractName)
-          break
-        }
-        case String(SmartContractNames.recurringPPPaidTrial): {
-          // console.log(event.contract.contractName)
-          break
-        }
-        case String(SmartContractNames.recurringDynamicPP): {
-          // console.log(event.contract.contractName)
-          break
+        default: {
+          this.logger.warn(
+            `Contract ${event.contract.contractName} that cannot be processed!`,
+          )
         }
       }
     }
@@ -111,20 +97,11 @@ export class MonitoringService {
 
     for (let event of events) {
       switch (event.contract.contractName) {
+        case String(SmartContractNames.recurringPPFreeTrial):
+        case String(SmartContractNames.recurringPPPaidTrial):
+        case String(SmartContractNames.recurringDynamicPP):
         case String(SmartContractNames.recurringPP): {
           await this.recurringPPExecutionEventMonitoring.monitor(event)
-          break
-        }
-        case String(SmartContractNames.recurringPPFreeTrial): {
-          // console.log(event.contract.contractName)
-          break
-        }
-        case String(SmartContractNames.recurringPPPaidTrial): {
-          // console.log(event.contract.contractName)
-          break
-        }
-        case String(SmartContractNames.recurringDynamicPP): {
-          // console.log(event.contract.contractName)
           break
         }
         default:
@@ -147,28 +124,22 @@ export class MonitoringService {
 
     for (let event of events) {
       switch (event.contract.contractName) {
+        case String(SmartContractNames.singleDynamicPP):
         case String(SmartContractNames.singlePP): {
           await this.singlePullPaymentBMEditedEventService.monitor(event)
           break
         }
-        case String(SmartContractNames.singleDynamicPP): {
-          // console.log(event.contract.contractName)
-          break
-        }
+        case String(SmartContractNames.recurringPPFreeTrial):
+        case String(SmartContractNames.recurringPPPaidTrial):
+        case String(SmartContractNames.recurringDynamicPP):
         case String(SmartContractNames.recurringPP): {
           await this.recurringPullPaymentBMEditedEventMonitoring.monitor(event)
           break
         }
-        case String(SmartContractNames.recurringPPFreeTrial): {
-          // console.log(event.contract.contractName)
-          break
-        }
-        case String(SmartContractNames.recurringPPPaidTrial): {
-          // console.log(event.contract.contractName)
-          break
-        }
-        case String(SmartContractNames.recurringDynamicPP): {
-          // console.log(event.contract.contractName)
+        default: {
+          this.logger.warn(
+            `Contract ${event.contract.contractName} that cannot be processed!`,
+          )
           break
         }
       }
@@ -193,6 +164,9 @@ export class MonitoringService {
         case String(SmartContractNames.singlePP):
         case String(SmartContractNames.singleDynamicPP):
         default: {
+          this.logger.warn(
+            `Contract ${event.contract.contractName} that cannot be processed!`,
+          )
           break
         }
       }

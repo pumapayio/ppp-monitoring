@@ -76,14 +76,13 @@ export class ExecutorService {
           nonce: pendingNonce,
         })
         .on('transactionHash', (hash) => {
-          this.logger.debug('tx hash', hash)
+          this.logger.debug('On Tx Hash - tx hash', hash)
         })
         .on('receipt', (receipt) => {
-          this.logger.debug('tx hash', receipt.transactionHash)
+          this.logger.debug('On Receipt - tx receipt', receipt.transactionHash)
         })
         .on('error', (error, receipt) => {
           // If the transaction was rejected by the network with a receipt, the second parameter will be the receipt.
-          this.logger.debug('tx hash', receipt.transactionHash)
           this.logger.error(
             `Pull payment execution TX failed. <BM_TYPE-BM_ID-SUB_ID>=<${billingModelType}-${billingModelId}-${bmSubscriptionId}>. Reason: ${error.message}`,
           )

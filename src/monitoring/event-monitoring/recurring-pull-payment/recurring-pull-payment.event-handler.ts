@@ -15,7 +15,7 @@ import {
   serializePullPayment,
 } from 'src/api/pull-payment/pull-payment.serializer'
 import { PullPaymentService } from 'src/api/pull-payment/pull-payment.service'
-import { ContractEventLog } from 'src/utils/blockchain'
+import { ContractEventLog, SmartContractNames } from 'src/utils/blockchain'
 import { Web3Helper } from 'src/utils/web3Connector/web3Helper'
 
 @Injectable()
@@ -117,7 +117,9 @@ export class RecurringPullPaymentEventHandler {
     const web3Utils = this.web3Helper.getWeb3Utils(event.networkId)
     const unserializedBillingModel: UnserializedBillingModel =
       await contract.methods.getBillingModel(billingModelId).call()
-
+    // console.log('=================================================')
+    // console.log('unserializedBillingModel', unserializedBillingModel)
+    // console.log('=================================================')
     const billingModelDetails = serializeBMDetails(
       billingModelId,
       event.contractAddress,
@@ -134,7 +136,9 @@ export class RecurringPullPaymentEventHandler {
       )
       if (dbRecord) billingModelDetails.id = dbRecord.id
     }
-
+    // console.log('=================================================')
+    // console.log('billingModelDetails', billingModelDetails)
+    // console.log('=================================================')
     return billingModelDetails
   }
 
@@ -147,12 +151,18 @@ export class RecurringPullPaymentEventHandler {
   ) {
     const unserializedSubscription: UnserializedBMSubscription =
       await contract.methods.getSubscription(subscriptionId).call()
-    const serializedSubscription = serializeBMSubscription(
+    // console.log('=================================================')
+    // console.log('unserializedSubscription', unserializedSubscription)
+    // console.log('=================================================')
+    const subscriptionDetails = serializeBMSubscription(
       billingModelId,
       subscriptionId,
       event.contractAddress,
       event.networkId,
-      unserializedSubscription,
+      event.contract.contractName ===
+        String(SmartContractNames.recurringDynamicPP)
+        ? unserializedSubscription[0]
+        : unserializedSubscription,
     )
 
     if (checkDb) {
@@ -162,10 +172,12 @@ export class RecurringPullPaymentEventHandler {
         event.contractAddress,
         event.networkId,
       )
-      if (dbRecord) serializedSubscription.id = dbRecord.id
+      if (dbRecord) subscriptionDetails.id = dbRecord.id
     }
-
-    return serializedSubscription
+    // console.log('=================================================')
+    // console.log('subscriptionDetails', subscriptionDetails)
+    // console.log('=================================================')
+    return subscriptionDetails
   }
 
   private async constructPullPaymentDetails(

@@ -11,6 +11,8 @@ export interface UnserializedBillingModel {
   frequency?: BigNumber
   numberOfPayments?: string
   settlementToken?: string
+  trialPeriod?: string
+  initialAmount?: string
 }
 
 export function serializeBMDetails(
@@ -29,9 +31,13 @@ export function serializeBMDetails(
     blockCreationTime: bm.creationTime,
     name: bm.name ? web3Utils.hexToUtf8(bm.name) : null,
     amount: bm.amount ? String(bm.amount) : null,
+    // once we introduce the selling token, we
+    // will adjust the two lines below
     settlementToken: bm.settlementToken ? bm.settlementToken : null,
     sellingToken: bm.settlementToken ? bm.settlementToken : null,
     numberOfPayments: bm.numberOfPayments ? bm.numberOfPayments : null,
     frequency: bm.frequency ? String(bm.frequency) : null,
+    trialPeriod: bm.trialPeriod ? String(bm.trialPeriod) : null,
+    initialAmount: bm.initialAmount ? String(bm.initialAmount) : null,
   } as CreateBMDto
 }
