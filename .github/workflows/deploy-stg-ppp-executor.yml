@@ -11,7 +11,7 @@ on:
 
 permissions:
       id-token: write
-      contents: read 
+      contents: read
 
 jobs:
   deploy:
@@ -70,8 +70,8 @@ jobs:
                   { "name": "DB_DROP_SCHEMA", "value": "false" },
                   { "name": "DB_MIGRATIONS_RUN", "value": "true" },
                   { "name": "NO_COLOR", "value": "true"},
-                  { "name": "SCEDULER_INTERVAL_IN_SEC", "value": "300" },
-                  { "name": "SCEDULER_CRON_EXPRESSION", "value": "0 */5 * * * *" },
+                  { "name": "SCHEDULER_INTERVAL_IN_SEC", "value": "300" },
+                  { "name": "SCHEDULER_CRON_EXPRESSION", "value": "0 */5 * * * *" },
                   { "name": "EXECUTOR_PRIVATE_KEY", "value": "${{ secrets.EXECUTOR_PRIVATE_KEY_STGPPP }}" },
                   { "name": "SUPPORTED_NETWORKS", "value": "[97]" },
                   { "name": "MONITOR_MODE", "value": "all" },
