@@ -1,0 +1,60 @@
+name: build-ecs
+
+on:
+  workflow_call:
+    inputs:
+      service_name:
+        required: true
+        type: string
+      aws_role:
+        default: 'arn:aws:iam::910065472624:role/github'
+        type: string
+      aws_region:
+        default: 'eu-north-1'
+        type: string
+
+jobs:
+  build:
+    runs-on: [self-hosted, office]
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Restoring dependancies
+        uses: actions/cache@v2
+        with:
+          path: '**/node_modules'
+          key: ${{ runner.os }}-${{ hashFiles('**/yarn.lock') }}
+
+      - name: Installing dependancies
+        run: yarn install
+
+      - name: Building container
+        run: yarn dockerize:${{inputs.service_name}}
+
+      - name: Configuring AWS
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: ${{ inputs.aws_role }}
+          aws-region: ${{ inputs.aws_region }}
+
+      - name: Publishing image
+        id: publishing
+        run: |
+          VERSION=$( date +%Y%m%d%H%M%S )
+          echo ::set-output name=VERSION::$VERSION
+          DOCKER_LOGIN="$(aws ecr get-login --no-include-email)"
+          echo "$DOCKER_LOGIN" | bash
+          docker tag ${{ inputs.service_name }}:latest 910065472624.dkr.ecr.eu-north-1.amazonaws.com/${{ inputs.service_name }}:$VERSION
+          docker push 910065472624.dkr.ecr.eu-north-1.amazonaws.com/${{ inputs.service_name }}:$VERSION
+
+      - name: Failed
+        if: ${{ failure() }}
+        run: |
+          curl -XPOST '${{ secrets.SLACK_WEBHOOK }}' -d '{"text":"*FAILURE* ${{ inputs.service_name }} build failed"}'
+
+      - name: Cleaning up
+        if: ${{ always() }}
+        run: | 
+         docker volume rm $(docker volume ls -qf dangling=true) || true
+         docker images -a | grep '[0-9]\{14\}' | awk '{print $3}' | xargs docker rmi || true

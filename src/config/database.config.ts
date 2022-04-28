@@ -22,6 +22,6 @@ export default () =>
     entities: [join(__dirname, "../", "**/*.entity{.ts,.js}")],
     migrations: [join(__dirname, "../", "database/migrations/**/*.ts")],
     synchronize: process.env.DB_SYNCHRONIZE === "true",
-    dropSchema: process.env.DB_DROP_SCHEMA === "true",
+    dropSchema: process.env.DB_DROP_SCHEMA === "false",
     migrationsRun: process.env.DB_MIGRATIONS_RUN === "true",
   } as TypeOrmModuleOptions)

@@ -1,0 +1,13 @@
+# Base
+FROM node:16.14-alpine
+WORKDIR /app
+COPY ./package.json ./
+COPY ./yarn.lock ./
+COPY dist/ dist/
+COPY resources/ resources/
+
+# Install dependancies
+RUN yarn install --production --frozen-lockfile
+
+# Start service command
+CMD node dist/main
