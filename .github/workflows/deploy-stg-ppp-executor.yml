@@ -58,7 +58,7 @@ jobs:
                   }
                 },
                 "entryPoint": ["sh", "-c"],
-                "command": ["dockerize node dist/main.js"],
+                "command": ["node dist/main.js"],
                 "environment": [
                   { "name": "NODE_ENV", "value": "prod"},
                   { "name": "DB_HOST", "value": "${{ secrets.DB_HOST_STG3 }}" },
