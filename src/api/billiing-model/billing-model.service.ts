@@ -2,7 +2,6 @@ import { Injectable, Logger } from '@nestjs/common'
 import { BillingModel } from './billing-model.entity'
 import { BillingModelRepository } from './billing-model.repository'
 import { CreateBMDto } from './dto/createBM.dto'
-import { UpdateBMDto } from './dto/updateBM.dto'
 
 @Injectable()
 export class BillingModelService {
@@ -23,20 +22,6 @@ export class BillingModelService {
     )
 
     return createBillingModel
-  }
-
-  public async update(_billingModel: UpdateBMDto): Promise<BillingModel> {
-    const billingModel = await this.retrieveByBlockchainId(
-      _billingModel.billingModelId,
-      _billingModel.contractAddress,
-      _billingModel.networkId,
-    )
-    if (billingModel) {
-      Object.assign(billingModel, _billingModel)
-      return await this.billingModelRepository.save(billingModel)
-    }
-
-    return null
   }
 
   public async retrieveById(id: string): Promise<BillingModel> {

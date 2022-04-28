@@ -33,16 +33,19 @@ export class BillingModel extends DateAudit {
   @Column('varchar', { length: 255 })
   payee: string
 
-  @Column('varchar', { length: 255 })
+  @Column('varchar', { length: 255, default: 0 })
+  blockCreationTime: string
+
+  @Column('varchar', { length: 255, nullable: true })
   name: string
 
-  @Column('varchar', { length: 255 })
+  @Column('varchar', { length: 255, nullable: true })
   amount: string
 
-  @Column('varchar', { length: 255 })
+  @Column('varchar', { length: 255, nullable: true })
   sellingToken: string
 
-  @Column('varchar', { length: 255 })
+  @Column('varchar', { length: 255, nullable: true })
   settlementToken: string
 
   @Column('varchar', { length: 255, nullable: true })

@@ -4,32 +4,34 @@ import { CreateBMDto } from './dto/createBM.dto'
 // Unserialized entity means whatever objects we retrieve from the blockchain
 export interface UnserializedBillingModel {
   payee: string
-  name: string
-  amount: BigNumber
-  frequency: BigNumber
-  numberOfPayments: string
-  settlementToken: string
+  creationTime: string
   subscriptionIDs: string[]
+  name?: string
+  amount?: BigNumber
+  frequency?: BigNumber
+  numberOfPayments?: string
+  settlementToken?: string
 }
 
 export function serializeBMDetails(
   billingModelId: string,
   contractAddress: string,
   networkId: string,
-  bmDetails: UnserializedBillingModel,
+  bm: UnserializedBillingModel,
   web3Utils,
 ): CreateBMDto {
   return {
     billingModelId,
     contractAddress,
     networkId,
-    payee: bmDetails.payee,
-    name: web3Utils.hexToUtf8(bmDetails.name),
-    amount: String(bmDetails.amount),
-    settlementToken: bmDetails.settlementToken,
-    sellingToken: bmDetails.settlementToken,
-    numberOfPayments: bmDetails.numberOfPayments,
-    frequency: String(bmDetails.frequency),
-    subscriptionIDs: bmDetails.subscriptionIDs,
+    payee: bm.payee,
+    subscriptionIDs: bm.subscriptionIDs,
+    blockCreationTime: bm.creationTime,
+    name: bm.name ? web3Utils.hexToUtf8(bm.name) : null,
+    amount: bm.amount ? String(bm.amount) : null,
+    settlementToken: bm.settlementToken ? bm.settlementToken : null,
+    sellingToken: bm.settlementToken ? bm.settlementToken : null,
+    numberOfPayments: bm.numberOfPayments ? bm.numberOfPayments : null,
+    frequency: bm.frequency ? String(bm.frequency) : null,
   } as CreateBMDto
 }

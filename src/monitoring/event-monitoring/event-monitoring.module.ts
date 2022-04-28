@@ -19,10 +19,12 @@ import { SubscriptionCancelledEventMonitoring } from './recurring-pull-payment/s
 @Module({
   providers: [
     BaseMonitoring,
+    // Single BM
     SinglePullPaymentBMCreatedEventMonitoring,
     SinglePullPaymentBMEditedEventMonitoring,
     SingleBMSubscriptionEventMonitoring,
     SinglePullPaymentEventHandler,
+    // Recurring BM
     RecurringPullPaymentBMCreatedEventMonitoring,
     RecurringPullPaymentBMEditedEventMonitoring,
     RecurringBMSubscriptionEventMonitoring,
@@ -32,10 +34,12 @@ import { SubscriptionCancelledEventMonitoring } from './recurring-pull-payment/s
   ],
   exports: [
     BaseMonitoring,
+    // Single BM
     SinglePullPaymentBMCreatedEventMonitoring,
-    SingleBMSubscriptionEventMonitoring,
     SinglePullPaymentBMEditedEventMonitoring,
+    SingleBMSubscriptionEventMonitoring,
     SinglePullPaymentEventHandler,
+    // Recurring BM
     RecurringPullPaymentBMCreatedEventMonitoring,
     RecurringPullPaymentBMEditedEventMonitoring,
     RecurringBMSubscriptionEventMonitoring,

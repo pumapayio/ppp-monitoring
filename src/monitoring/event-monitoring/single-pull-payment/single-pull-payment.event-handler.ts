@@ -42,10 +42,61 @@ export class SinglePullPaymentEventHandler {
     await this.billingModelService.create(billingModelDetails)
   }
 
+  private async constructBMDetails(
+    billingModelId: string,
+    contract: any,
+    event: ContractEvent,
+    checkDb: boolean,
+  ) {
+    const web3Utils = this.web3Helper.getWeb3Utils(event.networkId)
+    const unserializedBillingModel: UnserializedBillingModel =
+      await contract.methods.getBillingModel(billingModelId).call()
+    const billingModelDetails = serializeBMDetails(
+      billingModelId,
+      event.contractAddress,
+      event.networkId,
+      unserializedBillingModel,
+      web3Utils,
+    )
+    billingModelDetails.billingModelId = billingModelId
+
+    if (checkDb) {
+      const dbRecord = await this.billingModelService.retrieveByBlockchainId(
+        billingModelId,
+        event.contractAddress,
+        event.networkId,
+      )
+      if (dbRecord) billingModelDetails.id = dbRecord.id
+    }
+
+    return billingModelDetails
+  }
+
   public async handleBMSubscriptionCreation(
     contract: any,
     event: ContractEvent,
     eventLog: ContractEventLog,
+    checkDb = true,
+  ) {
+    const serializedSubscription = await this.constructBMSubscriptionDetails(
+      contract,
+      event,
+      eventLog,
+      checkDb,
+    )
+    await this.handleMissingBMRecord(
+      eventLog.returnValues.billingModelID,
+      contract,
+      event,
+    )
+    await this.bmSubscriptionsService.create(serializedSubscription)
+  }
+
+  private async constructBMSubscriptionDetails(
+    contract: any,
+    event: ContractEvent,
+    eventLog: ContractEventLog,
+    checkDb,
   ) {
     const unserializedSubscription: UnserializedBMSubscription =
       await contract.methods
@@ -59,63 +110,17 @@ export class SinglePullPaymentEventHandler {
       unserializedSubscription,
     )
 
-    await this.handleMissingBMRecord(
-      eventLog.returnValues.billingModelID,
-      contract,
-      event,
-    )
-    await this.bmSubscriptionsService.create(serializedSubscription)
-  }
-
-  public async handlePPCreation(
-    contract: any,
-    event: ContractEvent,
-    eventLog: ContractEventLog,
-  ) {
-    const unserializedPullPayment: UnserializedPullPayment =
-      await contract.methods
-        .getPullPayment(eventLog.returnValues.pullPaymentID)
-        .call()
-    const serializedPullPayment = serializePullPayment(
-      eventLog.returnValues.pullPaymentID,
-      eventLog.returnValues.subscriptionID,
-      eventLog.returnValues.billingModelID,
-      event.contractAddress,
-      event.networkId,
-      unserializedPullPayment,
-    )
-
-    await this.pullPaymentService.create(serializedPullPayment)
-  }
-
-  private async constructBMDetails(
-    billingModelId: string,
-    contract: any,
-    event: ContractEvent,
-    checkDb: boolean,
-  ) {
-    const web3Utils = this.web3Helper.getWeb3Utils(event.networkId)
-    const unserializedBillingModel: UnserializedBillingModel =
-      await contract.methods.getBillingModel(billingModelId).call()
-    const billinModelDetails = serializeBMDetails(
-      billingModelId,
-      event.contractAddress,
-      event.networkId,
-      unserializedBillingModel,
-      web3Utils,
-    )
-    billinModelDetails.billingModelId = billingModelId
-
     if (checkDb) {
-      const dbRecord = await this.billingModelService.retrieveByBlockchainId(
-        billingModelId,
+      const dbRecord = await this.bmSubscriptionsService.retrieveByBlockchainId(
+        eventLog.returnValues.billingModelID,
+        eventLog.returnValues.subscriptionID,
         event.contractAddress,
         event.networkId,
       )
-      if (dbRecord) billinModelDetails.id = dbRecord.id
+      if (dbRecord) serializedSubscription.id = dbRecord.id
     }
 
-    return billinModelDetails
+    return serializedSubscription
   }
 
   private async handleMissingBMRecord(
@@ -132,5 +137,53 @@ export class SinglePullPaymentEventHandler {
     // no need to check from the db as we just did above
     // and we know that the record doesn't exist
     await this.handleBMCreateOrEditEvent(billingModelId, contract, event, false)
+  }
+
+  public async handlePPCreation(
+    contract: any,
+    event: ContractEvent,
+    eventLog: ContractEventLog,
+    checkDb = true,
+  ) {
+    const serializedPullPayment = await this.constructPPDetails(
+      contract,
+      event,
+      eventLog,
+      checkDb,
+    )
+    await this.pullPaymentService.create(serializedPullPayment)
+  }
+
+  private async constructPPDetails(
+    contract: any,
+    event: ContractEvent,
+    eventLog: ContractEventLog,
+    checkDb: boolean,
+  ) {
+    const unserializedPullPayment: UnserializedPullPayment =
+      await contract.methods
+        .getPullPayment(eventLog.returnValues.pullPaymentID)
+        .call()
+    const serializedPullPayment = serializePullPayment(
+      eventLog.returnValues.pullPaymentID,
+      eventLog.returnValues.subscriptionID,
+      eventLog.returnValues.billingModelID,
+      event.contractAddress,
+      event.networkId,
+      unserializedPullPayment,
+    )
+
+    if (checkDb) {
+      const dbRecord = await this.pullPaymentService.retrieveByBlockchainId(
+        eventLog.returnValues.billingModelID,
+        eventLog.returnValues.subscriptionID,
+        eventLog.returnValues.pullPaymentID,
+        event.contractAddress,
+        event.networkId,
+      )
+      if (dbRecord) serializedPullPayment.id = dbRecord.id
+    }
+
+    return serializedPullPayment
   }
 }

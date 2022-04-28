@@ -18,7 +18,7 @@
       {
         "eventName": "PullPaymentExecuted",
         "topic": "0x5b10886313bb2bd5c909ab9badf1d1394ccd547d61a74aab0985f600dc671e9b",
-        "syncHistorical": false
+        "syncHistorical": true
       },
       {
         "eventName": "BillingModelEdited",
@@ -1238,7 +1238,7 @@
       {
         "eventName": "SubscriptionCancelled",
         "topic": "0x1ec5df4e04c32fc9d865e6093ef51424092254a8458a2c8b4943a8a93a70832d",
-        "syncHistorical": false
+        "syncHistorical": true
       }
     ],
     "abi": [
@@ -2023,27 +2023,27 @@
       {
         "eventName": "BillingModelCreated",
         "topic": "0x7ea8b0018bcc6626a6b34111b5862a6221580ea86756f215b67c7b72022c38fe",
-        "syncHistorical": false
+        "syncHistorical": true
       },
       {
         "eventName": "NewSubscription",
         "topic": "0x0af540d9dd202f944b0919212fc5e2b0b90c859287128e379491d4744d51e473",
-        "syncHistorical": false
+        "syncHistorical": true
       },
       {
         "eventName": "PullPaymentExecuted",
         "topic": "0x5b10886313bb2bd5c909ab9badf1d1394ccd547d61a74aab0985f600dc671e9b",
-        "syncHistorical": false
+        "syncHistorical": true
       },
       {
         "eventName": "BillingModelEdited",
         "topic": "0xaca554e1e566a091d5eef840bd1356f90e5bd2610e7b6e6156fff2c899aaa38d",
-        "syncHistorical": false
+        "syncHistorical": true
       },
       {
         "eventName": "SubscriptionCancelled",
         "topic": "0x1ec5df4e04c32fc9d865e6093ef51424092254a8458a2c8b4943a8a93a70832d",
-        "syncHistorical": false
+        "syncHistorical": true
       }
     ],
     "abi": [
@@ -2868,27 +2868,27 @@
       {
         "eventName": "BillingModelCreated",
         "topic": "0x7ea8b0018bcc6626a6b34111b5862a6221580ea86756f215b67c7b72022c38fe",
-        "syncHistorical": false
+        "syncHistorical": true
       },
       {
         "eventName": "NewSubscription",
         "topic": "0x0af540d9dd202f944b0919212fc5e2b0b90c859287128e379491d4744d51e473",
-        "syncHistorical": false
+        "syncHistorical": true
       },
       {
         "eventName": "PullPaymentExecuted",
         "topic": "0x5b10886313bb2bd5c909ab9badf1d1394ccd547d61a74aab0985f600dc671e9b",
-        "syncHistorical": false
+        "syncHistorical": true
       },
       {
         "eventName": "BillingModelEdited",
         "topic": "0xaca554e1e566a091d5eef840bd1356f90e5bd2610e7b6e6156fff2c899aaa38d",
-        "syncHistorical": false
+        "syncHistorical": true
       },
       {
         "eventName": "SubscriptionCancelled",
         "topic": "0x1ec5df4e04c32fc9d865e6093ef51424092254a8458a2c8b4943a8a93a70832d",
-        "syncHistorical": false
+        "syncHistorical": true
       }
     ],
     "abi": [
@@ -3728,27 +3728,27 @@
       {
         "eventName": "BillingModelCreated",
         "topic": "0x7ea8b0018bcc6626a6b34111b5862a6221580ea86756f215b67c7b72022c38fe",
-        "syncHistorical": false
+        "syncHistorical": true
       },
       {
         "eventName": "NewSubscription",
         "topic": "0x0af540d9dd202f944b0919212fc5e2b0b90c859287128e379491d4744d51e473",
-        "syncHistorical": false
+        "syncHistorical": true
       },
       {
         "eventName": "PullPaymentExecuted",
         "topic": "0x5b10886313bb2bd5c909ab9badf1d1394ccd547d61a74aab0985f600dc671e9b",
-        "syncHistorical": false
+        "syncHistorical": true
       },
       {
         "eventName": "BillingModelEdited",
         "topic": "0xaca554e1e566a091d5eef840bd1356f90e5bd2610e7b6e6156fff2c899aaa38d",
-        "syncHistorical": false
+        "syncHistorical": true
       },
       {
         "eventName": "SubscriptionCancelled",
         "topic": "0x1ec5df4e04c32fc9d865e6093ef51424092254a8458a2c8b4943a8a93a70832d",
-        "syncHistorical": false
+        "syncHistorical": true
       }
     ],
     "abi": [

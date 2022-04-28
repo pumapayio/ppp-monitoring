@@ -17,9 +17,11 @@ export class MonitoringService {
 
   constructor(
     private contractEventService: ContractEventService,
+    // Single BM
     private singlePullPaymentBMCreatedEventService: SinglePullPaymentBMCreatedEventMonitoring,
     private singlePullPaymentBMEditedEventService: SinglePullPaymentBMEditedEventMonitoring,
     private singleBMSubscriptionEventMonitoring: SingleBMSubscriptionEventMonitoring,
+    // Recurring BM
     private recurringPullPaymentBMCreatedEventMonitoring: RecurringPullPaymentBMCreatedEventMonitoring,
     private recurringPullPaymentBMEditedEventMonitoring: RecurringPullPaymentBMEditedEventMonitoring,
     private recurringBMSubscriptionEventMonitoring: RecurringBMSubscriptionEventMonitoring,
@@ -42,12 +44,9 @@ export class MonitoringService {
     )
     for (let event of events) {
       switch (event.contract.contractName) {
+        case String(SmartContractNames.singleDynamicPP):
         case String(SmartContractNames.singlePP): {
           await this.singlePullPaymentBMCreatedEventService.monitor(event)
-          break
-        }
-        case String(SmartContractNames.singleDynamicPP): {
-          // console.log(event.contract.contractName)
           break
         }
         case String(SmartContractNames.recurringPP): {
@@ -78,12 +77,9 @@ export class MonitoringService {
 
     for (let event of events) {
       switch (event.contract.contractName) {
+        case String(SmartContractNames.singleDynamicPP):
         case String(SmartContractNames.singlePP): {
           await this.singleBMSubscriptionEventMonitoring.monitor(event)
-          break
-        }
-        case String(SmartContractNames.singleDynamicPP): {
-          // console.log(event.contract.contractName)
           break
         }
         case String(SmartContractNames.recurringPP): {
@@ -114,10 +110,6 @@ export class MonitoringService {
 
     for (let event of events) {
       switch (event.contract.contractName) {
-        case String(SmartContractNames.singleDynamicPP): {
-          // console.log(event.contract.contractName)
-          break
-        }
         case String(SmartContractNames.recurringPP): {
           await this.recurringPPExecutionEventMonitoring.monitor(event)
           break
@@ -135,6 +127,7 @@ export class MonitoringService {
           break
         }
         default:
+        case String(SmartContractNames.singleDynamicPP):
         case String(SmartContractNames.singlePP): {
           this.logger.debug(
             `Nothing to monitor for ${event.eventName} on ${event.contract.contractName} contract`,
@@ -191,11 +184,11 @@ export class MonitoringService {
       switch (event.contract.contractName) {
         case String(SmartContractNames.recurringPP):
         case String(SmartContractNames.recurringPPFreeTrial):
-        case String(SmartContractNames.recurringPPPaidTrial):
-        case String(SmartContractNames.recurringDynamicPP): {
+        case String(SmartContractNames.recurringPPPaidTrial): {
           await this.bmSubscriptionCancelledEventMonitoring.monitor(event)
           break
         }
+        case String(SmartContractNames.recurringDynamicPP):
         case String(SmartContractNames.singlePP):
         case String(SmartContractNames.singleDynamicPP):
         default: {
