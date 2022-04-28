@@ -1,0 +1,96 @@
+name: deploy-stg-ppp-executor
+on:
+  workflow_run:
+    workflows: [build-ppp-executor]
+    types: completed
+  push:
+    branches:
+      - master
+    paths:
+      - .github/workflows/deploy-stg-ppp-executor.yml
+
+permissions:
+      id-token: write
+      contents: read 
+
+jobs:
+  deploy:
+    env:
+      APP_NAME: stg-ppp-executor
+      SERVICE_NAME: ppp-executor
+      TASK_NAME: stg-ppp-executor
+      CLUSTER: STG-PUMAPAY
+
+    runs-on: [self-hosted, office]
+
+    steps:
+      - name: Configuring AWS
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: ${{ secrets.AWS_ACCESS_ROLE_DV_DEV01 }}
+          aws-region: ${{ secrets.AWS_ACCESS_REGION_DV_DEV01 }}
+
+      - name: Getting latest image
+        id: get
+        run: |
+          VERSION=$( aws ecr describe-images --repository-name ${{ env.SERVICE_NAME }} --query 'sort_by(imageDetails,& imagePushedAt)[-1].imageTags[0]' --output text )
+          echo ::set-output name=VERSION::$VERSION
+
+      - name: Creating task definition
+        id: task-definition
+        run: |
+          TASK_REVISION=$(aws ecs register-task-definition --output json --cli-input-json '{
+            "family": "${{ env.TASK_NAME }}",
+            "networkMode":"awsvpc",
+            "executionRoleArn": "ecsTaskExecutionRole",
+            "cpu": "256",
+            "memory": "512",
+            "requiresCompatibilities": ["FARGATE"],
+            "containerDefinitions": [{
+                "name": "${{ env.TASK_NAME }}",
+                "image": "910065472624.dkr.ecr.eu-north-1.amazonaws.com/${{ env.SERVICE_NAME }}:${{ steps.get.outputs.VERSION }}",
+                "logConfiguration": {
+                  "logDriver": "awslogs",
+                  "options": {
+                    "awslogs-group": "/aws/ecs/${{ env.APP_NAME }}",
+                    "awslogs-region": "eu-north-1",
+                    "awslogs-stream-prefix": "ppp"
+                  }
+                },
+                "entryPoint": ["sh", "-c"],
+                "command": ["dockerize node dist/main.js"],
+                "environment": [
+                  { "name": "NODE_ENV", "value": "prod"},
+                  { "name": "DB_HOST", "value": "${{ secrets.DB_HOST_STG3 }}" },
+                  { "name": "DB_HOST_READ", "value": "${{ secrets.DB_HOST_STG3 }}"},
+                  { "name": "DB_USERNAME", "value": "${{ secrets.DB_USERNAME_STGPPP }}" },
+                  { "name": "DB_PASSWORD", "value": "${{ secrets.DB_PASSWORD_STGPPP }}" },
+                  { "name": "DB_DATABASE", "value": "stgppp" },
+                  { "name": "DB_SYNCHRONIZE", "value": "true" },
+                  { "name": "DB_DROP_SCHEMA", "value": "false" },
+                  { "name": "DB_MIGRATIONS_RUN", "value": "true" },
+                  { "name": "NO_COLOR", "value": "true"},
+                  { "name": "SCEDULER_INTERVAL_IN_SEC", "value": "300" },
+                  { "name": "SCEDULER_CRON_EXPRESSION", "value": "0 */5 * * * *" },
+                  { "name": "EXECUTOR_PRIVATE_KEY", "value": "${{ secrets.EXECUTOR_PRIVATE_KEY_STGPPP }}" },
+                  { "name": "SUPPORTED_NETWORKS", "value": "[97]" },
+                  { "name": "MONITOR_MODE", "value": "all" },
+                  { "name": "BLOCK_SCAN_THRESHOLD", "value": "1000" }
+                ]
+              }]
+            }' | jq --raw-output '.taskDefinition.revision')
+            echo ::set-output name=TASK_REVISION::$TASK_REVISION
+
+      - name: Updating service
+        run : |
+          aws ecs update-service --cluster "${{ env.CLUSTER }}" --service "${{ env.TASK_NAME }}" --task-definition "${{ env.TASK_NAME }}":"${{ steps.task-definition.outputs.TASK_REVISION }}"
+
+      - name: Completed
+        if: ${{ success() }}
+        run: |
+          curl -XPOST '${{ secrets.SLACK_WEBHOOK }}' -d '{"text":"*SUCCESS* ${{ env.APP_NAME }} deployed"}'
+
+      - name: Failed
+        if: ${{ failure() }}
+        run: |
+          curl -XPOST '${{ secrets.SLACK_WEBHOOK }}' -d '{"text":"*FAILURE* ${{ env.APP_NAME }} deployment failed"}'
