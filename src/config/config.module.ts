@@ -3,7 +3,7 @@ import { ConfigModule as NestConfigModule } from '@nestjs/config'
 import AppConfig from './app.config'
 import BlockchainConfig from './blockchain.config'
 import DatabaseConfig from './database.config'
-import MailConfig from './mail.config'
+// import MailConfig from './mail.config'
 
 @Module({
   imports: [
@@ -16,7 +16,7 @@ import MailConfig from './mail.config'
         () => ({ app: AppConfig() }),
         () => ({ database: DatabaseConfig() }),
         () => ({ blockchain: BlockchainConfig() }),
-        () => ({ mail: MailConfig() }),
+        // () => ({ mail: MailConfig() }),
       ],
     }),
   ],

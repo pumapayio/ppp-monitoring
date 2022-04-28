@@ -54,6 +54,12 @@ export class BillingModel extends DateAudit {
   @Column('varchar', { length: 255, nullable: true })
   numberOfPayments: string
 
+  @Column('varchar', { length: 255, nullable: true })
+  trialPeriod: string
+
+  @Column('varchar', { length: 255, nullable: true })
+  initialAmount: string
+
   @OneToMany(
     (type) => BMSubscription,
     (bmSubscription) => bmSubscription.billingModel,

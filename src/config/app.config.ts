@@ -51,10 +51,10 @@ export default () => ({
   | Scheduler Interval
   |--------------------------------------------------------------------------
   |
-  | This value defines how often we scan our DB for upcoming pull payment executions 
+  | This value defines how often we scan our DB for upcoming pull payment executions
   | Default Value is every 5 minutes (300 seconds)
-  | WARNING: schedulerInterval must be in line with process.env.SCEDULER_CRON_EXPRESSION
+  | WARNING: schedulerInterval must be in line with process.env.SCHEDULER_CRON_EXPRESSION
   |
   */
-  schedulerInterval: process.env.SCEDULER_INTERVAL_IN_SEC || 300, // 5 mins
+  schedulerInterval: process.env.SCHEDULER_INTERVAL_IN_SEC || 300, // 5 mins
 })
