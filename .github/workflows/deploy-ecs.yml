@@ -1,0 +1,117 @@
+name: deploy-ecs
+
+on:
+  workflow_call:
+    inputs:
+      service_name:
+        required: true
+        type: string
+      app_name:
+        required: true
+        type: string
+      cluster:
+        required: true
+        type: string
+      from_version:
+        required: true
+        type: string
+      cpu:
+        default: '256'
+        type: string
+      memory:
+        default: '512'
+        type: string
+      prefix:
+        default: 'lac'
+        type: string
+    secrets:
+      definitions:
+        required: true
+
+jobs:
+  deploy:
+    steps:
+      - name: Setting up environment
+        id: environment
+        run: |
+          case ${{ inputs.from_version }} in
+            'new')
+              echo ::set-output name=AWS_ROLE_GET_VERSION::"arn:aws:iam::294521774800:role/github"
+              echo ::set-output name=AWS_REGION_GET_VERSION::"eu-west-1"
+              echo ::set-output name=AWS_ROLE_DEPLOY::"arn:aws:iam::910065472624:role/github"
+              echo ::set-output name=AWS_REGION_DEPLOY::"eu-north-1"
+            ;;
+            *)
+              echo ::set-output name=AWS_ROLE_GET_VERSION::"arn:aws:iam::910065472624:role/github"
+              echo ::set-output name=AWS_REGION_GET_VERSION::"eu-north-1"
+              echo ::set-output name=AWS_ROLE_DEPLOY::"arn:aws:iam::910065472624:role/github"
+              echo ::set-output name=AWS_REGION_DEPLOY::"eu-north-1"
+              echo ::set-output name=FROM_TASK_NAME::"${{ inputs.from_version }}-${{ inputs.service_name }}"
+              echo ::set-output name=FROM_CLUSTER::"$(${{ inputs.from_version }}^^)-CLUSTER"
+            ;;
+
+      - name: Configuring AWS
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: ${{ steps.environment.outputs.AWS_ROLE_GET_VERSION }}
+          aws-region: ${{ steps.environment.outputs.AWS_REGION_GET_VERSION }}
+
+      - name: Getting version
+        id: get
+        run: | 
+          case ${{ inputs.from_version }} in
+            'new')
+              echo ::set-output name=VERSION="$( aws ecr describe-images --repository-name ${{ inputs.service_name }} --query 'sort_by(imageDetails,& imagePushedAt)[-1].imageTags[0]' --output text )"
+            ;;
+            *)
+              echo ::set-output name=VERSION="$( aws ecs describe-tasks --cluster ${{ steps.environment.outputs.FROM_CLUSTER }} --output text --query 'tasks[].containers[].[image]' --tasks `aws ecs list-tasks --cluster ${{ steps.environment.outputs.FROM_CLUSTER }} --family ${{ steps.environment.outputs.FROM_TASK_NAME }} --desired-status RUNNING --query taskArns --output text` | awk 'BEGIN { FS = ":" } ; { print $2 }' )"
+            ;;
+            
+
+      - name: Configuring AWS
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: ${{ steps.environment.outputs.AWS_ROLE_DEPLOY }}
+          aws-region: ${{ steps.environment.outputs.AWS_REGION_DEPLOY }}
+
+      - name: Creating task definition
+        id: task-definition
+        run: |
+          TASK_REVISION=$(aws ecs register-task-definition --output json --cli-input-json '{
+            "family": "${{ inputs.app_name }}",
+            "networkMode":"awsvpc",
+            "executionRoleArn": "ecsTaskExecutionRole",
+            "cpu": "${{ inputs.cpu }}",
+            "memory": "${{ inputs.memory }}",
+            "requiresCompatibilities": ["FARGATE"],
+            "containerDefinitions": [{
+                "name": "${{ inputs.app_name }}",
+                "image": "294521774800.dkr.ecr.eu-west-1.amazonaws.com/${{ inputs.service_name }}:${{ steps.get.outputs.VERSION }}",
+                "logConfiguration": {
+                  "logDriver": "awslogs",
+                  "options": {
+                    "awslogs-group": "/aws/ecs/${{ inputs.app_name }}",
+                    "awslogs-region": "${{ steps.environment.outputs.AWS_REGION_DEPLOY }}",
+                    "awslogs-stream-prefix": "${{ inputs.prefix }}"
+                  }
+                },
+                "entryPoint": ["sh", "-c"],
+                "command": ["dockerize node dist/main.js"],
+                "environment": [${{ secrets.definitions }}]
+              }]
+            }' | jq --raw-output '.taskDefinition.revision')
+            echo ::set-output name=TASK_REVISION::$TASK_REVISION
+
+      - name: Updating service
+        run : |
+          aws ecs update-service --cluster "${{ inputs.cluster }}" --service "${{ inputs.app_name }}" --task-definition "${{ inputs.app_name }}":"${{ steps.task-definition.outputs.TASK_REVISION }}"
+
+      - name: Completed
+        if: ${{ success() }}
+        run: |
+          curl -XPOST '${{ secrets.SLACK_WEBHOOK }}' -d '{"text":"*SUCCESS* ${{ inputs.app_name }} deployed"}'
+
+      - name: Failed
+        if: ${{ failure() }}
+        run: |
+          curl -XPOST '${{ secrets.SLACK_WEBHOOK }}' -d '{"text":"*FAILURE* ${{ inputs.app_name }} deployment failed"}'

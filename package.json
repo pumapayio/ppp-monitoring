@@ -36,7 +36,8 @@
     "seed:run": "ts-node ./node_modules/typeorm-seeding/dist/cli.js seed",
     "seed:config": "ts-node ./node_modules/typeorm-seeding/dist/cli.js config",
     "db:setup": "yarn run schema:drop && yarn run migrate:run && yarn run seed:run",
-    "db:reset": "./scripts/reset-db.sh"
+    "db:reset": "./scripts/reset-db.sh",
+    "dockerize:ppp-executor": "yarn run build && docker build -t ppp-executor-node:latest ./ -f ./Dockerfile-build"
   },
   "dependencies": {
     "@nestjs/common": "^8.0.0",
