@@ -1,5 +1,5 @@
-import { Module, NestModule, MiddlewareConsumer } from "@nestjs/common"
-import { LoggerMiddleware } from "./middlewares/logger.middleware"
+import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common'
+import { LoggerMiddleware } from './middlewares/logger.middleware'
 
 @Module({
   imports: [],
@@ -8,6 +8,6 @@ import { LoggerMiddleware } from "./middlewares/logger.middleware"
 })
 export class SharedModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(LoggerMiddleware).forRoutes("*")
+    consumer.apply(LoggerMiddleware).forRoutes('*')
   }
 }
