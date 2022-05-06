@@ -41,6 +41,12 @@
       },
       {
         "indexed": false,
+        "internalType": "string",
+        "name": "newMerchantName",
+        "type": "string"
+      },
+      {
+        "indexed": false,
         "internalType": "address",
         "name": "oldPayee",
         "type": "address"
@@ -167,8 +173,7 @@
       }
     ],
     "stateMutability": "view",
-    "type": "function",
-    "constant": true
+    "type": "function"
   },
   {
     "inputs": [],
@@ -181,8 +186,7 @@
       }
     ],
     "stateMutability": "view",
-    "type": "function",
-    "constant": true
+    "type": "function"
   },
   {
     "inputs": [],
@@ -243,6 +247,21 @@
         "type": "string"
       },
       {
+        "internalType": "string",
+        "name": "_merchantName",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_reference",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_merchantURL",
+        "type": "string"
+      },
+      {
         "internalType": "uint256",
         "name": "_amount",
         "type": "uint256"
@@ -285,6 +304,11 @@
         "internalType": "address",
         "name": "_paymentToken",
         "type": "address"
+      },
+      {
+        "internalType": "string",
+        "name": "_reference",
+        "type": "string"
       }
     ],
     "name": "subscribeToBillingModel",
@@ -352,6 +376,16 @@
         "internalType": "string",
         "name": "_newName",
         "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_newMerchantName",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_newMerchantURL",
+        "type": "string"
       }
     ],
     "name": "editBillingModel",
@@ -391,8 +425,7 @@
       }
     ],
     "stateMutability": "pure",
-    "type": "function",
-    "constant": true
+    "type": "function"
   },
   {
     "inputs": [
@@ -419,6 +452,21 @@
           {
             "internalType": "string",
             "name": "name",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "merchantName",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "uniqueReference",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "merchantURL",
             "type": "string"
           },
           {
@@ -463,8 +511,7 @@
       }
     ],
     "stateMutability": "view",
-    "type": "function",
-    "constant": true
+    "type": "function"
   },
   {
     "inputs": [
@@ -486,6 +533,21 @@
           {
             "internalType": "string",
             "name": "name",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "merchantName",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "uniqueReference",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "merchantURL",
             "type": "string"
           },
           {
@@ -525,8 +587,7 @@
       }
     ],
     "stateMutability": "view",
-    "type": "function",
-    "constant": true
+    "type": "function"
   },
   {
     "inputs": [
@@ -594,6 +655,11 @@
             "internalType": "uint256",
             "name": "billingModelID",
             "type": "uint256"
+          },
+          {
+            "internalType": "string",
+            "name": "uniqueReference",
+            "type": "string"
           }
         ],
         "internalType": "struct IPullPayment.SubscriptionData",
@@ -602,8 +668,7 @@
       }
     ],
     "stateMutability": "view",
-    "type": "function",
-    "constant": true
+    "type": "function"
   },
   {
     "inputs": [
@@ -644,8 +709,7 @@
       }
     ],
     "stateMutability": "view",
-    "type": "function",
-    "constant": true
+    "type": "function"
   },
   {
     "inputs": [
@@ -664,8 +728,7 @@
       }
     ],
     "stateMutability": "view",
-    "type": "function",
-    "constant": true
+    "type": "function"
   },
   {
     "inputs": [
@@ -684,8 +747,7 @@
       }
     ],
     "stateMutability": "view",
-    "type": "function",
-    "constant": true
+    "type": "function"
   },
   {
     "inputs": [
@@ -704,8 +766,7 @@
       }
     ],
     "stateMutability": "view",
-    "type": "function",
-    "constant": true
+    "type": "function"
   },
   {
     "inputs": [
@@ -724,8 +785,7 @@
       }
     ],
     "stateMutability": "view",
-    "type": "function",
-    "constant": true
+    "type": "function"
   },
   {
     "inputs": [],
@@ -738,8 +798,7 @@
       }
     ],
     "stateMutability": "view",
-    "type": "function",
-    "constant": true
+    "type": "function"
   },
   {
     "inputs": [],
@@ -752,8 +811,7 @@
       }
     ],
     "stateMutability": "view",
-    "type": "function",
-    "constant": true
+    "type": "function"
   },
   {
     "inputs": [],
@@ -766,7 +824,6 @@
       }
     ],
     "stateMutability": "view",
-    "type": "function",
-    "constant": true
+    "type": "function"
   }
 ]

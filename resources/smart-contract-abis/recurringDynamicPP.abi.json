@@ -44,6 +44,12 @@
         "internalType": "address",
         "name": "oldPayee",
         "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "newMerchantName",
+        "type": "string"
       }
     ],
     "name": "BillingModelEdited",
@@ -167,8 +173,7 @@
       }
     ],
     "stateMutability": "view",
-    "type": "function",
-    "constant": true
+    "type": "function"
   },
   {
     "inputs": [],
@@ -181,8 +186,7 @@
       }
     ],
     "stateMutability": "view",
-    "type": "function",
-    "constant": true
+    "type": "function"
   },
   {
     "inputs": [],
@@ -241,6 +245,21 @@
         "internalType": "uint8",
         "name": "_recurringPPType",
         "type": "uint8"
+      },
+      {
+        "internalType": "string",
+        "name": "_merchantName",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_reference",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_merchantURL",
+        "type": "string"
       }
     ],
     "name": "createBillingModel",
@@ -300,13 +319,18 @@
         "internalType": "uint256",
         "name": "_initialAMount",
         "type": "uint256"
+      },
+      {
+        "internalType": "string",
+        "name": "_reference",
+        "type": "string"
       }
     ],
     "name": "subscribeToBillingModel",
     "outputs": [
       {
         "internalType": "uint256",
-        "name": "subscriptionID",
+        "name": "newSubscriptionID",
         "type": "uint256"
       }
     ],
@@ -362,6 +386,16 @@
         "internalType": "address",
         "name": "_newPayee",
         "type": "address"
+      },
+      {
+        "internalType": "string",
+        "name": "_newMerchantName",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_newMerchantURL",
+        "type": "string"
       }
     ],
     "name": "editBillingModel",
@@ -393,6 +427,21 @@
             "type": "address"
           },
           {
+            "internalType": "string",
+            "name": "merchantName",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "uniqueReference",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "merchantURL",
+            "type": "string"
+          },
+          {
             "internalType": "uint8",
             "name": "recurringPPType",
             "type": "uint8"
@@ -414,8 +463,7 @@
       }
     ],
     "stateMutability": "view",
-    "type": "function",
-    "constant": true
+    "type": "function"
   },
   {
     "inputs": [
@@ -495,6 +543,11 @@
                 "internalType": "uint256[]",
                 "name": "pullPaymentIDs",
                 "type": "uint256[]"
+              },
+              {
+                "internalType": "string",
+                "name": "uniqueReference",
+                "type": "string"
               }
             ],
             "internalType": "struct IRecurringDynamicPullPayment.SubscriptionData",
@@ -518,8 +571,7 @@
       }
     ],
     "stateMutability": "view",
-    "type": "function",
-    "constant": true
+    "type": "function"
   },
   {
     "inputs": [
@@ -550,8 +602,7 @@
       }
     ],
     "stateMutability": "view",
-    "type": "function",
-    "constant": true
+    "type": "function"
   },
   {
     "inputs": [
@@ -570,8 +621,7 @@
       }
     ],
     "stateMutability": "view",
-    "type": "function",
-    "constant": true
+    "type": "function"
   },
   {
     "inputs": [
@@ -590,8 +640,7 @@
       }
     ],
     "stateMutability": "view",
-    "type": "function",
-    "constant": true
+    "type": "function"
   },
   {
     "inputs": [
@@ -610,8 +659,7 @@
       }
     ],
     "stateMutability": "view",
-    "type": "function",
-    "constant": true
+    "type": "function"
   },
   {
     "inputs": [
@@ -630,8 +678,7 @@
       }
     ],
     "stateMutability": "view",
-    "type": "function",
-    "constant": true
+    "type": "function"
   },
   {
     "inputs": [],
@@ -644,8 +691,7 @@
       }
     ],
     "stateMutability": "view",
-    "type": "function",
-    "constant": true
+    "type": "function"
   },
   {
     "inputs": [],
@@ -658,8 +704,7 @@
       }
     ],
     "stateMutability": "view",
-    "type": "function",
-    "constant": true
+    "type": "function"
   },
   {
     "inputs": [],
@@ -672,8 +717,7 @@
       }
     ],
     "stateMutability": "view",
-    "type": "function",
-    "constant": true
+    "type": "function"
   },
   {
     "inputs": [],
@@ -701,7 +745,6 @@
       }
     ],
     "stateMutability": "pure",
-    "type": "function",
-    "constant": true
+    "type": "function"
   }
 ]
