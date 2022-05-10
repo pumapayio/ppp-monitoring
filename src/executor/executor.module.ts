@@ -19,7 +19,6 @@ export class ExecutorModule {
     private config: ConfigService,
     private executorService: ExecutorService,
   ) {
-    console.log(OperationModes[this.config.get('app.mode')])
     if (
       OperationModes[this.config.get('app.mode')] === OperationModes.Executor ||
       OperationModes[this.config.get('app.mode')] ===
