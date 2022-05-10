@@ -17,6 +17,9 @@ export class CreateBMDto {
   // single and recurring dynamic billing models
   name?: string
   amount?: string
+  merchantName?: string
+  merchantURL?: string
+  uniqueReference?: string
   sellingToken?: string
   settlementToken?: string
   frequency?: string

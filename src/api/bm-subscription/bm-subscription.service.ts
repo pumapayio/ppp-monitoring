@@ -3,7 +3,6 @@ import { ConfigService } from '@nestjs/config'
 import { BMSubscription } from './bm-subscription.entity'
 import { BMSubscriptionRepository } from './bm-subscription.repository'
 import { CreateBMSubscriptionDto } from './dto/createBMSubscription.dto'
-import { UpdateBMSubscriptionDto } from './dto/updateBMSubscription.dto'
 
 @Injectable()
 export class BMSubscriptionService {
@@ -61,24 +60,5 @@ export class BMSubscriptionService {
         networkId,
       },
     })
-  }
-
-  public async update(
-    _subscription: UpdateBMSubscriptionDto,
-    networkId: string,
-    contractAddress: string,
-  ): Promise<BMSubscription> {
-    const subscription = await this.retrieveBySubscriptionId(
-      _subscription.bmSubscriptionId,
-      _subscription.billingModelId,
-      networkId,
-      contractAddress,
-    )
-    if (subscription) {
-      Object.assign(subscription, _subscription)
-
-      return await this.bmSubscriptionRepository.save(subscription)
-    }
-    return null
   }
 }

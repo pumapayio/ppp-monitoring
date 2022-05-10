@@ -40,6 +40,10 @@ export class BMSubscription extends DateAudit {
   @Column('varchar', { length: 255 })
   paymentToken: string
 
+  @Index()
+  @Column('varchar', { length: 255 })
+  uniqueReference: string
+
   @Column('varchar', { length: 255, nullable: true })
   numberOfPayments: string
 

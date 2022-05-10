@@ -7,6 +7,7 @@ export interface UnserializedBMSubscription {
   paymentAmount?: BigNumber
   amount?: BigNumber
   settlementToken: string
+  uniqueReference: string
   paymentToken: string
   numberOfPayments?: string
   startTimestamp?: string
@@ -28,6 +29,7 @@ export function serializeBMSubscription(
     bmSubscriptionId,
     networkId,
     contractAddress,
+    uniqueReference: bmSubscription.uniqueReference,
     subscriber: bmSubscription.subscriber,
     paymentAmount: String(
       bmSubscription.paymentAmount
