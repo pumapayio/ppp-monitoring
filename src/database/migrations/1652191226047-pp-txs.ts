@@ -6,7 +6,7 @@ export class ppTxs1652191226047 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`
             ALTER TABLE "pull_payment"
-            ADD "executionAmount" character varying(255) NOT NULL
+            ADD "executionFeeAmount" character varying(255) NOT NULL
         `)
     await queryRunner.query(`
             ALTER TABLE "pull_payment"
@@ -19,7 +19,7 @@ export class ppTxs1652191226047 implements MigrationInterface {
             ALTER TABLE "pull_payment" DROP COLUMN "receivingAmount"
         `)
     await queryRunner.query(`
-            ALTER TABLE "pull_payment" DROP COLUMN "executionAmount"
+            ALTER TABLE "pull_payment" DROP COLUMN "executionFeeAmount"
         `)
   }
 }

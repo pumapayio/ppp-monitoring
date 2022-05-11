@@ -46,7 +46,7 @@ export class PullPayment extends DateAudit {
   paymentAmount: string
 
   @Column('varchar', { length: 255 })
-  executionAmount: string
+  executionFeeAmount: string
 
   @Column('varchar', { length: 255 })
   receivingAmount: string

@@ -36,7 +36,7 @@ export async function serializePullPayment(
     contractAddress,
     networkId,
     paymentAmount: String(transactionAmounts.amountPaid),
-    executionAmount: String(transactionAmounts.executionFee),
+    executionFeeAmount: String(transactionAmounts.executionFee),
     receivingAmount: String(transactionAmounts.amountReceived),
     executionTimestamp: pullPayment.executionTimestamp,
   } as CreatePullPaymentDto

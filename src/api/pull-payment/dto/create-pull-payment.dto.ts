@@ -20,7 +20,7 @@ export class CreatePullPaymentDto {
   paymentAmount: string
 
   @IsNotEmpty()
-  executionAmount: string
+  executionFeeAmount: string
 
   @IsNotEmpty()
   receivingAmount: string
