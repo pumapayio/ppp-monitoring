@@ -144,8 +144,8 @@ export class BlockchainGlobals {
         [ChainId.BSC_TESTNET]: '0xB75A3b4A4DA2F2043Ed5Fc6d92669821C4d2f846',
       },
       [SmartContractNames.recurringDynamicPP]: {
-        [ChainId.BSC_MAINNET]: '0xDa4Ef6C94d7477cc77FDf5c00F55242A37c37883',
-        [ChainId.BSC_TESTNET]: '0xDa4Ef6C94d7477cc77FDf5c00F55242A37c37883',
+        [ChainId.BSC_MAINNET]: '0x5ACD271e836DAbc7fC67dAF28bC2c5757ebE5521',
+        [ChainId.BSC_TESTNET]: '0x5ACD271e836DAbc7fC67dAF28bC2c5757ebE5521',
       },
     }
     return smartContractAddresses[`${contractType}`][networkId]
