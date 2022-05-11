@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 import { ContractEvent } from 'src/api/contract-event/contract-event.entity'
 import { ContractEventLog } from 'src/utils/blockchain'
 import { BaseMonitoring } from '../base-monitoring/base-monitoring'
@@ -6,16 +6,14 @@ import { RecurringPullPaymentEventHandler } from './recurring-pull-payment.event
 
 @Injectable()
 export class RecurringPullPaymentBMCreatedEventMonitoring {
-  private readonly logger = new Logger(
-    RecurringPullPaymentBMCreatedEventMonitoring.name,
-  )
-
   constructor(
     private baseMonitoring: BaseMonitoring,
     private eventHandler: RecurringPullPaymentEventHandler,
   ) {}
 
   public async monitor(event: ContractEvent): Promise<void> {
+    // We don't handle this one so that we allow the app to crash
+    // in case there is no EXECUTOR_PRIVATE_KEY configured
     await this.baseMonitoring.monitor(
       event,
       this.eventHandler,

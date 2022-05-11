@@ -5,7 +5,7 @@ import { ExecutorService } from './executor.service'
 import { ConfigService } from '@nestjs/config'
 import { CronExpression, SchedulerRegistry } from '@nestjs/schedule'
 import { CronJob } from 'cron'
-import { OperationModes } from '../utils/operationModes'
+import { UtilsService } from '../utils/utils.service'
 
 @Module({
   imports: [BMSubscriptionModule, UtilsModule],
@@ -17,13 +17,10 @@ export class ExecutorModule {
   constructor(
     private schedulerRegistry: SchedulerRegistry,
     private config: ConfigService,
+    private utils: UtilsService,
     private executorService: ExecutorService,
   ) {
-    if (
-      OperationModes[this.config.get('app.mode')] === OperationModes.Executor ||
-      OperationModes[this.config.get('app.mode')] ===
-        OperationModes.MerchantExecutor
-    ) {
+    if (utils.isExecutorMode()) {
       JSON.parse(this.config.get('blockchain.supportedNetworks')).map(
         (networkId) => {
           this.executorService.processUpcomingPullPaymentExecutions(

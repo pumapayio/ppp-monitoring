@@ -27,7 +27,6 @@ export async function serializePullPayment(
     transactionHash,
     web3,
   )
-  console.log(transactionAmounts)
 
   return {
     pullPaymentId,

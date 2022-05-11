@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 import { ContractEventTypes } from './contract-event-types'
 import { ContractEvent } from './contract-event.entity'
 import { ContractEventRepository } from './contract-event.repository'
@@ -6,8 +6,6 @@ import { UpdateContractEventDto } from './dto/updateContractEvent.dto'
 
 @Injectable()
 export class ContractEventService {
-  private readonly logger = new Logger(ContractEventService.name)
-
   constructor(
     private readonly contractEventRepository: ContractEventRepository,
   ) {}
@@ -31,7 +29,7 @@ export class ContractEventService {
     eventName: ContractEventTypes,
     networkId: string,
   ): Promise<ContractEvent[]> {
-    const contractEvents = await this.contractEventRepository.find({
+    return await this.contractEventRepository.find({
       where: {
         networkId,
         eventName,
@@ -41,7 +39,5 @@ export class ContractEventService {
         createdAt: 'ASC',
       },
     })
-
-    return contractEvents
   }
 }

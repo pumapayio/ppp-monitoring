@@ -1,4 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common'
+import { OperationModes } from '../operationModes'
 
 const Web3 = require('web3')
 
@@ -96,11 +97,11 @@ export class Web3Connector {
   }
 
   private static setupDefaultAccount(web3) {
-    // TODO: The below depends on the "executor mode" specified in config file
-    // Note: If there is no executor key, don't let the application to start
     if (
-      process.env.EXECUTOR_PRIVATE_KEY === '' ||
-      process.env.EXECUTOR_PRIVATE_KEY === undefined
+      process.env.MODE !== OperationModes.Executor &&
+      process.env.MODE !== OperationModes.MerchantExecutor &&
+      (process.env.EXECUTOR_PRIVATE_KEY === '' ||
+        process.env.EXECUTOR_PRIVATE_KEY === undefined)
     ) {
       this.logger.error(`Executor private key is not defined!`)
       throw new Error(`Executor private key is not defined!`)

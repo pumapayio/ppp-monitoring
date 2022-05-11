@@ -16,11 +16,8 @@ export class BMSubscriptionService {
   ): Promise<BMSubscription> {
     const subscription = new BMSubscription()
     Object.assign(subscription, createBMSubscriptionDto)
-    const createBMSubscription = await this.bmSubscriptionRepository.save(
-      subscription,
-    )
 
-    return createBMSubscription
+    return await this.bmSubscriptionRepository.save(subscription)
   }
 
   public async retrieveUpcomingSubscriptions(
