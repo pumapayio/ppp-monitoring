@@ -173,7 +173,8 @@
       }
     ],
     "stateMutability": "view",
-    "type": "function"
+    "type": "function",
+    "constant": true
   },
   {
     "inputs": [],
@@ -186,7 +187,8 @@
       }
     ],
     "stateMutability": "view",
-    "type": "function"
+    "type": "function",
+    "constant": true
   },
   {
     "inputs": [],
@@ -463,7 +465,8 @@
       }
     ],
     "stateMutability": "view",
-    "type": "function"
+    "type": "function",
+    "constant": true
   },
   {
     "inputs": [
@@ -545,6 +548,11 @@
                 "type": "uint256[]"
               },
               {
+                "internalType": "uint256",
+                "name": "billingModelID",
+                "type": "uint256"
+              },
+              {
                 "internalType": "string",
                 "name": "uniqueReference",
                 "type": "string"
@@ -571,7 +579,8 @@
       }
     ],
     "stateMutability": "view",
-    "type": "function"
+    "type": "function",
+    "constant": true
   },
   {
     "inputs": [
@@ -594,15 +603,26 @@
             "internalType": "uint256",
             "name": "executionTimestamp",
             "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "billingModelID",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "subscriptionID",
+            "type": "uint256"
           }
         ],
-        "internalType": "struct RecurringDynamicPullPayment.PullPayment",
+        "internalType": "struct RecurringDynamicPullPayment.PullPaymentData",
         "name": "pullPayment",
         "type": "tuple"
       }
     ],
     "stateMutability": "view",
-    "type": "function"
+    "type": "function",
+    "constant": true
   },
   {
     "inputs": [
@@ -621,7 +641,8 @@
       }
     ],
     "stateMutability": "view",
-    "type": "function"
+    "type": "function",
+    "constant": true
   },
   {
     "inputs": [
@@ -640,7 +661,8 @@
       }
     ],
     "stateMutability": "view",
-    "type": "function"
+    "type": "function",
+    "constant": true
   },
   {
     "inputs": [
@@ -659,7 +681,8 @@
       }
     ],
     "stateMutability": "view",
-    "type": "function"
+    "type": "function",
+    "constant": true
   },
   {
     "inputs": [
@@ -678,7 +701,8 @@
       }
     ],
     "stateMutability": "view",
-    "type": "function"
+    "type": "function",
+    "constant": true
   },
   {
     "inputs": [],
@@ -691,7 +715,8 @@
       }
     ],
     "stateMutability": "view",
-    "type": "function"
+    "type": "function",
+    "constant": true
   },
   {
     "inputs": [],
@@ -704,7 +729,8 @@
       }
     ],
     "stateMutability": "view",
-    "type": "function"
+    "type": "function",
+    "constant": true
   },
   {
     "inputs": [],
@@ -717,7 +743,8 @@
       }
     ],
     "stateMutability": "view",
-    "type": "function"
+    "type": "function",
+    "constant": true
   },
   {
     "inputs": [],
@@ -745,6 +772,7 @@
       }
     ],
     "stateMutability": "pure",
-    "type": "function"
+    "type": "function",
+    "constant": true
   }
 ]
