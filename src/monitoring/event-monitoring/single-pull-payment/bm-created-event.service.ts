@@ -34,5 +34,8 @@ export class SinglePullPaymentBMCreatedEventMonitoring {
       contract,
       event,
     )
+    // TODO: In case of 'Merchant' Mode
+    // We call an API which we can have the API key and url as
+    // configuration parameter for the developer to specify
   }
 }

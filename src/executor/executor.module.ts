@@ -5,6 +5,7 @@ import { ExecutorService } from './executor.service'
 import { ConfigService } from '@nestjs/config'
 import { CronExpression, SchedulerRegistry } from '@nestjs/schedule'
 import { CronJob } from 'cron'
+import { OperationModes } from '../utils/operationModes'
 
 @Module({
   imports: [BMSubscriptionModule, UtilsModule],
@@ -18,28 +19,34 @@ export class ExecutorModule {
     private config: ConfigService,
     private executorService: ExecutorService,
   ) {
-    JSON.parse(this.config.get('blockchain.supportedNetworks')).map(
-      (networkId) => {
-        this.executorService.processUpcomingPullPaymentExecutions(
-          String(networkId),
-        )
-        const cronInterval =
-          process.env.SCHEDULER_CRON_EXPRESSION ||
-          CronExpression.EVERY_5_MINUTES
-        const cronJobName = `UpcomingPullPayments_${networkId}`
-        const job = new CronJob(cronInterval, () => {
-          this.logger.debug(
-            `Name: ${cronJobName} - Cron Interval: ${cronInterval}`,
-          )
+    if (
+      OperationModes[this.config.get('app.mode')] === OperationModes.Executor ||
+      OperationModes[this.config.get('app.mode')] ===
+        OperationModes.MerchantExecutor
+    ) {
+      JSON.parse(this.config.get('blockchain.supportedNetworks')).map(
+        (networkId) => {
           this.executorService.processUpcomingPullPaymentExecutions(
             String(networkId),
           )
-        })
-        this.schedulerRegistry.addCronJob(cronJobName, job)
-        job.start()
+          const cronInterval =
+            process.env.SCHEDULER_CRON_EXPRESSION ||
+            CronExpression.EVERY_5_MINUTES
+          const cronJobName = `UpcomingPullPayments_${networkId}`
+          const job = new CronJob(cronInterval, () => {
+            this.logger.debug(
+              `Name: ${cronJobName} - Cron Interval: ${cronInterval}`,
+            )
+            this.executorService.processUpcomingPullPaymentExecutions(
+              String(networkId),
+            )
+          })
+          this.schedulerRegistry.addCronJob(cronJobName, job)
+          job.start()
 
-        this.logger.debug(`Cron Job ${cronJobName} added`)
-      },
-    )
+          this.logger.debug(`Cron Job ${cronJobName} added`)
+        },
+      )
+    }
   }
 }

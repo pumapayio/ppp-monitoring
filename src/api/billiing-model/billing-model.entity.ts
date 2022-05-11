@@ -43,6 +43,16 @@ export class BillingModel extends DateAudit {
   amount: string
 
   @Column('varchar', { length: 255, nullable: true })
+  merchantName: string
+
+  @Column('varchar', { length: 255, nullable: true })
+  merchantURL: string
+
+  @Index()
+  @Column('varchar', { length: 255, nullable: false })
+  uniqueReference: string
+
+  @Column('varchar', { length: 255, nullable: true })
   sellingToken: string
 
   @Column('varchar', { length: 255, nullable: true })

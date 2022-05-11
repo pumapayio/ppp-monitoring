@@ -26,6 +26,25 @@ export default () => ({
 
   /*
   |--------------------------------------------------------------------------
+  | (Operation) Mode
+  |--------------------------------------------------------------------------
+  |
+  | This value defines the operation mode of the executor node.
+  | There are 4 modes supported that eventually will be supported:
+  |   - Executor          =>  Monitor all the blockchain events and trigger executions
+  |   - Monitoring        =>  Monitor all the blockchain events but no executions
+  |   - MerchantExecutor  =>  Monitors blockchain events for a specific set of
+  |                           addresses and triggers executions only for those
+  |   - MerchantMonitor   => Monitors blockchain events for a specific set of
+  |                           addresses but does NOT trigger any executions
+  | Currently Supporting: [Executor , Monitoring]
+  |
+  */
+
+  mode: process.env.MODE || 'Executor',
+
+  /*
+  |--------------------------------------------------------------------------
   | Application Port
   |--------------------------------------------------------------------------
   |
