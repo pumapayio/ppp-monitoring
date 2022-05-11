@@ -65,9 +65,9 @@ const extractPullPaymentAmounts = async (
   let amountReceived: string
   let amountPaid: string
 
-  console.log(' =======  =======  =======  =======  =======  ======= ')
-  console.log(executorContractAddress)
-  console.log(executorAddress)
+  // console.log(' =======  =======  =======  =======  =======  ======= ')
+  // console.log(executorContractAddress)
+  // console.log(executorAddress)
   transactionReceipt?.logs.filter((event) => {
     const transferEventTopic =
       '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef'
@@ -95,7 +95,7 @@ const extractPullPaymentAmounts = async (
         event.data,
         [event.topics[1], event.topics[2]],
       )
-      console.log(parsedEvent)
+      // console.log(parsedEvent)
 
       if (
         parsedEvent['from']?.toLocaleLowerCase() ===
@@ -148,7 +148,7 @@ const extractPullPaymentAmounts = async (
     }
     return false
   })
-  console.log(' =======  =======  =======  =======  =======  ======= ')
+  // console.log(' =======  =======  =======  =======  =======  ======= ')
   return {
     executionFee: executionFee,
     amountReceived: amountReceived,
