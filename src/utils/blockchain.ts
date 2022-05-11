@@ -16,6 +16,7 @@ export enum SmartContractNames {
   coreRegistry = <any>'coreRegistry',
   ppRegistry = <any>'ppRegistry',
   executor = <any>'executor',
+  executorReceiver = <any>`executorReceiver`,
   singlePP = <any>'SinglePullPayment',
   singleDynamicPP = <any>'SingleDynamicPullPayment',
   recurringPP = <any>'RecurringPullPayment',
@@ -72,8 +73,6 @@ export interface BillingModelEditedEvent {
   newPayee: string
 }
 
-export interface PullPayementExecutionEvent {}
-
 @Injectable()
 export class BlockchainGlobals {
   constructor() {}
@@ -104,6 +103,12 @@ export class BlockchainGlobals {
     contractType: SmartContractNames,
   ): string {
     const smartContractAddresses = {
+      // TODO: Need to retrieve the executor fee receiver from the blockchain
+      [SmartContractNames.executorReceiver]: {
+        // TODO: Update the contract addresses for BSC mainnet
+        [ChainId.BSC_MAINNET]: '0xb2a80b679f87530edfb848708ca948cbf25ca3e0',
+        [ChainId.BSC_TESTNET]: '0xb2a80b679f87530edfb848708ca948cbf25ca3e0',
+      },
       [SmartContractNames.executor]: {
         // TODO: Update the contract addresses for BSC mainnet
         [ChainId.BSC_MAINNET]: '0xc9fdd1778b659E051290E40bdBbd88709FD56900',

@@ -6,6 +6,9 @@ export interface UnserializedBillingModel {
   payee: string
   creationTime: string
   subscriptionIDs: string[]
+  uniqueReference: string
+  merchantName?: string
+  merchantURL?: string
   name?: string
   amount?: BigNumber
   frequency?: BigNumber
@@ -29,7 +32,10 @@ export function serializeBMDetails(
     payee: bm.payee,
     subscriptionIDs: bm.subscriptionIDs,
     blockCreationTime: bm.creationTime,
-    name: bm.name ? web3Utils.hexToUtf8(bm.name) : null,
+    uniqueReference: bm.uniqueReference,
+    merchantName: bm.merchantName ? bm.merchantName : null,
+    merchantURL: bm.merchantURL ? bm.merchantURL : null,
+    name: bm.name ? bm.name : null,
     amount: bm.amount ? String(bm.amount) : null,
     // once we introduce the selling token, we
     // will adjust the two lines below

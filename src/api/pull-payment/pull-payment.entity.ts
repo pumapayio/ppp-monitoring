@@ -46,6 +46,12 @@ export class PullPayment extends DateAudit {
   paymentAmount: string
 
   @Column('varchar', { length: 255 })
+  executionAmount: string
+
+  @Column('varchar', { length: 255 })
+  receivingAmount: string
+
+  @Column('varchar', { length: 255 })
   executionTimestamp: string
 
   @ManyToOne((type) => BMSubscription, {

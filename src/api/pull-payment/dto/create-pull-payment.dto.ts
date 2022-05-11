@@ -20,5 +20,11 @@ export class CreatePullPaymentDto {
   paymentAmount: string
 
   @IsNotEmpty()
+  executionAmount: string
+
+  @IsNotEmpty()
+  receivingAmount: string
+
+  @IsNotEmpty()
   executionTimestamp: string
 }

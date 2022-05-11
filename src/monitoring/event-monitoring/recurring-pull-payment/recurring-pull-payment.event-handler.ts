@@ -17,6 +17,7 @@ import {
 import { PullPaymentService } from 'src/api/pull-payment/pull-payment.service'
 import { ContractEventLog, SmartContractNames } from 'src/utils/blockchain'
 import { Web3Helper } from 'src/utils/web3Connector/web3Helper'
+import { TransactionReceipt } from 'web3-core'
 
 @Injectable()
 export class RecurringPullPaymentEventHandler {
@@ -93,6 +94,7 @@ export class RecurringPullPaymentEventHandler {
       eventLog.returnValues.billingModelID,
       eventLog.returnValues.subscriptionID,
       eventLog.returnValues.pullPaymentID,
+      eventLog.transactionHash,
       contract,
       event,
       checkDb,
@@ -184,19 +186,23 @@ export class RecurringPullPaymentEventHandler {
     billingModelId: string,
     subscriptionId: string,
     pullPaymentId: string,
+    transactionHash: string,
     contract: any,
     event: ContractEvent,
     checkDb: boolean,
   ) {
     const unserializedPullPayment: UnserializedPullPayment =
       await contract.methods.getPullPayment(pullPaymentId).call()
-    const pullPaymentDetails = serializePullPayment(
+
+    const pullPaymentDetails = await serializePullPayment(
       pullPaymentId,
       subscriptionId,
       billingModelId,
       event.contractAddress,
       event.networkId,
       unserializedPullPayment,
+      transactionHash,
+      this.web3Helper.getWeb3Instance(contract.networkId),
     )
 
     if (checkDb) {
