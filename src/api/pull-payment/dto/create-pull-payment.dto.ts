@@ -27,4 +27,7 @@ export class CreatePullPaymentDto {
 
   @IsNotEmpty()
   executionTimestamp: string
+
+  @IsNotEmpty()
+  transactionHash: string
 }

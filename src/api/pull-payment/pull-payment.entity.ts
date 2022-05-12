@@ -54,6 +54,9 @@ export class PullPayment extends DateAudit {
   @Column('varchar', { length: 255 })
   executionTimestamp: string
 
+  @Column('varchar', { length: 66 })
+  transactionHash: string
+
   @ManyToOne((type) => BMSubscription, {
     onDelete: 'CASCADE',
     nullable: false,
