@@ -20,11 +20,13 @@ export async function serializePullPayment(
   networkId: string,
   pullPayment: UnserializedPullPayment,
   transactionHash: string,
+  merchantAddress: string,
   web3: Web3,
 ): Promise<CreatePullPaymentDto> {
   const transactionAmounts = await extractPullPaymentAmounts(
     networkId,
     transactionHash,
+    merchantAddress,
     web3,
   )
 
@@ -34,9 +36,9 @@ export async function serializePullPayment(
     billingModelId,
     contractAddress,
     networkId,
-    paymentAmount: String(transactionAmounts.amountPaid),
-    executionFeeAmount: String(transactionAmounts.executionFee),
-    receivingAmount: String(transactionAmounts.amountReceived),
+    paymentAmount: String(transactionAmounts.paymentAmount),
+    executionFeeAmount: String(transactionAmounts.executionFeeAmount),
+    receivingAmount: String(transactionAmounts.receivingAmount),
     executionTimestamp: pullPayment.executionTimestamp,
     transactionHash: transactionHash,
   } as CreatePullPaymentDto
@@ -45,6 +47,7 @@ export async function serializePullPayment(
 const extractPullPaymentAmounts = async (
   networkId: string,
   transactionHash: string,
+  merchantAddress: string,
   web3: Web3,
 ) => {
   const transactionReceipt: TransactionReceipt =
@@ -61,9 +64,9 @@ const extractPullPaymentAmounts = async (
     SmartContractNames.executor,
   )
 
-  let executionFee: string
-  let amountReceived: string
-  let amountPaid: string
+  let executionFeeAmount: string
+  let receivingAmount: string
+  let paymentAmount: string
 
   // console.log(' =======  =======  =======  =======  =======  ======= ')
   // console.log(executorContractAddress)
@@ -104,24 +107,21 @@ const extractPullPaymentAmounts = async (
           executorAddress.toLocaleLowerCase()
       ) {
         // get execution fee
-        executionFee = Number(parsedEvent['value']?.toString()).toLocaleString(
-          'en-US',
-          {
-            useGrouping: false,
-          },
-        )
+        executionFeeAmount = Number(
+          parsedEvent['value']?.toString(),
+        ).toLocaleString('en-US', {
+          useGrouping: false,
+        })
 
         return true
       }
 
       // get amount received by merchant
       if (
-        parsedEvent['from']?.toLocaleLowerCase() ===
-          executorContractAddress.toLocaleLowerCase() &&
-        parsedEvent['to']?.toLocaleLowerCase() !==
-          executorAddress.toLocaleLowerCase()
+        parsedEvent['to']?.toLocaleLowerCase() ==
+        merchantAddress.toLocaleLowerCase()
       ) {
-        amountReceived = Number(
+        receivingAmount = Number(
           parsedEvent['value']?.toString(),
         ).toLocaleString('en-US', {
           useGrouping: false,
@@ -137,7 +137,7 @@ const extractPullPaymentAmounts = async (
         parsedEvent['to']?.toLocaleLowerCase() ===
           executorContractAddress.toLocaleLowerCase()
       ) {
-        amountPaid = Number(parsedEvent['value']?.toString()).toLocaleString(
+        paymentAmount = Number(parsedEvent['value']?.toString()).toLocaleString(
           'en-US',
           {
             useGrouping: false,
@@ -150,8 +150,8 @@ const extractPullPaymentAmounts = async (
   })
   // console.log(' =======  =======  =======  =======  =======  ======= ')
   return {
-    executionFee: executionFee,
-    amountReceived: amountReceived,
-    amountPaid: amountPaid,
+    executionFeeAmount: executionFeeAmount,
+    receivingAmount: receivingAmount,
+    paymentAmount: paymentAmount,
   }
 }

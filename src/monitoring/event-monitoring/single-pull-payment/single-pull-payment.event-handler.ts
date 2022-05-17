@@ -17,7 +17,6 @@ import {
 import { PullPaymentService } from 'src/api/pull-payment/pull-payment.service'
 import { ContractEventLog } from 'src/utils/blockchain'
 import { Web3Helper } from 'src/utils/web3Connector/web3Helper'
-import { TransactionReceipt } from 'web3-core'
 
 @Injectable()
 export class SinglePullPaymentEventHandler {
@@ -166,6 +165,12 @@ export class SinglePullPaymentEventHandler {
         .getPullPayment(eventLog.returnValues.pullPaymentID)
         .call()
 
+    const bmDetails = await this.billingModelService.retrieveByBlockchainId(
+      eventLog.returnValues.billingModelID,
+      event.contractAddress,
+      event.networkId,
+    )
+
     const serializedPullPayment = await serializePullPayment(
       eventLog.returnValues.pullPaymentID,
       eventLog.returnValues.subscriptionID,
@@ -174,6 +179,7 @@ export class SinglePullPaymentEventHandler {
       event.networkId,
       unserializedPullPayment,
       eventLog.transactionHash,
+      bmDetails.payee,
       this.web3Helper.getWeb3Instance(contract.networkId),
     )
 

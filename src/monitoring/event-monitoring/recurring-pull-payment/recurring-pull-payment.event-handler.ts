@@ -172,6 +172,12 @@ export class RecurringPullPaymentEventHandler {
     const unserializedPullPayment: UnserializedPullPayment =
       await contract.methods.getPullPayment(pullPaymentId).call()
 
+    const bmDetails = await this.billingModelService.retrieveByBlockchainId(
+      billingModelId,
+      event.contractAddress,
+      event.networkId,
+    )
+
     const pullPaymentDetails = await serializePullPayment(
       pullPaymentId,
       subscriptionId,
@@ -180,6 +186,7 @@ export class RecurringPullPaymentEventHandler {
       event.networkId,
       unserializedPullPayment,
       transactionHash,
+      bmDetails.payee,
       this.web3Helper.getWeb3Instance(contract.networkId),
     )
 
