@@ -10,6 +10,7 @@ export interface UnserializedBMSubscription {
   uniqueReference: string
   paymentToken: string
   numberOfPayments?: string
+  remainingPayments?: string // in case of dynamic recurring
   startTimestamp?: string
   cancelTimestamp?: string
   nextPaymentTimestamp?: string
@@ -39,7 +40,9 @@ export function serializeBMSubscription(
     settlementToken: bmSubscription.settlementToken,
     paymentToken: bmSubscription.paymentToken,
     token: bmSubscription.settlementToken,
-    numberOfPayments: bmSubscription.numberOfPayments,
+    remainingNumberOfPayments: bmSubscription.numberOfPayments
+      ? bmSubscription.numberOfPayments
+      : bmSubscription.remainingPayments,
     startTimestamp: bmSubscription.startTimestamp,
     cancelTimestamp: bmSubscription.cancelTimestamp,
     nextPaymentTimestamp: bmSubscription.nextPaymentTimestamp,

@@ -45,7 +45,7 @@ export class BMSubscription extends DateAudit {
   uniqueReference: string
 
   @Column('varchar', { length: 255, nullable: true })
-  numberOfPayments: string
+  remainingNumberOfPayments: string
 
   @Column('varchar', { length: 11, nullable: true })
   startTimestamp: string

@@ -20,7 +20,7 @@ export class BMSubscriptionRepository extends Repository<BMSubscription> {
       where: {
         nextPaymentTimestamp: LessThanOrEqual(startTimestamp),
         cancelTimestamp: Equal(0),
-        numberOfPayments: MoreThan(0),
+        remainingNumberOfPayments: MoreThan(0),
         networkId,
       },
       order: {
