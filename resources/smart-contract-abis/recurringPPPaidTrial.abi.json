@@ -71,7 +71,13 @@
         "type": "uint256"
       },
       {
-        "indexed": true,
+        "indexed": false,
+        "internalType": "address",
+        "name": "payee",
+        "type": "address"
+      },
+      {
+        "indexed": false,
         "internalType": "address",
         "name": "payer",
         "type": "address"
@@ -119,6 +125,12 @@
         "internalType": "uint256",
         "name": "billingModelID",
         "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "payee",
+        "type": "address"
       },
       {
         "indexed": false,
@@ -667,6 +679,11 @@
             "internalType": "string",
             "name": "uniqueReference",
             "type": "string"
+          },
+          {
+            "internalType": "address",
+            "name": "cancelledBy",
+            "type": "address"
           }
         ],
         "internalType": "struct IRecurringPPWithPaidTrial.SubscriptionData",

@@ -73,7 +73,13 @@
       {
         "indexed": false,
         "internalType": "address",
-        "name": "subscriber",
+        "name": "payee",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "payer",
         "type": "address"
       }
     ],

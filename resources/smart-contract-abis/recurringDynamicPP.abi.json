@@ -71,7 +71,13 @@
         "type": "uint256"
       },
       {
-        "indexed": true,
+        "indexed": false,
+        "internalType": "address",
+        "name": "payee",
+        "type": "address"
+      },
+      {
+        "indexed": false,
         "internalType": "address",
         "name": "payer",
         "type": "address"
@@ -119,6 +125,12 @@
         "internalType": "uint256",
         "name": "billingModelID",
         "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "payee",
+        "type": "address"
       },
       {
         "indexed": false,
@@ -173,8 +185,7 @@
       }
     ],
     "stateMutability": "view",
-    "type": "function",
-    "constant": true
+    "type": "function"
   },
   {
     "inputs": [],
@@ -187,8 +198,7 @@
       }
     ],
     "stateMutability": "view",
-    "type": "function",
-    "constant": true
+    "type": "function"
   },
   {
     "inputs": [],
@@ -465,8 +475,7 @@
       }
     ],
     "stateMutability": "view",
-    "type": "function",
-    "constant": true
+    "type": "function"
   },
   {
     "inputs": [
@@ -556,6 +565,11 @@
                 "internalType": "string",
                 "name": "uniqueReference",
                 "type": "string"
+              },
+              {
+                "internalType": "address",
+                "name": "cancelledBy",
+                "type": "address"
               }
             ],
             "internalType": "struct IRecurringDynamicPullPayment.SubscriptionData",
@@ -579,8 +593,7 @@
       }
     ],
     "stateMutability": "view",
-    "type": "function",
-    "constant": true
+    "type": "function"
   },
   {
     "inputs": [
@@ -621,8 +634,7 @@
       }
     ],
     "stateMutability": "view",
-    "type": "function",
-    "constant": true
+    "type": "function"
   },
   {
     "inputs": [
@@ -641,8 +653,7 @@
       }
     ],
     "stateMutability": "view",
-    "type": "function",
-    "constant": true
+    "type": "function"
   },
   {
     "inputs": [
@@ -661,8 +672,7 @@
       }
     ],
     "stateMutability": "view",
-    "type": "function",
-    "constant": true
+    "type": "function"
   },
   {
     "inputs": [
@@ -681,8 +691,7 @@
       }
     ],
     "stateMutability": "view",
-    "type": "function",
-    "constant": true
+    "type": "function"
   },
   {
     "inputs": [
@@ -701,8 +710,7 @@
       }
     ],
     "stateMutability": "view",
-    "type": "function",
-    "constant": true
+    "type": "function"
   },
   {
     "inputs": [],
@@ -715,8 +723,7 @@
       }
     ],
     "stateMutability": "view",
-    "type": "function",
-    "constant": true
+    "type": "function"
   },
   {
     "inputs": [],
@@ -729,8 +736,7 @@
       }
     ],
     "stateMutability": "view",
-    "type": "function",
-    "constant": true
+    "type": "function"
   },
   {
     "inputs": [],
@@ -743,8 +749,7 @@
       }
     ],
     "stateMutability": "view",
-    "type": "function",
-    "constant": true
+    "type": "function"
   },
   {
     "inputs": [],
@@ -772,7 +777,6 @@
       }
     ],
     "stateMutability": "pure",
-    "type": "function",
-    "constant": true
+    "type": "function"
   }
 ]
