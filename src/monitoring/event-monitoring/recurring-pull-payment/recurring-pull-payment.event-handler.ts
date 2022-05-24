@@ -40,7 +40,7 @@ export class RecurringPullPaymentEventHandler {
       checkDb,
     )
 
-    await this.billingModelService.create(billingModelDetails)
+    return await this.billingModelService.create(billingModelDetails)
   }
 
   public async handleBMSubscriptionCreateOrEditEvent(
@@ -59,7 +59,7 @@ export class RecurringPullPaymentEventHandler {
     )
     await this.handleMissingBMRecord(billingModelId, contract, event)
 
-    await this.bmSubscriptionsService.create(bmSubscriptionDetails)
+    return await this.bmSubscriptionsService.create(bmSubscriptionDetails)
   }
 
   public async handlePPCreation(
@@ -84,8 +84,7 @@ export class RecurringPullPaymentEventHandler {
       event,
       checkDb,
     )
-
-    await this.pullPaymentService.create(pullPaymentDetails)
+    return await this.pullPaymentService.create(pullPaymentDetails)
   }
 
   private async constructBMDetails(
@@ -187,7 +186,7 @@ export class RecurringPullPaymentEventHandler {
       unserializedPullPayment,
       transactionHash,
       bmDetails.payee,
-      this.web3Helper.getWeb3Instance(contract.networkId),
+      this.web3Helper.getWeb3Instance(event.networkId),
     )
 
     if (checkDb) {
@@ -214,7 +213,7 @@ export class RecurringPullPaymentEventHandler {
       event.contractAddress,
       event.networkId,
     )
-    if (dbRecord) return
+    if (dbRecord) return dbRecord
     // no need to check from the db as we just did above
     // and we know that the record doesn't exist
     await this.handleBMCreateOrEditEvent(billingModelId, contract, event, false)

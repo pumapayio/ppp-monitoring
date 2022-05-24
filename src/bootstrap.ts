@@ -10,6 +10,7 @@ import { resolve } from 'path'
 
 import { AppModule } from './app.module'
 import { ConfigService } from '@nestjs/config'
+import { OperationModes } from './utils/operationModes'
 
 export async function bootstrap() {
   /*
@@ -28,6 +29,29 @@ export async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule)
   const config = app.get(ConfigService)
 
+  /*
+  |--------------------------------------------------------------------------
+  | Check that the configuration is correct based on the operation mdoe
+  |--------------------------------------------------------------------------
+  |
+  */
+  switch (config.get('app.mode')) {
+    case OperationModes.MerchantMonitoring: {
+      if (
+        JSON.parse(config.get('app.monitoringAddresses')).length === 0 ||
+        config.get('app.apiURL') === null ||
+        config.get('app.apiKey') === null
+      ) {
+        throw Error(
+          `=============================================
+          Merchant Monitoring service not configured correctly!
+          Make sure you have set MONITORING_ADDRESSES, API_URL and API_KEY
+          =============================================`,
+        )
+      }
+      // TODO: Call the api url with the api key and make sure you get a 200
+    }
+  }
   /*
   |--------------------------------------------------------------------------
   | Add Global Express Middlewares

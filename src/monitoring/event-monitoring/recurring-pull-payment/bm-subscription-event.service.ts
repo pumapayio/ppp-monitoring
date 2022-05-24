@@ -15,10 +15,14 @@ export class RecurringBMSubscriptionEventMonitoring {
     private eventHandler: RecurringPullPaymentEventHandler,
   ) {}
 
-  public async monitor(event: ContractEvent): Promise<void> {
+  public async monitor(
+    event: ContractEvent,
+    merchantAddresses: string[],
+  ): Promise<void> {
     try {
       await this.baseMonitoring.monitor(
         event,
+        merchantAddresses,
         this.eventHandler,
         this.handleEventLog,
       )
@@ -31,15 +35,32 @@ export class RecurringBMSubscriptionEventMonitoring {
 
   private async handleEventLog(
     contract: any,
+    merchantAddresses: string[],
     event: ContractEvent,
     eventLog: ContractEventLog,
     eventHandler: RecurringPullPaymentEventHandler,
   ): Promise<void> {
-    await eventHandler.handleBMSubscriptionCreateOrEditEvent(
-      eventLog.returnValues.billingModelID,
-      eventLog.returnValues.subscriptionID,
-      contract,
-      event,
-    )
+    if (merchantAddresses.length === 0) {
+      await eventHandler.handleBMSubscriptionCreateOrEditEvent(
+        eventLog.returnValues.billingModelID,
+        eventLog.returnValues.subscriptionID,
+        contract,
+        event,
+      )
+    } else {
+      if (merchantAddresses.includes(eventLog.returnValues.payee)) {
+        const bmSubscription =
+          await eventHandler.handleBMSubscriptionCreateOrEditEvent(
+            eventLog.returnValues.billingModelID,
+            eventLog.returnValues.subscriptionID,
+            contract,
+            event,
+          )
+
+        delete bmSubscription.createdAt
+        delete bmSubscription.updatedAt
+        console.log('bmSubscription', bmSubscription)
+      }
+    }
   }
 }

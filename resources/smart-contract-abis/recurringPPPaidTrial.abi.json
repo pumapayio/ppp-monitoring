@@ -71,7 +71,13 @@
         "type": "uint256"
       },
       {
-        "indexed": true,
+        "indexed": false,
+        "internalType": "address",
+        "name": "payee",
+        "type": "address"
+      },
+      {
+        "indexed": false,
         "internalType": "address",
         "name": "payer",
         "type": "address"
@@ -119,6 +125,12 @@
         "internalType": "uint256",
         "name": "billingModelID",
         "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "payee",
+        "type": "address"
       },
       {
         "indexed": false,
@@ -173,7 +185,8 @@
       }
     ],
     "stateMutability": "view",
-    "type": "function"
+    "type": "function",
+    "constant": true
   },
   {
     "inputs": [],
@@ -186,7 +199,8 @@
       }
     ],
     "stateMutability": "view",
-    "type": "function"
+    "type": "function",
+    "constant": true
   },
   {
     "inputs": [],
@@ -503,7 +517,8 @@
       }
     ],
     "stateMutability": "view",
-    "type": "function"
+    "type": "function",
+    "constant": true
   },
   {
     "inputs": [
@@ -589,7 +604,8 @@
       }
     ],
     "stateMutability": "view",
-    "type": "function"
+    "type": "function",
+    "constant": true
   },
   {
     "inputs": [
@@ -675,7 +691,8 @@
       }
     ],
     "stateMutability": "view",
-    "type": "function"
+    "type": "function",
+    "constant": true
   },
   {
     "inputs": [
@@ -716,7 +733,8 @@
       }
     ],
     "stateMutability": "view",
-    "type": "function"
+    "type": "function",
+    "constant": true
   },
   {
     "inputs": [
@@ -735,7 +753,8 @@
       }
     ],
     "stateMutability": "view",
-    "type": "function"
+    "type": "function",
+    "constant": true
   },
   {
     "inputs": [
@@ -754,7 +773,8 @@
       }
     ],
     "stateMutability": "view",
-    "type": "function"
+    "type": "function",
+    "constant": true
   },
   {
     "inputs": [
@@ -773,7 +793,8 @@
       }
     ],
     "stateMutability": "view",
-    "type": "function"
+    "type": "function",
+    "constant": true
   },
   {
     "inputs": [
@@ -792,7 +813,8 @@
       }
     ],
     "stateMutability": "view",
-    "type": "function"
+    "type": "function",
+    "constant": true
   },
   {
     "inputs": [
@@ -811,7 +833,8 @@
       }
     ],
     "stateMutability": "view",
-    "type": "function"
+    "type": "function",
+    "constant": true
   },
   {
     "inputs": [],
@@ -824,7 +847,8 @@
       }
     ],
     "stateMutability": "view",
-    "type": "function"
+    "type": "function",
+    "constant": true
   },
   {
     "inputs": [],
@@ -837,7 +861,8 @@
       }
     ],
     "stateMutability": "view",
-    "type": "function"
+    "type": "function",
+    "constant": true
   },
   {
     "inputs": [],
@@ -850,7 +875,8 @@
       }
     ],
     "stateMutability": "view",
-    "type": "function"
+    "type": "function",
+    "constant": true
   },
   {
     "inputs": [],
@@ -878,6 +904,7 @@
       }
     ],
     "stateMutability": "pure",
-    "type": "function"
+    "type": "function",
+    "constant": true
   }
 ]

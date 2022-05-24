@@ -13,4 +13,13 @@ export class UtilsService {
         OperationModes.MerchantExecutor
     )
   }
+
+  public isMerchantMode(): boolean {
+    return (
+      OperationModes[this.config.get('app.mode')] ===
+        OperationModes.MerchantMonitoring ||
+      OperationModes[this.config.get('app.mode')] ===
+        OperationModes.MerchantExecutor
+    )
+  }
 }

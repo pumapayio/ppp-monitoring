@@ -13,10 +13,14 @@ export class SingleBMSubscriptionEventMonitoring {
     private eventHandler: SinglePullPaymentEventHandler,
   ) {}
 
-  public async monitor(event: ContractEvent): Promise<void> {
+  public async monitor(
+    event: ContractEvent,
+    merchantAddresses: string[],
+  ): Promise<void> {
     try {
       await this.baseMonitoring.monitor(
         event,
+        merchantAddresses,
         this.eventHandler,
         this.handleEventLog,
       )
@@ -29,11 +33,33 @@ export class SingleBMSubscriptionEventMonitoring {
 
   private async handleEventLog(
     contract: any,
+    merchantAddresses: string[],
     event: ContractEvent,
     eventLog: ContractEventLog,
     eventHandler: SinglePullPaymentEventHandler,
   ): Promise<void> {
-    await eventHandler.handleBMSubscriptionCreation(contract, event, eventLog)
-    await eventHandler.handlePPCreation(contract, event, eventLog)
+    if (merchantAddresses.length === 0) {
+      await eventHandler.handleBMSubscriptionCreation(contract, event, eventLog)
+      await eventHandler.handlePPCreation(contract, event, eventLog)
+    } else {
+      if (merchantAddresses.includes(eventLog.returnValues.payee)) {
+        const bmSubscription = await eventHandler.handleBMSubscriptionCreation(
+          contract,
+          event,
+          eventLog,
+        )
+
+        console.log('bmSubscription', bmSubscription)
+        const pullPayment = await eventHandler.handlePPCreation(
+          contract,
+          event,
+          eventLog,
+        )
+        console.log('pullPayment', pullPayment)
+        // TODO: In case of 'Merchant' Mode
+        // We call an API which we can have the API key and url as
+        // configuration parameter for the developer to specify
+      }
+    }
   }
 }

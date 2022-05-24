@@ -15,10 +15,14 @@ export class SubscriptionCancelledEventMonitoring {
     private eventHandler: RecurringPullPaymentEventHandler,
   ) {}
 
-  public async monitor(event: ContractEvent): Promise<void> {
+  public async monitor(
+    event: ContractEvent,
+    merchantAddresses: string[],
+  ): Promise<void> {
     try {
       await this.baseMonitoring.monitor(
         event,
+        merchantAddresses,
         this.eventHandler,
         this.handleEventLog,
       )
@@ -31,6 +35,7 @@ export class SubscriptionCancelledEventMonitoring {
 
   private async handleEventLog(
     contract: any,
+    merchantAddresses: string[],
     event: ContractEvent,
     eventLog: ContractEventLog,
     eventHandler: RecurringPullPaymentEventHandler,

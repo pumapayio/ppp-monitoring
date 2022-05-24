@@ -13,6 +13,7 @@ export interface UnserializedBMSubscription {
   remainingPayments?: string // in case of dynamic recurring
   startTimestamp?: string
   cancelTimestamp?: string
+  cancelledBy?: string
   nextPaymentTimestamp?: string
   lastPaymentTimestamp?: string
   pullPaymentIDs: string[]
@@ -45,6 +46,7 @@ export function serializeBMSubscription(
       : bmSubscription.remainingPayments,
     startTimestamp: bmSubscription.startTimestamp,
     cancelTimestamp: bmSubscription.cancelTimestamp,
+    cancelledBy: bmSubscription.cancelledBy,
     nextPaymentTimestamp: bmSubscription.nextPaymentTimestamp,
     lastPaymentTimestamp: bmSubscription.lastPaymentTimestamp,
     pullPaymentIDs: bmSubscription.pullPaymentIDs,

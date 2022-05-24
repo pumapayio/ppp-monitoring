@@ -85,6 +85,8 @@ export class Web3Connector {
   }
 
   public static instantiateHttpProvider(networkId: string, rpcUrl: string) {
+    if (networkId === undefined || networkId === null)
+      throw new Error('No network ID provided!')
     if (!Web3Connector.web3HttpProviders[networkId]) {
       let web3 = new Web3(new Web3.providers.HttpProvider(rpcUrl))
       web3 = Web3Connector.setupDefaultAccount(web3)

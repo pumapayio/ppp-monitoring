@@ -21,11 +21,13 @@ export class BaseMonitoring {
   ) {}
   public async monitor(
     event: ContractEvent,
+    merchantAddresses: string[],
     eventHandler:
       | SinglePullPaymentEventHandler
       | RecurringPullPaymentEventHandler,
     handleEventLog: (
       contract: any,
+      merchantAddresses: string[],
       event: ContractEvent,
       eventLog: ContractEventLog,
       eventHandler:
@@ -47,6 +49,7 @@ export class BaseMonitoring {
         })
         await this.processPastEvents(
           event,
+          merchantAddresses,
           currentBlockNumber,
           handleEventLog,
           eventHandler,
@@ -54,12 +57,14 @@ export class BaseMonitoring {
       }
       await this.monitorFutureEvents(
         event,
+        merchantAddresses,
         currentBlockNumber,
         handleEventLog,
         eventHandler,
       )
       this.ensureFutureEventMonitoring(
         event,
+        merchantAddresses,
         currentBlockNumber,
         handleEventLog,
         eventHandler,
@@ -73,6 +78,7 @@ export class BaseMonitoring {
 
   private async monitorFutureEvents(
     event: ContractEvent,
+    merchantAddresses: string[],
     currentBlockNumber: number,
     handleEventLog: Function,
     eventHandler:
@@ -102,7 +108,13 @@ export class BaseMonitoring {
         })
         .on('data', async (eventLog: ContractEventLog) => {
           try {
-            await handleEventLog(contract, event, eventLog, eventHandler)
+            await handleEventLog(
+              contract,
+              merchantAddresses,
+              event,
+              eventLog,
+              eventHandler,
+            )
             await this.contractEventService.update({
               id: event.id,
               lastSyncedBlock: eventLog.blockNumber,
@@ -128,6 +140,7 @@ export class BaseMonitoring {
       await sleep(10000) // Sleep 10 seconds and start again monitoring events
       this.monitorFutureEvents(
         event,
+        merchantAddresses,
         currentBlockNumber,
         handleEventLog,
         eventHandler,
@@ -137,6 +150,7 @@ export class BaseMonitoring {
 
   private async processPastEvents(
     event: ContractEvent,
+    merchantAddresses: string[],
     currentBlockNumber: number,
     handleEventLog: Function,
     eventHandler:
@@ -176,6 +190,7 @@ export class BaseMonitoring {
             toBlock: toBlock,
           },
         )
+        // console.log('pastEvents', pastEvents)
 
         this.logger.log(
           `Found ${pastEvents.length} ${event.eventName} past events for ${event.contract.contractName}.`,
@@ -191,6 +206,7 @@ export class BaseMonitoring {
                   resolve(
                     await handleEventLog(
                       contract,
+                      merchantAddresses,
                       event,
                       pastEvent,
                       eventHandler,
@@ -235,6 +251,7 @@ export class BaseMonitoring {
       await sleep(10000) // Sleep 10 seconds and start again monitoring events
       this.processPastEvents(
         event,
+        merchantAddresses,
         currentBlockNumber,
         handleEventLog,
         eventHandler,
@@ -244,6 +261,7 @@ export class BaseMonitoring {
 
   private async ensureFutureEventMonitoring(
     event: ContractEvent,
+    merchantAddresses: string[],
     currentBlockNumber: number,
     handleEventLog: Function,
     eventHandler:
@@ -261,6 +279,7 @@ export class BaseMonitoring {
       // so, we try to connect again
       await this.monitorFutureEvents(
         event,
+        merchantAddresses,
         currentBlockNumber,
         handleEventLog,
         eventHandler,
