@@ -1551,6 +1551,18 @@
             "internalType": "uint256",
             "name": "subscriptionID",
             "type": "uint256"
+          },
+          {
+            "indexed": false,
+            "internalType": "address",
+            "name": "payee",
+            "type": "address"
+          },
+          {
+            "indexed": false,
+            "internalType": "address",
+            "name": "payer",
+            "type": "address"
           }
         ],
         "name": "SubscriptionCancelled",
@@ -1567,8 +1579,7 @@
           }
         ],
         "stateMutability": "view",
-        "type": "function",
-        "constant": true
+        "type": "function"
       },
       {
         "inputs": [],
@@ -1581,8 +1592,7 @@
           }
         ],
         "stateMutability": "view",
-        "type": "function",
-        "constant": true
+        "type": "function"
       },
       {
         "inputs": [],
@@ -1821,8 +1831,7 @@
           }
         ],
         "stateMutability": "pure",
-        "type": "function",
-        "constant": true
+        "type": "function"
       },
       {
         "inputs": [
@@ -1908,8 +1917,7 @@
           }
         ],
         "stateMutability": "view",
-        "type": "function",
-        "constant": true
+        "type": "function"
       },
       {
         "inputs": [
@@ -1985,8 +1993,7 @@
           }
         ],
         "stateMutability": "view",
-        "type": "function",
-        "constant": true
+        "type": "function"
       },
       {
         "inputs": [
@@ -2059,6 +2066,11 @@
                 "internalType": "string",
                 "name": "uniqueReference",
                 "type": "string"
+              },
+              {
+                "internalType": "address",
+                "name": "cancelledBy",
+                "type": "address"
               }
             ],
             "internalType": "struct IPullPayment.SubscriptionData",
@@ -2067,8 +2079,7 @@
           }
         ],
         "stateMutability": "view",
-        "type": "function",
-        "constant": true
+        "type": "function"
       },
       {
         "inputs": [
@@ -2109,8 +2120,7 @@
           }
         ],
         "stateMutability": "view",
-        "type": "function",
-        "constant": true
+        "type": "function"
       },
       {
         "inputs": [
@@ -2129,8 +2139,7 @@
           }
         ],
         "stateMutability": "view",
-        "type": "function",
-        "constant": true
+        "type": "function"
       },
       {
         "inputs": [
@@ -2149,8 +2158,7 @@
           }
         ],
         "stateMutability": "view",
-        "type": "function",
-        "constant": true
+        "type": "function"
       },
       {
         "inputs": [
@@ -2169,8 +2177,7 @@
           }
         ],
         "stateMutability": "view",
-        "type": "function",
-        "constant": true
+        "type": "function"
       },
       {
         "inputs": [
@@ -2189,8 +2196,7 @@
           }
         ],
         "stateMutability": "view",
-        "type": "function",
-        "constant": true
+        "type": "function"
       },
       {
         "inputs": [],
@@ -2203,8 +2209,7 @@
           }
         ],
         "stateMutability": "view",
-        "type": "function",
-        "constant": true
+        "type": "function"
       },
       {
         "inputs": [],
@@ -2217,8 +2222,7 @@
           }
         ],
         "stateMutability": "view",
-        "type": "function",
-        "constant": true
+        "type": "function"
       },
       {
         "inputs": [],
@@ -2231,8 +2235,7 @@
           }
         ],
         "stateMutability": "view",
-        "type": "function",
-        "constant": true
+        "type": "function"
       }
     ]
   },
@@ -2439,6 +2442,18 @@
             "internalType": "uint256",
             "name": "subscriptionID",
             "type": "uint256"
+          },
+          {
+            "indexed": false,
+            "internalType": "address",
+            "name": "payee",
+            "type": "address"
+          },
+          {
+            "indexed": false,
+            "internalType": "address",
+            "name": "payer",
+            "type": "address"
           }
         ],
         "name": "SubscriptionCancelled",
@@ -2455,8 +2470,7 @@
           }
         ],
         "stateMutability": "view",
-        "type": "function",
-        "constant": true
+        "type": "function"
       },
       {
         "inputs": [],
@@ -2469,8 +2483,7 @@
           }
         ],
         "stateMutability": "view",
-        "type": "function",
-        "constant": true
+        "type": "function"
       },
       {
         "inputs": [],
@@ -2777,8 +2790,7 @@
           }
         ],
         "stateMutability": "view",
-        "type": "function",
-        "constant": true
+        "type": "function"
       },
       {
         "inputs": [
@@ -2859,8 +2871,7 @@
           }
         ],
         "stateMutability": "view",
-        "type": "function",
-        "constant": true
+        "type": "function"
       },
       {
         "inputs": [
@@ -2938,6 +2949,11 @@
                 "internalType": "string",
                 "name": "uniqueReference",
                 "type": "string"
+              },
+              {
+                "internalType": "address",
+                "name": "cancelledBy",
+                "type": "address"
               }
             ],
             "internalType": "struct IRecurringPPWithFreeTrial.SubscriptionData",
@@ -2946,8 +2962,7 @@
           }
         ],
         "stateMutability": "view",
-        "type": "function",
-        "constant": true
+        "type": "function"
       },
       {
         "inputs": [
@@ -2988,8 +3003,7 @@
           }
         ],
         "stateMutability": "view",
-        "type": "function",
-        "constant": true
+        "type": "function"
       },
       {
         "inputs": [
@@ -3008,8 +3022,7 @@
           }
         ],
         "stateMutability": "view",
-        "type": "function",
-        "constant": true
+        "type": "function"
       },
       {
         "inputs": [
@@ -3028,8 +3041,7 @@
           }
         ],
         "stateMutability": "view",
-        "type": "function",
-        "constant": true
+        "type": "function"
       },
       {
         "inputs": [
@@ -3048,8 +3060,7 @@
           }
         ],
         "stateMutability": "view",
-        "type": "function",
-        "constant": true
+        "type": "function"
       },
       {
         "inputs": [
@@ -3068,8 +3079,7 @@
           }
         ],
         "stateMutability": "view",
-        "type": "function",
-        "constant": true
+        "type": "function"
       },
       {
         "inputs": [
@@ -3088,8 +3098,7 @@
           }
         ],
         "stateMutability": "view",
-        "type": "function",
-        "constant": true
+        "type": "function"
       },
       {
         "inputs": [],
@@ -3102,8 +3111,7 @@
           }
         ],
         "stateMutability": "view",
-        "type": "function",
-        "constant": true
+        "type": "function"
       },
       {
         "inputs": [],
@@ -3116,8 +3124,7 @@
           }
         ],
         "stateMutability": "view",
-        "type": "function",
-        "constant": true
+        "type": "function"
       },
       {
         "inputs": [],
@@ -3130,8 +3137,7 @@
           }
         ],
         "stateMutability": "view",
-        "type": "function",
-        "constant": true
+        "type": "function"
       },
       {
         "inputs": [],
@@ -3159,8 +3165,7 @@
           }
         ],
         "stateMutability": "pure",
-        "type": "function",
-        "constant": true
+        "type": "function"
       }
     ]
   },
@@ -3367,6 +3372,18 @@
             "internalType": "uint256",
             "name": "subscriptionID",
             "type": "uint256"
+          },
+          {
+            "indexed": false,
+            "internalType": "address",
+            "name": "payee",
+            "type": "address"
+          },
+          {
+            "indexed": false,
+            "internalType": "address",
+            "name": "payer",
+            "type": "address"
           }
         ],
         "name": "SubscriptionCancelled",
@@ -3383,8 +3400,7 @@
           }
         ],
         "stateMutability": "view",
-        "type": "function",
-        "constant": true
+        "type": "function"
       },
       {
         "inputs": [],
@@ -3397,8 +3413,7 @@
           }
         ],
         "stateMutability": "view",
-        "type": "function",
-        "constant": true
+        "type": "function"
       },
       {
         "inputs": [],
@@ -3715,8 +3730,7 @@
           }
         ],
         "stateMutability": "view",
-        "type": "function",
-        "constant": true
+        "type": "function"
       },
       {
         "inputs": [
@@ -3802,8 +3816,7 @@
           }
         ],
         "stateMutability": "view",
-        "type": "function",
-        "constant": true
+        "type": "function"
       },
       {
         "inputs": [
@@ -3881,6 +3894,11 @@
                 "internalType": "string",
                 "name": "uniqueReference",
                 "type": "string"
+              },
+              {
+                "internalType": "address",
+                "name": "cancelledBy",
+                "type": "address"
               }
             ],
             "internalType": "struct IRecurringPPWithPaidTrial.SubscriptionData",
@@ -3889,8 +3907,7 @@
           }
         ],
         "stateMutability": "view",
-        "type": "function",
-        "constant": true
+        "type": "function"
       },
       {
         "inputs": [
@@ -3931,8 +3948,7 @@
           }
         ],
         "stateMutability": "view",
-        "type": "function",
-        "constant": true
+        "type": "function"
       },
       {
         "inputs": [
@@ -3951,8 +3967,7 @@
           }
         ],
         "stateMutability": "view",
-        "type": "function",
-        "constant": true
+        "type": "function"
       },
       {
         "inputs": [
@@ -3971,8 +3986,7 @@
           }
         ],
         "stateMutability": "view",
-        "type": "function",
-        "constant": true
+        "type": "function"
       },
       {
         "inputs": [
@@ -3991,8 +4005,7 @@
           }
         ],
         "stateMutability": "view",
-        "type": "function",
-        "constant": true
+        "type": "function"
       },
       {
         "inputs": [
@@ -4011,8 +4024,7 @@
           }
         ],
         "stateMutability": "view",
-        "type": "function",
-        "constant": true
+        "type": "function"
       },
       {
         "inputs": [
@@ -4031,8 +4043,7 @@
           }
         ],
         "stateMutability": "view",
-        "type": "function",
-        "constant": true
+        "type": "function"
       },
       {
         "inputs": [],
@@ -4045,8 +4056,7 @@
           }
         ],
         "stateMutability": "view",
-        "type": "function",
-        "constant": true
+        "type": "function"
       },
       {
         "inputs": [],
@@ -4059,8 +4069,7 @@
           }
         ],
         "stateMutability": "view",
-        "type": "function",
-        "constant": true
+        "type": "function"
       },
       {
         "inputs": [],
@@ -4073,8 +4082,7 @@
           }
         ],
         "stateMutability": "view",
-        "type": "function",
-        "constant": true
+        "type": "function"
       },
       {
         "inputs": [],
@@ -4102,8 +4110,7 @@
           }
         ],
         "stateMutability": "pure",
-        "type": "function",
-        "constant": true
+        "type": "function"
       }
     ]
   },
@@ -4310,6 +4317,18 @@
             "internalType": "uint256",
             "name": "subscriptionID",
             "type": "uint256"
+          },
+          {
+            "indexed": false,
+            "internalType": "address",
+            "name": "payee",
+            "type": "address"
+          },
+          {
+            "indexed": false,
+            "internalType": "address",
+            "name": "payer",
+            "type": "address"
           }
         ],
         "name": "SubscriptionCancelled",
@@ -4326,8 +4345,7 @@
           }
         ],
         "stateMutability": "view",
-        "type": "function",
-        "constant": true
+        "type": "function"
       },
       {
         "inputs": [],
@@ -4340,8 +4358,7 @@
           }
         ],
         "stateMutability": "view",
-        "type": "function",
-        "constant": true
+        "type": "function"
       },
       {
         "inputs": [],
@@ -4618,8 +4635,7 @@
           }
         ],
         "stateMutability": "view",
-        "type": "function",
-        "constant": true
+        "type": "function"
       },
       {
         "inputs": [
@@ -4709,6 +4725,11 @@
                     "internalType": "string",
                     "name": "uniqueReference",
                     "type": "string"
+                  },
+                  {
+                    "internalType": "address",
+                    "name": "cancelledBy",
+                    "type": "address"
                   }
                 ],
                 "internalType": "struct IRecurringDynamicPullPayment.SubscriptionData",
@@ -4732,8 +4753,7 @@
           }
         ],
         "stateMutability": "view",
-        "type": "function",
-        "constant": true
+        "type": "function"
       },
       {
         "inputs": [
@@ -4774,8 +4794,7 @@
           }
         ],
         "stateMutability": "view",
-        "type": "function",
-        "constant": true
+        "type": "function"
       },
       {
         "inputs": [
@@ -4794,8 +4813,7 @@
           }
         ],
         "stateMutability": "view",
-        "type": "function",
-        "constant": true
+        "type": "function"
       },
       {
         "inputs": [
@@ -4814,8 +4832,7 @@
           }
         ],
         "stateMutability": "view",
-        "type": "function",
-        "constant": true
+        "type": "function"
       },
       {
         "inputs": [
@@ -4834,8 +4851,7 @@
           }
         ],
         "stateMutability": "view",
-        "type": "function",
-        "constant": true
+        "type": "function"
       },
       {
         "inputs": [
@@ -4854,8 +4870,7 @@
           }
         ],
         "stateMutability": "view",
-        "type": "function",
-        "constant": true
+        "type": "function"
       },
       {
         "inputs": [],
@@ -4868,8 +4883,7 @@
           }
         ],
         "stateMutability": "view",
-        "type": "function",
-        "constant": true
+        "type": "function"
       },
       {
         "inputs": [],
@@ -4882,8 +4896,7 @@
           }
         ],
         "stateMutability": "view",
-        "type": "function",
-        "constant": true
+        "type": "function"
       },
       {
         "inputs": [],
@@ -4896,8 +4909,7 @@
           }
         ],
         "stateMutability": "view",
-        "type": "function",
-        "constant": true
+        "type": "function"
       },
       {
         "inputs": [],
@@ -4925,8 +4937,7 @@
           }
         ],
         "stateMutability": "pure",
-        "type": "function",
-        "constant": true
+        "type": "function"
       }
     ]
   }

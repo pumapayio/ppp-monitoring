@@ -89,11 +89,9 @@ export class SinglePullPaymentEventHandler {
       contract,
       event,
     )
-    console.log('billingModel', billingModel)
     const bmSubscription = await this.bmSubscriptionsService.create(
       serializedSubscription,
     )
-    console.log('bmSubscription 1', bmSubscription)
     bmSubscription.billingModel = billingModel
     return bmSubscription
   }
@@ -191,7 +189,7 @@ export class SinglePullPaymentEventHandler {
       unserializedPullPayment,
       eventLog.transactionHash,
       bmDetails.payee,
-      this.web3Helper.getWeb3Instance(contract.networkId),
+      this.web3Helper.getWeb3Instance(event.networkId),
     )
 
     if (checkDb) {

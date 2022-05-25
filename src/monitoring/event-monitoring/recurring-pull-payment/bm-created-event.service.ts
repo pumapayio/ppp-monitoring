@@ -3,6 +3,8 @@ import { ContractEvent } from 'src/api/contract-event/contract-event.entity'
 import { ContractEventLog } from 'src/utils/blockchain'
 import { BaseMonitoring } from '../base-monitoring/base-monitoring'
 import { RecurringPullPaymentEventHandler } from './recurring-pull-payment.event-handler'
+import { UtilsService } from '../../../utils/utils.service'
+import { ContractEventTypes } from '../../../api/contract-event/contract-event-types'
 
 @Injectable()
 export class RecurringPullPaymentBMCreatedEventMonitoring {
@@ -15,8 +17,8 @@ export class RecurringPullPaymentBMCreatedEventMonitoring {
     event: ContractEvent,
     merchantAddresses: string[],
   ): Promise<void> {
-    // We don't handle this one so that we allow the app to crash
-    // in case there is no EXECUTOR_PRIVATE_KEY configured
+    // We don't handle (try-catch) this one so that we allow the
+    // app to crash in case there is no EXECUTOR_PRIVATE_KEY configured
     await this.baseMonitoring.monitor(
       event,
       merchantAddresses,
@@ -31,6 +33,7 @@ export class RecurringPullPaymentBMCreatedEventMonitoring {
     event: ContractEvent,
     eventLog: ContractEventLog,
     eventHandler: RecurringPullPaymentEventHandler,
+    utils: UtilsService,
   ): Promise<void> {
     if (merchantAddresses.length === 0) {
       // for non-merchant mode, we store all the events
@@ -49,13 +52,7 @@ export class RecurringPullPaymentBMCreatedEventMonitoring {
           event,
         )
 
-        delete bm.createdAt
-        delete bm.updatedAt
-        console.log('bm', bm)
-
-        // TODO: In case of 'Merchant' Mode
-        // We call an API which we can have the API key and url as
-        // configuration parameter for the developer to specify
+        await utils.notifyMerchant(ContractEventTypes.BillingModelCreated, bm)
       }
     }
   }

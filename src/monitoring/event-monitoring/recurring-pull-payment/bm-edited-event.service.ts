@@ -3,6 +3,8 @@ import { ContractEvent } from 'src/api/contract-event/contract-event.entity'
 import { ContractEventLog } from 'src/utils/blockchain'
 import { BaseMonitoring } from '../base-monitoring/base-monitoring'
 import { RecurringPullPaymentEventHandler } from './recurring-pull-payment.event-handler'
+import { UtilsService } from '../../../utils/utils.service'
+import { ContractEventTypes } from '../../../api/contract-event/contract-event-types'
 
 @Injectable()
 export class RecurringPullPaymentBMEditedEventMonitoring {
@@ -39,6 +41,7 @@ export class RecurringPullPaymentBMEditedEventMonitoring {
     event: ContractEvent,
     eventLog: ContractEventLog,
     eventHandler: RecurringPullPaymentEventHandler,
+    utils: UtilsService,
   ) {
     if (merchantAddresses.length === 0) {
       await eventHandler.handleBMCreateOrEditEvent(
@@ -47,15 +50,17 @@ export class RecurringPullPaymentBMEditedEventMonitoring {
         event,
       )
     } else {
-      if (merchantAddresses.includes(eventLog.returnValues.payee)) {
+      if (
+        merchantAddresses.includes(eventLog.returnValues.oldPayee) ||
+        merchantAddresses.includes(eventLog.returnValues.newPayee)
+      ) {
         const bm = await eventHandler.handleBMCreateOrEditEvent(
           eventLog.returnValues.billingModelID,
           contract,
           event,
         )
-        delete bm.createdAt
-        delete bm.updatedAt
-        console.log('bm', bm)
+
+        await utils.notifyMerchant(ContractEventTypes.BillingModelEdited, bm)
       }
     }
   }

@@ -21,11 +21,15 @@ export class MonitoringModule {
         let monitorAddresses = []
         if (utils.isMerchantMode()) {
           monitorAddresses = JSON.parse(config.get('app.monitoringAddresses'))
+          // this.utils.checkMerchantAPI().catch((e) => {
+          //   throw new Error(
+          //     `Merchant API has failed. Response status: ${e.response.status} - ${e.response.statusText}`,
+          //   )
+          // })
         }
-        this.monitoringService.monitorEvents(
-          String(networkId),
-          monitorAddresses,
-        )
+        this.monitoringService
+          .monitorEvents(String(networkId), monitorAddresses)
+          .catch((e) => console.error(e))
       },
     )
   }

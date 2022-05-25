@@ -191,6 +191,7 @@ export class MonitoringService {
     for (let event of events) {
       switch (event.contract.contractName) {
         case String(SmartContractNames.recurringPP):
+        case String(SmartContractNames.recurringDynamicPP):
         case String(SmartContractNames.recurringPPFreeTrial):
         case String(SmartContractNames.recurringPPPaidTrial): {
           await this.bmSubscriptionCancelledEventMonitoring.monitor(
@@ -199,7 +200,6 @@ export class MonitoringService {
           )
           break
         }
-        case String(SmartContractNames.recurringDynamicPP):
         case String(SmartContractNames.singlePP):
         case String(SmartContractNames.singleDynamicPP):
         default: {

@@ -3,6 +3,8 @@ import { BaseMonitoring } from '../base-monitoring/base-monitoring'
 import { ContractEvent } from '../../../api/contract-event/contract-event.entity'
 import { ContractEventLog } from '../../../utils/blockchain'
 import { RecurringPullPaymentEventHandler } from './recurring-pull-payment.event-handler'
+import { UtilsService } from '../../../utils/utils.service'
+import { ContractEventTypes } from '../../../api/contract-event/contract-event-types'
 
 @Injectable()
 export class SubscriptionCancelledEventMonitoring {
@@ -12,6 +14,7 @@ export class SubscriptionCancelledEventMonitoring {
 
   constructor(
     private baseMonitoring: BaseMonitoring,
+    private utils: UtilsService,
     private eventHandler: RecurringPullPaymentEventHandler,
   ) {}
 
@@ -39,12 +42,31 @@ export class SubscriptionCancelledEventMonitoring {
     event: ContractEvent,
     eventLog: ContractEventLog,
     eventHandler: RecurringPullPaymentEventHandler,
+    utils: UtilsService,
   ): Promise<void> {
-    await eventHandler.handleBMSubscriptionCreateOrEditEvent(
-      eventLog.returnValues.billingModelID,
-      eventLog.returnValues.subscriptionID,
-      contract,
-      event,
-    )
+    console.log(eventLog)
+    if (merchantAddresses.length === 0) {
+      await eventHandler.handleBMSubscriptionCreateOrEditEvent(
+        eventLog.returnValues.billingModelID,
+        eventLog.returnValues.subscriptionID,
+        contract,
+        event,
+      )
+    } else {
+      if (merchantAddresses.includes(eventLog.returnValues.payee)) {
+        const bmSubscription =
+          await eventHandler.handleBMSubscriptionCreateOrEditEvent(
+            eventLog.returnValues.billingModelID,
+            eventLog.returnValues.subscriptionID,
+            contract,
+            event,
+          )
+
+        await utils.notifyMerchant(
+          ContractEventTypes.SubscriptionCancelled,
+          bmSubscription,
+        )
+      }
+    }
   }
 }

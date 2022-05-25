@@ -3,6 +3,8 @@ import { ContractEvent } from 'src/api/contract-event/contract-event.entity'
 import { ContractEventLog } from 'src/utils/blockchain'
 import { BaseMonitoring } from '../base-monitoring/base-monitoring'
 import { SinglePullPaymentEventHandler } from './single-pull-payment.event-handler'
+import { UtilsService } from '../../../utils/utils.service'
+import { ContractEventTypes } from '../../../api/contract-event/contract-event-types'
 
 @Injectable()
 export class SingleBMSubscriptionEventMonitoring {
@@ -37,6 +39,7 @@ export class SingleBMSubscriptionEventMonitoring {
     event: ContractEvent,
     eventLog: ContractEventLog,
     eventHandler: SinglePullPaymentEventHandler,
+    utils: UtilsService,
   ): Promise<void> {
     if (merchantAddresses.length === 0) {
       await eventHandler.handleBMSubscriptionCreation(contract, event, eventLog)
@@ -49,16 +52,20 @@ export class SingleBMSubscriptionEventMonitoring {
           eventLog,
         )
 
-        console.log('bmSubscription', bmSubscription)
         const pullPayment = await eventHandler.handlePPCreation(
           contract,
           event,
           eventLog,
         )
-        console.log('pullPayment', pullPayment)
-        // TODO: In case of 'Merchant' Mode
-        // We call an API which we can have the API key and url as
-        // configuration parameter for the developer to specify
+        pullPayment.bmSubscription = bmSubscription
+
+        // NOTE: The actual event here is a new subscription, but since we are
+        // dealing with single payments it is also the execution of the pull
+        // payment, and we notify the merchant with this type of event
+        await utils.notifyMerchant(
+          ContractEventTypes.PullPaymentExecuted,
+          pullPayment,
+        )
       }
     }
   }

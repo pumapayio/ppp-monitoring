@@ -66,13 +66,27 @@ export default () => ({
 
   /*
   |--------------------------------------------------------------------------
-  | API Key
+  | Request Header Key
   |--------------------------------------------------------------------------
   |
-  | This is a api key that the executor node will use to call the api url
-  | provided by merchant
+  | This the http request header key which is used to authenticate the request
+  | on merchant side
+  | Examples:
+  | - Access-Token
+  | - Authorization
+  |
   */
-  apiKey: process.env.API_KEY || null,
+  requestHeaderKey: process.env.REQUEST_HEADER_KEY || null,
+
+  /*
+  |--------------------------------------------------------------------------
+  | Request Header Value
+  |--------------------------------------------------------------------------
+  |
+  | This is the value used for the request header key specified above and is
+  | used to eventually authenticate the request on merchant side
+  */
+  requestHeaderValue: process.env.REQUEST_HEADER_VALUE || null,
 
   /*
   |--------------------------------------------------------------------------

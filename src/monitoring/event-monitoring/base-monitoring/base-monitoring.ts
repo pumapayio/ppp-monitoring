@@ -8,6 +8,7 @@ import { sleep } from 'src/utils/sleep'
 import { Web3Helper } from 'src/utils/web3Connector/web3Helper'
 import { RecurringPullPaymentEventHandler } from '../recurring-pull-payment/recurring-pull-payment.event-handler'
 import { SinglePullPaymentEventHandler } from '../single-pull-payment/single-pull-payment.event-handler'
+import { UtilsService } from '../../../utils/utils.service'
 
 @Injectable()
 export class BaseMonitoring {
@@ -16,6 +17,7 @@ export class BaseMonitoring {
 
   constructor(
     private config: ConfigService,
+    private utils: UtilsService,
     private web3Helper: Web3Helper,
     private contractEventService: ContractEventService,
   ) {}
@@ -33,6 +35,7 @@ export class BaseMonitoring {
       eventHandler:
         | SinglePullPaymentEventHandler
         | RecurringPullPaymentEventHandler,
+      utils: UtilsService,
     ) => Promise<void>,
   ): Promise<void> {
     const web3 = this.web3Helper.getWeb3Instance(event.networkId)
@@ -114,6 +117,7 @@ export class BaseMonitoring {
               event,
               eventLog,
               eventHandler,
+              this.utils,
             )
             await this.contractEventService.update({
               id: event.id,
@@ -210,6 +214,7 @@ export class BaseMonitoring {
                       event,
                       pastEvent,
                       eventHandler,
+                      this.utils,
                     ),
                   )
                 } catch (error) {

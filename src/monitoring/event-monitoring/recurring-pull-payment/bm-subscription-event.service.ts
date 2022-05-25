@@ -3,6 +3,8 @@ import { ContractEvent } from 'src/api/contract-event/contract-event.entity'
 import { ContractEventLog } from 'src/utils/blockchain'
 import { BaseMonitoring } from '../base-monitoring/base-monitoring'
 import { RecurringPullPaymentEventHandler } from './recurring-pull-payment.event-handler'
+import { UtilsService } from '../../../utils/utils.service'
+import { ContractEventTypes } from '../../../api/contract-event/contract-event-types'
 
 @Injectable()
 export class RecurringBMSubscriptionEventMonitoring {
@@ -39,6 +41,7 @@ export class RecurringBMSubscriptionEventMonitoring {
     event: ContractEvent,
     eventLog: ContractEventLog,
     eventHandler: RecurringPullPaymentEventHandler,
+    utils: UtilsService,
   ): Promise<void> {
     if (merchantAddresses.length === 0) {
       await eventHandler.handleBMSubscriptionCreateOrEditEvent(
@@ -57,9 +60,10 @@ export class RecurringBMSubscriptionEventMonitoring {
             event,
           )
 
-        delete bmSubscription.createdAt
-        delete bmSubscription.updatedAt
-        console.log('bmSubscription', bmSubscription)
+        await utils.notifyMerchant(
+          ContractEventTypes.NewSubscription,
+          bmSubscription,
+        )
       }
     }
   }

@@ -40,16 +40,17 @@ export async function bootstrap() {
       if (
         JSON.parse(config.get('app.monitoringAddresses')).length === 0 ||
         config.get('app.apiURL') === null ||
-        config.get('app.apiKey') === null
+        config.get('app.requestHeaderKey') === null ||
+        config.get('app.requestHeaderValue') === null
       ) {
         throw Error(
           `=============================================
           Merchant Monitoring service not configured correctly!
-          Make sure you have set MONITORING_ADDRESSES, API_URL and API_KEY
+          Make sure you have set MONITORING_ADDRESSES, API_URL,
+          REQUEST_HEADER_KEY and REQUEST_HEADER_VALUE
           =============================================`,
         )
       }
-      // TODO: Call the api url with the api key and make sure you get a 200
     }
   }
   /*
@@ -106,9 +107,10 @@ export async function bootstrap() {
   |
   */
 
-  const logger = new Logger('bootstrap')
+  const logger = new Logger('Bootstrap')
 
   await app.listen(config.get('app.port'), () => {
     logger.log(`Server is listen on http://localhost:${config.get('app.port')}`)
+    logger.log(`=== OPERATION MODE - ${config.get('app.mode')} ===`)
   })
 }

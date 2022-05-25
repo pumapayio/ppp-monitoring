@@ -3,6 +3,8 @@ import { ContractEvent } from 'src/api/contract-event/contract-event.entity'
 import { ContractEventLog } from 'src/utils/blockchain'
 import { BaseMonitoring } from '../base-monitoring/base-monitoring'
 import { RecurringPullPaymentEventHandler } from './recurring-pull-payment.event-handler'
+import { UtilsService } from '../../../utils/utils.service'
+import { ContractEventTypes } from '../../../api/contract-event/contract-event-types'
 
 @Injectable()
 export class RecurringPPExecutionEventMonitoring {
@@ -10,6 +12,7 @@ export class RecurringPPExecutionEventMonitoring {
 
   constructor(
     private baseMonitoring: BaseMonitoring,
+    private utils: UtilsService,
     private eventHandler: RecurringPullPaymentEventHandler,
   ) {}
 
@@ -37,6 +40,7 @@ export class RecurringPPExecutionEventMonitoring {
     event: ContractEvent,
     eventLog: ContractEventLog,
     eventHandler: RecurringPullPaymentEventHandler,
+    utils: UtilsService,
   ): Promise<void> {
     if (merchantAddresses.length === 0) {
       await eventHandler.handlePPCreation(contract, event, eventLog)
@@ -48,9 +52,10 @@ export class RecurringPPExecutionEventMonitoring {
           eventLog,
         )
 
-        delete pullPayment.createdAt
-        delete pullPayment.updatedAt
-        console.log('pullPayment', pullPayment)
+        await utils.notifyMerchant(
+          ContractEventTypes.PullPaymentExecuted,
+          pullPayment,
+        )
       }
     }
   }

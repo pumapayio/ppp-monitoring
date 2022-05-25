@@ -3,6 +3,9 @@ import { ContractEvent } from 'src/api/contract-event/contract-event.entity'
 import { ContractEventLog } from 'src/utils/blockchain'
 import { BaseMonitoring } from '../base-monitoring/base-monitoring'
 import { SinglePullPaymentEventHandler } from './single-pull-payment.event-handler'
+import { UtilsService } from '../../../utils/utils.service'
+import { ContractEventTypes } from '../../../api/contract-event/contract-event-types'
+import { BillingModel } from '../../../api/billiing-model/billing-model.entity'
 
 @Injectable()
 export class SinglePullPaymentBMEditedEventMonitoring {
@@ -39,7 +42,9 @@ export class SinglePullPaymentBMEditedEventMonitoring {
     event: ContractEvent,
     eventLog: ContractEventLog,
     eventHandler: SinglePullPaymentEventHandler,
+    utils: UtilsService,
   ) {
+    console.log(eventLog)
     if (merchantAddresses.length === 0) {
       await eventHandler.handleBMCreateOrEditEvent(
         eventLog.returnValues.billingModelID,
@@ -47,18 +52,17 @@ export class SinglePullPaymentBMEditedEventMonitoring {
         event,
       )
     } else {
-      if (merchantAddresses.includes(eventLog.returnValues.payee)) {
+      if (
+        merchantAddresses.includes(eventLog.returnValues.oldPayee) ||
+        merchantAddresses.includes(eventLog.returnValues.newPayee)
+      ) {
         const bm = await eventHandler.handleBMCreateOrEditEvent(
           eventLog.returnValues.billingModelID,
           contract,
           event,
         )
-        delete bm.createdAt
-        delete bm.updatedAt
-        console.log('bm', bm)
-        // TODO: In case of 'Merchant' Mode
-        // We call an API which we can have the API key and url as
-        // configuration parameter for the developer to specify
+
+        await utils.notifyMerchant(ContractEventTypes.BillingModelEdited, bm)
       }
     }
   }
