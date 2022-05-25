@@ -17,18 +17,26 @@ export class UtilsService {
 
   public isExecutorMode(): boolean {
     return (
-      OperationModes[this.config.get('app.mode')] === OperationModes.Executor ||
-      OperationModes[this.config.get('app.mode')] ===
-        OperationModes.MerchantExecutor
+      OperationModes[this.config.get('app.operationMode')] ===
+        OperationModes.Executor ||
+      OperationModes[this.config.get('app.operationMode')] ===
+        OperationModes.MerchantNotification
     )
   }
 
   public isMerchantMode(): boolean {
     return (
-      OperationModes[this.config.get('app.mode')] ===
+      OperationModes[this.config.get('app.operationMode')] ===
         OperationModes.MerchantMonitoring ||
-      OperationModes[this.config.get('app.mode')] ===
-        OperationModes.MerchantExecutor
+      OperationModes[this.config.get('app.operationMode')] ===
+        OperationModes.MerchantNotification
+    )
+  }
+
+  public isMerchantNotification(): boolean {
+    return (
+      OperationModes[this.config.get('app.operationMode')] ===
+      OperationModes.MerchantNotification
     )
   }
 
@@ -47,7 +55,7 @@ export class UtilsService {
   ): Promise<any> {
     const notificationMsg = this.constructNotificationBody(eventType, payload)
     const headers = this.setupHeaders()
-    console.log('notifying....', eventType, notificationMsg)
+
     return this.httpService
       .post(this.config.get('app.apiURL'), notificationMsg, {
         headers,

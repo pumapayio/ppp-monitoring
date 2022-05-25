@@ -30,7 +30,7 @@ export class RecurringPullPaymentBMEditedEventMonitoring {
       )
     } catch (error) {
       this.logger.debug(
-        `Failed to handle billing model creation events. Reason: ${error.message}`,
+        `Failed to handle billing model edit events. Reason: ${error.message}`,
       )
     }
   }
@@ -59,8 +59,8 @@ export class RecurringPullPaymentBMEditedEventMonitoring {
           contract,
           event,
         )
-
-        await utils.notifyMerchant(ContractEventTypes.BillingModelEdited, bm)
+        if (utils.isMerchantNotification())
+          await utils.notifyMerchant(ContractEventTypes.BillingModelEdited, bm)
       }
     }
   }

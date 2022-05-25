@@ -30,7 +30,7 @@ export class RecurringBMSubscriptionEventMonitoring {
       )
     } catch (error) {
       this.logger.debug(
-        `Failed to handle billing model creation events. Reason: ${error.message}`,
+        `Failed to handle billing model subscription events. Reason: ${error.message}`,
       )
     }
   }
@@ -60,10 +60,11 @@ export class RecurringBMSubscriptionEventMonitoring {
             event,
           )
 
-        await utils.notifyMerchant(
-          ContractEventTypes.NewSubscription,
-          bmSubscription,
-        )
+        if (utils.isMerchantNotification())
+          await utils.notifyMerchant(
+            ContractEventTypes.NewSubscription,
+            bmSubscription,
+          )
       }
     }
   }

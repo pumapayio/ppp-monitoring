@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import { Injectable, Logger } from '@nestjs/common'
 import { ContractEvent } from 'src/api/contract-event/contract-event.entity'
 import { ContractEventLog } from 'src/utils/blockchain'
 import { BaseMonitoring } from '../base-monitoring/base-monitoring'
@@ -8,6 +8,10 @@ import { ContractEventTypes } from '../../../api/contract-event/contract-event-t
 
 @Injectable()
 export class RecurringPullPaymentBMCreatedEventMonitoring {
+  private readonly logger = new Logger(
+    RecurringPullPaymentBMCreatedEventMonitoring.name,
+  )
+
   constructor(
     private baseMonitoring: BaseMonitoring,
     private eventHandler: RecurringPullPaymentEventHandler,
@@ -17,14 +21,18 @@ export class RecurringPullPaymentBMCreatedEventMonitoring {
     event: ContractEvent,
     merchantAddresses: string[],
   ): Promise<void> {
-    // We don't handle (try-catch) this one so that we allow the
-    // app to crash in case there is no EXECUTOR_PRIVATE_KEY configured
-    await this.baseMonitoring.monitor(
-      event,
-      merchantAddresses,
-      this.eventHandler,
-      this.handleEventLog,
-    )
+    try {
+      await this.baseMonitoring.monitor(
+        event,
+        merchantAddresses,
+        this.eventHandler,
+        this.handleEventLog,
+      )
+    } catch (error) {
+      this.logger.debug(
+        `Failed to handle billing model creation events. Reason: ${error.message}`,
+      )
+    }
   }
 
   private async handleEventLog(
@@ -52,7 +60,8 @@ export class RecurringPullPaymentBMCreatedEventMonitoring {
           event,
         )
 
-        await utils.notifyMerchant(ContractEventTypes.BillingModelCreated, bm)
+        if (utils.isMerchantNotification())
+          await utils.notifyMerchant(ContractEventTypes.BillingModelCreated, bm)
       }
     }
   }

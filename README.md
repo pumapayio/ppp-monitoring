@@ -16,7 +16,7 @@ This app monitors, stores and trigger the execution of pull payments
 - [Docker](https://docs.docker.com/desktop/)
 - [Docker Comppose](https://docs.docker.com/compose/install/)
 
-We recommand using [Homebrew](https://brew.sh/index_de) on your MAC or [choco](https://chocolatey.org/install) on windows.
+We recommend using [Homebrew](https://brew.sh/index_de) on your MAC or [choco](https://chocolatey.org/install) on windows.
 
 Now we can install our dependencies with the following command.
 

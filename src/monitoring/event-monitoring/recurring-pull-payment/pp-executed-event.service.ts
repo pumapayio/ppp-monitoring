@@ -29,7 +29,7 @@ export class RecurringPPExecutionEventMonitoring {
       )
     } catch (error) {
       this.logger.debug(
-        `Failed to handle billing model creation events. Reason: ${error.message}`,
+        `Failed to handle pull payment execution events. Reason: ${error.message}`,
       )
     }
   }
@@ -52,10 +52,11 @@ export class RecurringPPExecutionEventMonitoring {
           eventLog,
         )
 
-        await utils.notifyMerchant(
-          ContractEventTypes.PullPaymentExecuted,
-          pullPayment,
-        )
+        if (utils.isMerchantNotification())
+          await utils.notifyMerchant(
+            ContractEventTypes.PullPaymentExecuted,
+            pullPayment,
+          )
       }
     }
   }

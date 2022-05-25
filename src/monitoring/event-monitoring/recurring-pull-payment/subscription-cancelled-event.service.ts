@@ -31,7 +31,7 @@ export class SubscriptionCancelledEventMonitoring {
       )
     } catch (error) {
       this.logger.debug(
-        `Failed to handle billing model creation events. Reason: ${error.message}`,
+        `Failed to handle bm subscription cancelled events. Reason: ${error.message}`,
       )
     }
   }

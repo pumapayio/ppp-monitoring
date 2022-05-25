@@ -28,7 +28,7 @@ export class SingleBMSubscriptionEventMonitoring {
       )
     } catch (error) {
       this.logger.debug(
-        `Failed to handle billing model creation events. Reason: ${error.message}`,
+        `Failed to handle pull payment execution events. Reason: ${error.message}`,
       )
     }
   }
@@ -59,13 +59,14 @@ export class SingleBMSubscriptionEventMonitoring {
         )
         pullPayment.bmSubscription = bmSubscription
 
-        // NOTE: The actual event here is a new subscription, but since we are
-        // dealing with single payments it is also the execution of the pull
-        // payment, and we notify the merchant with this type of event
-        await utils.notifyMerchant(
-          ContractEventTypes.PullPaymentExecuted,
-          pullPayment,
-        )
+        if (utils.isMerchantNotification())
+          // NOTE: The actual event here is a new subscription, but since we are
+          // dealing with single payments it is also the execution of the pull
+          // payment, and we notify the merchant with this type of event
+          await utils.notifyMerchant(
+            ContractEventTypes.PullPaymentExecuted,
+            pullPayment,
+          )
       }
     }
   }

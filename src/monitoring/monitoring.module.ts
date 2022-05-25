@@ -19,13 +19,15 @@ export class MonitoringModule {
     JSON.parse(this.config.get('blockchain.supportedNetworks')).map(
       (networkId) => {
         let monitorAddresses = []
-        if (utils.isMerchantMode()) {
+        if (this.utils.isMerchantMode()) {
           monitorAddresses = JSON.parse(config.get('app.monitoringAddresses'))
-          // this.utils.checkMerchantAPI().catch((e) => {
-          //   throw new Error(
-          //     `Merchant API has failed. Response status: ${e.response.status} - ${e.response.statusText}`,
-          //   )
-          // })
+          if (this.utils.isMerchantNotification()) {
+            this.utils.checkMerchantAPI().catch((e) => {
+              throw new Error(
+                `Merchant API has failed. Response status: ${e.response.status} - ${e.response.statusText}`,
+              )
+            })
+          }
         }
         this.monitoringService
           .monitorEvents(String(networkId), monitorAddresses)

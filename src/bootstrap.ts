@@ -35,8 +35,31 @@ export async function bootstrap() {
   |--------------------------------------------------------------------------
   |
   */
-  switch (config.get('app.mode')) {
-    case OperationModes.MerchantMonitoring: {
+  switch (config.get('app.operationMode')) {
+    case OperationModes.Executor: {
+      if (config.get('blockchain.executorKey') === null) {
+        throw Error(
+          `=============================================
+          Executor service not configured correctly!
+          Make sure you have set EXECUTOR_PRIVATE_KEY
+          =============================================`,
+        )
+      }
+      break
+    }
+    case OperationModes.MerchantMonitoring:
+      {
+        if (JSON.parse(config.get('app.monitoringAddresses')).length === 0) {
+          throw Error(
+            `=============================================
+          Merchant Monitoring service not configured correctly!
+          Make sure you have set MONITORING_ADDRESSES
+          =============================================`,
+          )
+        }
+      }
+      break
+    case OperationModes.MerchantNotification: {
       if (
         JSON.parse(config.get('app.monitoringAddresses')).length === 0 ||
         config.get('app.apiURL') === null ||
@@ -45,12 +68,13 @@ export async function bootstrap() {
       ) {
         throw Error(
           `=============================================
-          Merchant Monitoring service not configured correctly!
+          Merchant Notification service not configured correctly!
           Make sure you have set MONITORING_ADDRESSES, API_URL,
           REQUEST_HEADER_KEY and REQUEST_HEADER_VALUE
           =============================================`,
         )
       }
+      break
     }
   }
   /*
@@ -58,7 +82,7 @@ export async function bootstrap() {
   | Add Global Express Middlewares
   |--------------------------------------------------------------------------
   |
-  | Here we can add some globel express middlewares. This will affect the
+  | Here we can add some global express middlewares. This will affect the
   | whole application.
   |
   */
@@ -111,6 +135,6 @@ export async function bootstrap() {
 
   await app.listen(config.get('app.port'), () => {
     logger.log(`Server is listen on http://localhost:${config.get('app.port')}`)
-    logger.log(`=== OPERATION MODE - ${config.get('app.mode')} ===`)
+    logger.log(`=== OPERATION MODE - ${config.get('app.operationMode')} ===`)
   })
 }

@@ -101,7 +101,7 @@ export class Web3Connector {
   private static setupDefaultAccount(web3) {
     if (
       process.env.MODE !== OperationModes.Executor &&
-      process.env.MODE !== OperationModes.MerchantExecutor &&
+      process.env.MODE !== OperationModes.MerchantNotification &&
       (process.env.EXECUTOR_PRIVATE_KEY === '' ||
         process.env.EXECUTOR_PRIVATE_KEY === undefined)
     ) {
