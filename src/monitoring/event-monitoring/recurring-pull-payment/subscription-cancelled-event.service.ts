@@ -44,7 +44,6 @@ export class SubscriptionCancelledEventMonitoring {
     eventHandler: RecurringPullPaymentEventHandler,
     utils: UtilsService,
   ): Promise<void> {
-    console.log(eventLog)
     if (merchantAddresses.length === 0) {
       await eventHandler.handleBMSubscriptionCreateOrEditEvent(
         eventLog.returnValues.billingModelID,

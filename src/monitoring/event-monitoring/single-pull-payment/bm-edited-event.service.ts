@@ -44,7 +44,6 @@ export class SinglePullPaymentBMEditedEventMonitoring {
     eventHandler: SinglePullPaymentEventHandler,
     utils: UtilsService,
   ) {
-    console.log(eventLog)
     if (merchantAddresses.length === 0) {
       await eventHandler.handleBMCreateOrEditEvent(
         eventLog.returnValues.billingModelID,
