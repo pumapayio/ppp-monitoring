@@ -28,13 +28,9 @@ $ yarn install
 
 Copy the `.env.examle` and rename it to `.env`. In this file collects all the global configurations.
 
-NOTE: `NODE_ENV` specifies which env file will be used when launcing the app.
-
-Example: In case of `NODE_ENV=dev` the app will use `env.dev` file
-
 ### Database setup
 
-We have setup the local DB using docker-compose to make it easier
+We have set up the local DB using docker-compose to make it easier
 
 ```bash
 # starts the docker image and have it running in the background (-d)
