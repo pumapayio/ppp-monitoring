@@ -155,13 +155,18 @@ export class BlockchainGlobals {
     switch (networkId) {
       case ChainId.BSC_MAINNET:
         // TODO: We must have a list of providers to connect to
-        return ['https://bsc-dataseed.binance.org/']
+        return [
+          'https://bsc-dataseed.binance.org/',
+          'https://bsc-dataseed2.binance.org/',
+          'https://bsc-dataseed3.binance.org/',
+          'https://bsc-dataseed4.binance.org',
+        ]
       case ChainId.BSC_TESTNET:
       default:
         return [
           'https://data-seed-prebsc-1-s1.binance.org:8545/',
-          'https://data-seed-prebsc-1-s2.binance.org:8545/',
-          'https://data-seed-prebsc-2-s3.binance.org:8545/',
+          // 'https://data-seed-prebsc-1-s2.binance.org:8545/',
+          // 'https://data-seed-prebsc-2-s3.binance.org:8545/',
         ]
     }
   }
