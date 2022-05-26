@@ -89,7 +89,7 @@ export class Web3Connector {
       throw new Error('No network ID provided!')
     if (!Web3Connector.web3HttpProviders[networkId]) {
       let web3 = new Web3(new Web3.providers.HttpProvider(rpcUrl))
-      if (process.env.OPERATION_MODE !== OperationModes.Executor) {
+      if (process.env.OPERATION_MODE === OperationModes.Executor) {
         web3 = Web3Connector.setupDefaultAccount(web3)
       }
       this.web3HttpProviders[networkId] = web3
