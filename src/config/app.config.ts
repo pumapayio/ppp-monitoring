@@ -51,7 +51,7 @@ export default () => ({
   | or MerchantMonitoring mode
   |
   */
-  monitoringAddresses: process.env.MONITORING_ADDRESSES || [],
+  monitoringAddresses: process.env.MONITORING_ADDRESSES || '[]',
 
   /*
   |--------------------------------------------------------------------------
@@ -98,16 +98,6 @@ export default () => ({
   */
 
   port: parseInt(process.env.PORT, 10) || 3333,
-
-  /*
-  |--------------------------------------------------------------------------
-  | Client URL
-  |--------------------------------------------------------------------------
-  |
-  | This value defines the url to our web client.
-  |
-  */
-  clientUrl: process.env.CLIENT_URL || 'http://localhost:8080/tournament',
 
   /*
   |--------------------------------------------------------------------------
