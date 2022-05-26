@@ -53,6 +53,9 @@ export class BMSubscription extends DateAudit {
   @Column('varchar', { length: 11, nullable: true })
   cancelTimestamp: string
 
+  @Column('varchar', { length: 42, nullable: true })
+  cancelledBy: string
+
   @Index()
   @Column('varchar', { length: 11, nullable: true })
   nextPaymentTimestamp: string

@@ -1,5 +1,4 @@
 import { IsNotEmpty } from 'class-validator'
-import { Column } from 'typeorm'
 
 export class CreateBMSubscriptionDto {
   // to be used in case we want to do create or update
@@ -30,6 +29,7 @@ export class CreateBMSubscriptionDto {
   remainingNumberOfPayments?: string
   startTimestamp?: string
   cancelTimestamp?: string
+  cancelledBy?: string
   nextPaymentTimestamp?: string
   lastPaymentTimestamp?: string
 }

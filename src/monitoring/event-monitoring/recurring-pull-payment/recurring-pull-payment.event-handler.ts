@@ -40,7 +40,7 @@ export class RecurringPullPaymentEventHandler {
       checkDb,
     )
 
-    await this.billingModelService.create(billingModelDetails)
+    return await this.billingModelService.create(billingModelDetails)
   }
 
   public async handleBMSubscriptionCreateOrEditEvent(
@@ -57,9 +57,18 @@ export class RecurringPullPaymentEventHandler {
       event,
       checkDb,
     )
-    await this.handleMissingBMRecord(billingModelId, contract, event)
+    const billingModel = await this.handleMissingBMRecord(
+      billingModelId,
+      contract,
+      event,
+    )
 
-    await this.bmSubscriptionsService.create(bmSubscriptionDetails)
+    const createBMSubscription = await this.bmSubscriptionsService.create(
+      bmSubscriptionDetails,
+    )
+    createBMSubscription.billingModel = billingModel
+
+    return createBMSubscription
   }
 
   public async handlePPCreation(
@@ -77,15 +86,19 @@ export class RecurringPullPaymentEventHandler {
       event,
       checkDb,
     )
-    await this.handleBMSubscriptionCreateOrEditEvent(
+    const bmSubscription = await this.handleBMSubscriptionCreateOrEditEvent(
       eventLog.returnValues.billingModelID,
       eventLog.returnValues.subscriptionID,
       contract,
       event,
       checkDb,
     )
+    const createdPPDetails = await this.pullPaymentService.create(
+      pullPaymentDetails,
+    )
+    createdPPDetails.bmSubscription = bmSubscription
 
-    await this.pullPaymentService.create(pullPaymentDetails)
+    return createdPPDetails
   }
 
   private async constructBMDetails(
@@ -187,7 +200,7 @@ export class RecurringPullPaymentEventHandler {
       unserializedPullPayment,
       transactionHash,
       bmDetails.payee,
-      this.web3Helper.getWeb3Instance(contract.networkId),
+      this.web3Helper.getWeb3Instance(event.networkId),
     )
 
     if (checkDb) {
@@ -214,9 +227,14 @@ export class RecurringPullPaymentEventHandler {
       event.contractAddress,
       event.networkId,
     )
-    if (dbRecord) return
+    if (dbRecord) return dbRecord
     // no need to check from the db as we just did above
     // and we know that the record doesn't exist
-    await this.handleBMCreateOrEditEvent(billingModelId, contract, event, false)
+    return await this.handleBMCreateOrEditEvent(
+      billingModelId,
+      contract,
+      event,
+      false,
+    )
   }
 }

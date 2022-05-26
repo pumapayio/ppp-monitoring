@@ -26,22 +26,66 @@ export default () => ({
 
   /*
   |--------------------------------------------------------------------------
-  | (Operation) Mode
+  | Operation Mode
   |--------------------------------------------------------------------------
   |
   | This value defines the operation mode of the executor node.
   | There are 4 modes supported that eventually will be supported:
-  |   - Executor          =>  Monitor all the blockchain events and trigger executions
-  |   - Monitoring        =>  Monitor all the blockchain events but no executions
-  |   - MerchantExecutor  =>  Monitors blockchain events for a specific set of
-  |                           addresses and triggers executions only for those
-  |   - MerchantMonitor   => Monitors blockchain events for a specific set of
-  |                           addresses but does NOT trigger any executions
-  | Currently Supporting: [Executor , Monitoring]
+  |   - Executor              =>  Monitor all the blockchain events and trigger executions
+  |   - Monitoring            =>  Monitor all the blockchain events but no executions
+  |   - MerchantNotification  =>  Monitors blockchain events for a specific set of
+  |                               addresses and triggers executions only for those
+  |   - MerchantMonitoring    => Monitors blockchain events for a specific set of
+  |                               addresses but does NOT trigger any executions
+  | Currently Supporting: [Executor , Monitoring, MerchantMonitor, MerchantNotification]
   |
   */
+  operationMode: process.env.OPERATION_MODE || 'Monitoring',
 
-  mode: process.env.MODE || 'Executor',
+  /*
+  |--------------------------------------------------------------------------
+  | Monitoring Addresses
+  |--------------------------------------------------------------------------
+  |
+  | This is a list of addresses to be monitored in case of MerchantNotification
+  | or MerchantMonitoring mode
+  |
+  */
+  monitoringAddresses: process.env.MONITORING_ADDRESSES || [],
+
+  /*
+  |--------------------------------------------------------------------------
+  | API Key
+  |--------------------------------------------------------------------------
+  |
+  | This is a api key that the executor node will use to call the api url
+  | provided by merchant
+  */
+  apiURL: process.env.API_URL || null,
+
+  /*
+  |--------------------------------------------------------------------------
+  | Request Header Key
+  |--------------------------------------------------------------------------
+  |
+  | This the http request header key which is used to authenticate the request
+  | on merchant side
+  | Examples:
+  | - Access-Token
+  | - Authorization
+  |
+  */
+  requestHeaderKey: process.env.REQUEST_HEADER_KEY || null,
+
+  /*
+  |--------------------------------------------------------------------------
+  | Request Header Value
+  |--------------------------------------------------------------------------
+  |
+  | This is the value used for the request header key specified above and is
+  | used to eventually authenticate the request on merchant side
+  */
+  requestHeaderValue: process.env.REQUEST_HEADER_VALUE || null,
 
   /*
   |--------------------------------------------------------------------------

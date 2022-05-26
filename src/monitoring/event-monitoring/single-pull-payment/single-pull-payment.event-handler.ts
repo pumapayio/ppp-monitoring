@@ -39,7 +39,7 @@ export class SinglePullPaymentEventHandler {
       event,
       checkDb,
     )
-    await this.billingModelService.create(billingModelDetails)
+    return await this.billingModelService.create(billingModelDetails)
   }
 
   private async constructBMDetails(
@@ -84,12 +84,16 @@ export class SinglePullPaymentEventHandler {
       eventLog,
       checkDb,
     )
-    await this.handleMissingBMRecord(
+    const billingModel = await this.handleMissingBMRecord(
       eventLog.returnValues.billingModelID,
       contract,
       event,
     )
-    await this.bmSubscriptionsService.create(serializedSubscription)
+    const bmSubscription = await this.bmSubscriptionsService.create(
+      serializedSubscription,
+    )
+    bmSubscription.billingModel = billingModel
+    return bmSubscription
   }
 
   private async constructBMSubscriptionDetails(
@@ -133,10 +137,15 @@ export class SinglePullPaymentEventHandler {
       event.contractAddress,
       event.networkId,
     )
-    if (dbRecord) return
+    if (dbRecord) return dbRecord
     // no need to check from the db as we just did above
     // and we know that the record doesn't exist
-    await this.handleBMCreateOrEditEvent(billingModelId, contract, event, false)
+    return await this.handleBMCreateOrEditEvent(
+      billingModelId,
+      contract,
+      event,
+      false,
+    )
   }
 
   public async handlePPCreation(
@@ -151,7 +160,7 @@ export class SinglePullPaymentEventHandler {
       eventLog,
       checkDb,
     )
-    await this.pullPaymentService.create(serializedPullPayment)
+    return await this.pullPaymentService.create(serializedPullPayment)
   }
 
   private async constructPPDetails(
@@ -180,7 +189,7 @@ export class SinglePullPaymentEventHandler {
       unserializedPullPayment,
       eventLog.transactionHash,
       bmDetails.payee,
-      this.web3Helper.getWeb3Instance(contract.networkId),
+      this.web3Helper.getWeb3Instance(event.networkId),
     )
 
     if (checkDb) {

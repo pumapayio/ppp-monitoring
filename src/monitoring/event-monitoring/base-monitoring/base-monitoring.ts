@@ -8,6 +8,7 @@ import { sleep } from 'src/utils/sleep'
 import { Web3Helper } from 'src/utils/web3Connector/web3Helper'
 import { RecurringPullPaymentEventHandler } from '../recurring-pull-payment/recurring-pull-payment.event-handler'
 import { SinglePullPaymentEventHandler } from '../single-pull-payment/single-pull-payment.event-handler'
+import { UtilsService } from '../../../utils/utils.service'
 
 @Injectable()
 export class BaseMonitoring {
@@ -16,21 +17,25 @@ export class BaseMonitoring {
 
   constructor(
     private config: ConfigService,
+    private utils: UtilsService,
     private web3Helper: Web3Helper,
     private contractEventService: ContractEventService,
   ) {}
   public async monitor(
     event: ContractEvent,
+    merchantAddresses: string[],
     eventHandler:
       | SinglePullPaymentEventHandler
       | RecurringPullPaymentEventHandler,
     handleEventLog: (
       contract: any,
+      merchantAddresses: string[],
       event: ContractEvent,
       eventLog: ContractEventLog,
       eventHandler:
         | SinglePullPaymentEventHandler
         | RecurringPullPaymentEventHandler,
+      utils: UtilsService,
     ) => Promise<void>,
   ): Promise<void> {
     const web3 = this.web3Helper.getWeb3Instance(event.networkId)
@@ -47,6 +52,7 @@ export class BaseMonitoring {
         })
         await this.processPastEvents(
           event,
+          merchantAddresses,
           currentBlockNumber,
           handleEventLog,
           eventHandler,
@@ -54,12 +60,14 @@ export class BaseMonitoring {
       }
       await this.monitorFutureEvents(
         event,
+        merchantAddresses,
         currentBlockNumber,
         handleEventLog,
         eventHandler,
       )
       this.ensureFutureEventMonitoring(
         event,
+        merchantAddresses,
         currentBlockNumber,
         handleEventLog,
         eventHandler,
@@ -73,6 +81,7 @@ export class BaseMonitoring {
 
   private async monitorFutureEvents(
     event: ContractEvent,
+    merchantAddresses: string[],
     currentBlockNumber: number,
     handleEventLog: Function,
     eventHandler:
@@ -102,7 +111,14 @@ export class BaseMonitoring {
         })
         .on('data', async (eventLog: ContractEventLog) => {
           try {
-            await handleEventLog(contract, event, eventLog, eventHandler)
+            await handleEventLog(
+              contract,
+              merchantAddresses,
+              event,
+              eventLog,
+              eventHandler,
+              this.utils,
+            )
             await this.contractEventService.update({
               id: event.id,
               lastSyncedBlock: eventLog.blockNumber,
@@ -128,6 +144,7 @@ export class BaseMonitoring {
       await sleep(10000) // Sleep 10 seconds and start again monitoring events
       this.monitorFutureEvents(
         event,
+        merchantAddresses,
         currentBlockNumber,
         handleEventLog,
         eventHandler,
@@ -137,6 +154,7 @@ export class BaseMonitoring {
 
   private async processPastEvents(
     event: ContractEvent,
+    merchantAddresses: string[],
     currentBlockNumber: number,
     handleEventLog: Function,
     eventHandler:
@@ -176,6 +194,7 @@ export class BaseMonitoring {
             toBlock: toBlock,
           },
         )
+        // console.log('pastEvents', pastEvents)
 
         this.logger.log(
           `Found ${pastEvents.length} ${event.eventName} past events for ${event.contract.contractName}.`,
@@ -191,9 +210,11 @@ export class BaseMonitoring {
                   resolve(
                     await handleEventLog(
                       contract,
+                      merchantAddresses,
                       event,
                       pastEvent,
                       eventHandler,
+                      this.utils,
                     ),
                   )
                 } catch (error) {
@@ -235,6 +256,7 @@ export class BaseMonitoring {
       await sleep(10000) // Sleep 10 seconds and start again monitoring events
       this.processPastEvents(
         event,
+        merchantAddresses,
         currentBlockNumber,
         handleEventLog,
         eventHandler,
@@ -244,6 +266,7 @@ export class BaseMonitoring {
 
   private async ensureFutureEventMonitoring(
     event: ContractEvent,
+    merchantAddresses: string[],
     currentBlockNumber: number,
     handleEventLog: Function,
     eventHandler:
@@ -261,6 +284,7 @@ export class BaseMonitoring {
       // so, we try to connect again
       await this.monitorFutureEvents(
         event,
+        merchantAddresses,
         currentBlockNumber,
         handleEventLog,
         eventHandler,

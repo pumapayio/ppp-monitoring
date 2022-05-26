@@ -10,6 +10,7 @@ import { resolve } from 'path'
 
 import { AppModule } from './app.module'
 import { ConfigService } from '@nestjs/config'
+import { OperationModes } from './utils/operationModes'
 
 export async function bootstrap() {
   /*
@@ -30,10 +31,58 @@ export async function bootstrap() {
 
   /*
   |--------------------------------------------------------------------------
+  | Check that the configuration is correct based on the operation mdoe
+  |--------------------------------------------------------------------------
+  |
+  */
+  switch (config.get('app.operationMode')) {
+    case OperationModes.Executor: {
+      if (config.get('blockchain.executorKey') === null) {
+        throw Error(
+          `=============================================
+          Executor service not configured correctly!
+          Make sure you have set EXECUTOR_PRIVATE_KEY
+          =============================================`,
+        )
+      }
+      break
+    }
+    case OperationModes.MerchantMonitoring:
+      {
+        if (JSON.parse(config.get('app.monitoringAddresses')).length === 0) {
+          throw Error(
+            `=============================================
+          Merchant Monitoring service not configured correctly!
+          Make sure you have set MONITORING_ADDRESSES
+          =============================================`,
+          )
+        }
+      }
+      break
+    case OperationModes.MerchantNotification: {
+      if (
+        JSON.parse(config.get('app.monitoringAddresses')).length === 0 ||
+        config.get('app.apiURL') === null ||
+        config.get('app.requestHeaderKey') === null ||
+        config.get('app.requestHeaderValue') === null
+      ) {
+        throw Error(
+          `=============================================
+          Merchant Notification service not configured correctly!
+          Make sure you have set MONITORING_ADDRESSES, API_URL,
+          REQUEST_HEADER_KEY and REQUEST_HEADER_VALUE
+          =============================================`,
+        )
+      }
+      break
+    }
+  }
+  /*
+  |--------------------------------------------------------------------------
   | Add Global Express Middlewares
   |--------------------------------------------------------------------------
   |
-  | Here we can add some globel express middlewares. This will affect the
+  | Here we can add some global express middlewares. This will affect the
   | whole application.
   |
   */
@@ -82,9 +131,10 @@ export async function bootstrap() {
   |
   */
 
-  const logger = new Logger('bootstrap')
+  const logger = new Logger('Bootstrap')
 
   await app.listen(config.get('app.port'), () => {
     logger.log(`Server is listen on http://localhost:${config.get('app.port')}`)
+    logger.log(`=== OPERATION MODE - ${config.get('app.operationMode')} ===`)
   })
 }

@@ -1,6 +1,6 @@
 export enum OperationModes {
   Executor = 'Executor',
   Monitoring = 'Monitoring',
-  MerchantExecutor = 'MerchantExecutor',
+  MerchantNotification = 'MerchantNotification',
   MerchantMonitoring = 'MerchantMonitoring',
 }

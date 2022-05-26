@@ -111,41 +111,41 @@ export class BlockchainGlobals {
       },
       [SmartContractNames.executor]: {
         // TODO: Update the contract addresses for BSC mainnet
-        [ChainId.BSC_MAINNET]: '0xc9fdd1778b659E051290E40bdBbd88709FD56900',
-        [ChainId.BSC_TESTNET]: '0xc9fdd1778b659E051290E40bdBbd88709FD56900',
+        [ChainId.BSC_MAINNET]: '0x286d4B4306ef74e68c7F2BAd529648812503593e',
+        [ChainId.BSC_TESTNET]: '0x286d4B4306ef74e68c7F2BAd529648812503593e',
       },
       [SmartContractNames.coreRegistry]: {
         // TODO: Update the contract addresses for BSC mainnet
-        [ChainId.BSC_MAINNET]: '0xb74FE07AbB552d9c05ebE08A8bC956aEf51D6B03',
-        [ChainId.BSC_TESTNET]: '0xb74FE07AbB552d9c05ebE08A8bC956aEf51D6B03',
+        [ChainId.BSC_MAINNET]: '0x5358A28A3fdFD3e43DF0Ec0dE2Cdaf6c1365E572',
+        [ChainId.BSC_TESTNET]: '0x5358A28A3fdFD3e43DF0Ec0dE2Cdaf6c1365E572',
       },
       [SmartContractNames.ppRegistry]: {
-        [ChainId.BSC_MAINNET]: '0x9B14FDbA0031D314A67c1bd27232a755F321dF2F',
-        [ChainId.BSC_TESTNET]: '0x9B14FDbA0031D314A67c1bd27232a755F321dF2F',
+        [ChainId.BSC_MAINNET]: '0xb66FDF8e16C78a20c4742867EBA5d6e08a37F451',
+        [ChainId.BSC_TESTNET]: '0xb66FDF8e16C78a20c4742867EBA5d6e08a37F451',
       },
       [SmartContractNames.singlePP]: {
-        [ChainId.BSC_MAINNET]: '0xCc6b2D6f14f6cC6D7009B96A6cf3855dAd44c7f0',
-        [ChainId.BSC_TESTNET]: '0xCc6b2D6f14f6cC6D7009B96A6cf3855dAd44c7f0',
+        [ChainId.BSC_MAINNET]: '0xcD8Fd4dDee80f3f27845e74faa12fF6720975B4c',
+        [ChainId.BSC_TESTNET]: '0xcD8Fd4dDee80f3f27845e74faa12fF6720975B4c',
       },
       [SmartContractNames.singleDynamicPP]: {
-        [ChainId.BSC_MAINNET]: '0xa1a6bB74C5e82625166983620d0d68986Bf7e739',
-        [ChainId.BSC_TESTNET]: '0xa1a6bB74C5e82625166983620d0d68986Bf7e739',
+        [ChainId.BSC_MAINNET]: '0xaffa2db1641273485365D526a2a9218E06803afc',
+        [ChainId.BSC_TESTNET]: '0xaffa2db1641273485365D526a2a9218E06803afc',
       },
       [SmartContractNames.recurringPP]: {
-        [ChainId.BSC_MAINNET]: '0x47F3A91207a2bf119D9699a4E5b4D7F6C1BA5E05',
-        [ChainId.BSC_TESTNET]: '0x47F3A91207a2bf119D9699a4E5b4D7F6C1BA5E05',
+        [ChainId.BSC_MAINNET]: '0x1f6f3e75D26bC77811A47Eac8d91aF8F2530bBba',
+        [ChainId.BSC_TESTNET]: '0x1f6f3e75D26bC77811A47Eac8d91aF8F2530bBba',
       },
       [SmartContractNames.recurringPPFreeTrial]: {
-        [ChainId.BSC_MAINNET]: '0xEdB12AD30dEc412F3ce7859DFFDd82a107fFa6E5',
-        [ChainId.BSC_TESTNET]: '0xEdB12AD30dEc412F3ce7859DFFDd82a107fFa6E5',
+        [ChainId.BSC_MAINNET]: '0xaafE33394Dc1d7A3e117399FE9F959Bc8FCf5588',
+        [ChainId.BSC_TESTNET]: '0xaafE33394Dc1d7A3e117399FE9F959Bc8FCf5588',
       },
       [SmartContractNames.recurringPPPaidTrial]: {
-        [ChainId.BSC_MAINNET]: '0xB75A3b4A4DA2F2043Ed5Fc6d92669821C4d2f846',
-        [ChainId.BSC_TESTNET]: '0xB75A3b4A4DA2F2043Ed5Fc6d92669821C4d2f846',
+        [ChainId.BSC_MAINNET]: '0x2e9b5d0B090c067177A52a78763BcA371f49f71f',
+        [ChainId.BSC_TESTNET]: '0x2e9b5d0B090c067177A52a78763BcA371f49f71f',
       },
       [SmartContractNames.recurringDynamicPP]: {
-        [ChainId.BSC_MAINNET]: '0x5ACD271e836DAbc7fC67dAF28bC2c5757ebE5521',
-        [ChainId.BSC_TESTNET]: '0x5ACD271e836DAbc7fC67dAF28bC2c5757ebE5521',
+        [ChainId.BSC_MAINNET]: '0xb0eBD14E3555b65941eD603923875465f6Daa6Ab',
+        [ChainId.BSC_TESTNET]: '0xb0eBD14E3555b65941eD603923875465f6Daa6Ab',
       },
     }
     return smartContractAddresses[`${contractType}`][networkId]

@@ -85,9 +85,13 @@ export class Web3Connector {
   }
 
   public static instantiateHttpProvider(networkId: string, rpcUrl: string) {
+    if (networkId === undefined || networkId === null)
+      throw new Error('No network ID provided!')
     if (!Web3Connector.web3HttpProviders[networkId]) {
       let web3 = new Web3(new Web3.providers.HttpProvider(rpcUrl))
-      web3 = Web3Connector.setupDefaultAccount(web3)
+      if (process.env.OPERATION_MODE !== OperationModes.Executor) {
+        web3 = Web3Connector.setupDefaultAccount(web3)
+      }
       this.web3HttpProviders[networkId] = web3
     } else {
       Web3Connector.logger.log(
@@ -97,16 +101,6 @@ export class Web3Connector {
   }
 
   private static setupDefaultAccount(web3) {
-    if (
-      process.env.MODE !== OperationModes.Executor &&
-      process.env.MODE !== OperationModes.MerchantExecutor &&
-      (process.env.EXECUTOR_PRIVATE_KEY === '' ||
-        process.env.EXECUTOR_PRIVATE_KEY === undefined)
-    ) {
-      this.logger.error(`Executor private key is not defined!`)
-      throw new Error(`Executor private key is not defined!`)
-    }
-
     const privateKey = process.env.EXECUTOR_PRIVATE_KEY
     const account = web3.eth.accounts.privateKeyToAccount('0x' + privateKey)
     web3.eth.accounts.wallet.add(account)

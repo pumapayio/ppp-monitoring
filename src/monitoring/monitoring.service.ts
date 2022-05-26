@@ -29,15 +29,18 @@ export class MonitoringService {
     private bmSubscriptionCancelledEventMonitoring: SubscriptionCancelledEventMonitoring,
   ) {}
 
-  public async monitorEvents(networkId: string) {
-    await this.monitorBMCreationEvents(networkId)
-    await this.monitorNewSubscriptionEvents(networkId)
-    await this.monitorPullPaymentExecutionEvents(networkId)
-    await this.monitorBMUpdatedEvents(networkId)
-    await this.monitorSubscriptionCancelledEvents(networkId)
+  public async monitorEvents(networkId: string, merchantAddresses: string[]) {
+    await this.monitorBMCreationEvents(networkId, merchantAddresses)
+    await this.monitorNewSubscriptionEvents(networkId, merchantAddresses)
+    await this.monitorPullPaymentExecutionEvents(networkId, merchantAddresses)
+    await this.monitorBMUpdatedEvents(networkId, merchantAddresses)
+    await this.monitorSubscriptionCancelledEvents(networkId, merchantAddresses)
   }
 
-  private async monitorBMCreationEvents(networkId: string) {
+  private async monitorBMCreationEvents(
+    networkId: string,
+    merchantAddresses: string[],
+  ) {
     const events = await this.contractEventService.retrieveContractEventByType(
       ContractEventTypes.BillingModelCreated,
       networkId,
@@ -46,21 +49,30 @@ export class MonitoringService {
       switch (event.contract.contractName) {
         case String(SmartContractNames.singleDynamicPP):
         case String(SmartContractNames.singlePP): {
-          await this.singlePullPaymentBMCreatedEventService.monitor(event)
+          await this.singlePullPaymentBMCreatedEventService.monitor(
+            event,
+            merchantAddresses,
+          )
           break
         }
         case String(SmartContractNames.recurringPPFreeTrial):
         case String(SmartContractNames.recurringPPPaidTrial):
         case String(SmartContractNames.recurringDynamicPP):
         case String(SmartContractNames.recurringPP): {
-          await this.recurringPullPaymentBMCreatedEventMonitoring.monitor(event)
+          await this.recurringPullPaymentBMCreatedEventMonitoring.monitor(
+            event,
+            merchantAddresses,
+          )
           break
         }
       }
     }
   }
 
-  private async monitorNewSubscriptionEvents(networkId: string) {
+  private async monitorNewSubscriptionEvents(
+    networkId: string,
+    merchantAddresses: string[],
+  ) {
     const events = await this.contractEventService.retrieveContractEventByType(
       ContractEventTypes.NewSubscription,
       networkId,
@@ -72,12 +84,18 @@ export class MonitoringService {
         case String(SmartContractNames.recurringPPPaidTrial):
         case String(SmartContractNames.recurringDynamicPP):
         case String(SmartContractNames.recurringPP): {
-          await this.recurringBMSubscriptionEventMonitoring.monitor(event)
+          await this.recurringBMSubscriptionEventMonitoring.monitor(
+            event,
+            merchantAddresses,
+          )
           break
         }
         case String(SmartContractNames.singleDynamicPP):
         case String(SmartContractNames.singlePP): {
-          await this.singleBMSubscriptionEventMonitoring.monitor(event)
+          await this.singleBMSubscriptionEventMonitoring.monitor(
+            event,
+            merchantAddresses,
+          )
           break
         }
         default: {
@@ -89,7 +107,10 @@ export class MonitoringService {
     }
   }
 
-  private async monitorPullPaymentExecutionEvents(networkId: string) {
+  private async monitorPullPaymentExecutionEvents(
+    networkId: string,
+    merchantAddresses: string[],
+  ) {
     const events = await this.contractEventService.retrieveContractEventByType(
       ContractEventTypes.PullPaymentExecuted,
       networkId,
@@ -101,7 +122,10 @@ export class MonitoringService {
         case String(SmartContractNames.recurringPPPaidTrial):
         case String(SmartContractNames.recurringDynamicPP):
         case String(SmartContractNames.recurringPP): {
-          await this.recurringPPExecutionEventMonitoring.monitor(event)
+          await this.recurringPPExecutionEventMonitoring.monitor(
+            event,
+            merchantAddresses,
+          )
           break
         }
         default:
@@ -116,7 +140,10 @@ export class MonitoringService {
     }
   }
 
-  private async monitorBMUpdatedEvents(networkId: string) {
+  private async monitorBMUpdatedEvents(
+    networkId: string,
+    merchantAddresses: string[],
+  ) {
     const events = await this.contractEventService.retrieveContractEventByType(
       ContractEventTypes.BillingModelEdited,
       networkId,
@@ -126,14 +153,20 @@ export class MonitoringService {
       switch (event.contract.contractName) {
         case String(SmartContractNames.singleDynamicPP):
         case String(SmartContractNames.singlePP): {
-          await this.singlePullPaymentBMEditedEventService.monitor(event)
+          await this.singlePullPaymentBMEditedEventService.monitor(
+            event,
+            merchantAddresses,
+          )
           break
         }
         case String(SmartContractNames.recurringPPFreeTrial):
         case String(SmartContractNames.recurringPPPaidTrial):
         case String(SmartContractNames.recurringDynamicPP):
         case String(SmartContractNames.recurringPP): {
-          await this.recurringPullPaymentBMEditedEventMonitoring.monitor(event)
+          await this.recurringPullPaymentBMEditedEventMonitoring.monitor(
+            event,
+            merchantAddresses,
+          )
           break
         }
         default: {
@@ -146,7 +179,10 @@ export class MonitoringService {
     }
   }
 
-  private async monitorSubscriptionCancelledEvents(networkId: string) {
+  private async monitorSubscriptionCancelledEvents(
+    networkId: string,
+    merchantAddresses: string[],
+  ) {
     const events = await this.contractEventService.retrieveContractEventByType(
       ContractEventTypes.SubscriptionCancelled,
       networkId,
@@ -155,12 +191,15 @@ export class MonitoringService {
     for (let event of events) {
       switch (event.contract.contractName) {
         case String(SmartContractNames.recurringPP):
+        case String(SmartContractNames.recurringDynamicPP):
         case String(SmartContractNames.recurringPPFreeTrial):
         case String(SmartContractNames.recurringPPPaidTrial): {
-          await this.bmSubscriptionCancelledEventMonitoring.monitor(event)
+          await this.bmSubscriptionCancelledEventMonitoring.monitor(
+            event,
+            merchantAddresses,
+          )
           break
         }
-        case String(SmartContractNames.recurringDynamicPP):
         case String(SmartContractNames.singlePP):
         case String(SmartContractNames.singleDynamicPP):
         default: {

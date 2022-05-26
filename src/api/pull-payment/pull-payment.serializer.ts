@@ -53,7 +53,7 @@ const extractPullPaymentAmounts = async (
   const transactionReceipt: TransactionReceipt =
     await web3.eth.getTransactionReceipt(transactionHash)
 
-  // 0xc9fdd1778b659E051290E40bdBbd88709FD56900
+  // 0x286d4B4306ef74e68c7F2BAd529648812503593e
   const executorAddress = BlockchainGlobals.GET_CONTRACT_ADDRESS(
     networkId,
     SmartContractNames.executorReceiver,

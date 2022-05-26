@@ -3,6 +3,8 @@ import { ContractEvent } from 'src/api/contract-event/contract-event.entity'
 import { ContractEventLog } from 'src/utils/blockchain'
 import { BaseMonitoring } from '../base-monitoring/base-monitoring'
 import { SinglePullPaymentEventHandler } from './single-pull-payment.event-handler'
+import { UtilsService } from '../../../utils/utils.service'
+import { ContractEventTypes } from '../../../api/contract-event/contract-event-types'
 
 @Injectable()
 export class SinglePullPaymentBMCreatedEventMonitoring {
@@ -15,27 +17,52 @@ export class SinglePullPaymentBMCreatedEventMonitoring {
     private eventHandler: SinglePullPaymentEventHandler,
   ) {}
 
-  public async monitor(event: ContractEvent): Promise<void> {
-    await this.baseMonitoring.monitor(
-      event,
-      this.eventHandler,
-      this.handleEventLog,
-    )
+  public async monitor(
+    event: ContractEvent,
+    merchantAddresses: string[],
+  ): Promise<void> {
+    try {
+      await this.baseMonitoring.monitor(
+        event,
+        merchantAddresses,
+        this.eventHandler,
+        this.handleEventLog,
+      )
+    } catch (error) {
+      this.logger.debug(
+        `Failed to handle billing model creation events. Reason: ${error.message}`,
+      )
+    }
   }
 
   private async handleEventLog(
     contract: any,
+    merchantAddresses: string[],
     event: ContractEvent,
     eventLog: ContractEventLog,
     eventHandler: SinglePullPaymentEventHandler,
+    utils: UtilsService,
   ): Promise<void> {
-    await eventHandler.handleBMCreateOrEditEvent(
-      eventLog.returnValues.billingModelID,
-      contract,
-      event,
-    )
-    // TODO: In case of 'Merchant' Mode
-    // We call an API which we can have the API key and url as
-    // configuration parameter for the developer to specify
+    if (merchantAddresses.length === 0) {
+      // for non-merchant mode, we store all the events
+      await eventHandler.handleBMCreateOrEditEvent(
+        eventLog.returnValues.billingModelID,
+        contract,
+        event,
+      )
+    } else {
+      // in case of merchant mode, we need to check if the payee
+      // is also part of the list of merchant addresses
+      if (merchantAddresses.includes(eventLog.returnValues.payee)) {
+        const bm = await eventHandler.handleBMCreateOrEditEvent(
+          eventLog.returnValues.billingModelID,
+          contract,
+          event,
+        )
+
+        if (utils.isMerchantNotification())
+          await utils.notifyMerchant(ContractEventTypes.BillingModelCreated, bm)
+      }
+    }
   }
 }
