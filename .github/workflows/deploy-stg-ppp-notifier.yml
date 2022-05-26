@@ -69,14 +69,14 @@ jobs:
                   { "name": "DB_SYNCHRONIZE", "value": "true" },
                   { "name": "DB_DROP_SCHEMA", "value": "false" },
                   { "name": "DB_MIGRATIONS_RUN", "value": "true" },
-                  { "name": "NO_COLOR", "value": "true"},
-                  { "name": "OPERATION_MODE", "value": "MerchantNotification",
-                  { "name": "MONITORING_ADDRESSES", "value": "['0x2128C4AEbd0ddAECf04172E49C0361603Aa4f2a1','0x07393f7b8183f1D2a7B58B61EE52f74CFF8Ed4dC']",
-                  { "name": "API_URL", "value": "https://pumapayv3.free.beeceptor.com",
-                  { "name": "REQUEST_HEADER_KEY", "value": "x-access-token",
-                  { "name": "REQUEST_HEADER_VALUE", "value": "xxxxx",
-                  { "name": "SUPPORTED_NETWORKS", "value": "[97]",
-                  { "name": "BLOCK_SCAN_THRESHOLD", "value": "1000"
+                  { "name": "NO_COLOR", "value": "true" },
+                  { "name": "OPERATION_MODE", "value": "MerchantNotification" },
+                  { "name": "MONITORING_ADDRESSES", "value": "['0x2128C4AEbd0ddAECf04172E49C0361603Aa4f2a1','0x07393f7b8183f1D2a7B58B61EE52f74CFF8Ed4dC']" },
+                  { "name": "API_URL", "value": "https://pumapayv3.free.beeceptor.com" },
+                  { "name": "REQUEST_HEADER_KEY", "value": "x-access-token" },
+                  { "name": "REQUEST_HEADER_VALUE", "value": "xxxxx" },
+                  { "name": "SUPPORTED_NETWORKS", "value": "[97]" },
+                  { "name": "BLOCK_SCAN_THRESHOLD", "value": "1000" }
                 ]
               }]
             }' | jq --raw-output '.taskDefinition.revision')
