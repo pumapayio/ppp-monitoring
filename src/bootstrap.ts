@@ -11,6 +11,7 @@ import { resolve } from 'path'
 import { AppModule } from './app.module'
 import { ConfigService } from '@nestjs/config'
 import { OperationModes } from './utils/operationModes'
+import { LogLevel } from '@nestjs/common/services/logger.service'
 
 export async function bootstrap() {
   /*
@@ -26,12 +27,17 @@ export async function bootstrap() {
   |
   */
 
-  const app = await NestFactory.create<NestExpressApplication>(AppModule)
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, {
+    logger:
+      process.env.LOG_LEVELS && JSON.parse(process.env.LOG_LEVELS).length > 0
+        ? (JSON.parse(process.env.LOG_LEVELS) as LogLevel[])
+        : ['log', 'error', 'warn', 'debug', 'verbose'],
+  })
   const config = app.get(ConfigService)
 
   /*
   |--------------------------------------------------------------------------
-  | Check that the configuration is correct based on the operation mdoe
+  | Check that the configuration is correct based on the operation mode
   |--------------------------------------------------------------------------
   |
   */
@@ -136,5 +142,15 @@ export async function bootstrap() {
   await app.listen(config.get('app.port'), () => {
     logger.log(`Server is listen on http://localhost:${config.get('app.port')}`)
     logger.log(`=== OPERATION MODE - ${config.get('app.operationMode')} ===`)
+    if (
+      config.get('app.operationMode') === OperationModes.MerchantMonitoring ||
+      config.get('app.operationMode') === OperationModes.MerchantNotification
+    ) {
+      logger.log(
+        `=== MONITORING ADDRESSES - ${JSON.parse(
+          config.get('app.monitoringAddresses'),
+        )} ===`,
+      )
+    }
   })
 }

@@ -37,7 +37,7 @@ export function serializeBMDetails(
     merchantURL: bm.merchantURL ? bm.merchantURL : null,
     name: bm.name ? bm.name : null,
     amount: bm.amount ? String(bm.amount) : null,
-    // once we introduce the selling token, we
+    // TODO: once we introduce the selling token, we
     // will adjust the two lines below
     settlementToken: bm.settlementToken ? bm.settlementToken : null,
     sellingToken: bm.settlementToken ? bm.settlementToken : null,
