@@ -1,13 +1,5 @@
 version: "3"
 services:
-  redis:
-    image: "library/redis:5.0.8-alpine"
-    ports:
-      - 6380:6379
-    volumes:
-      - redis-data:/data
-    networks:
-      - ppp-v3-network
   postgres:
     image: library/postgres:12.2-alpine
     environment:
