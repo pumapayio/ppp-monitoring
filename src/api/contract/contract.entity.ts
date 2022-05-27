@@ -29,9 +29,9 @@ export class Contract extends DateAudit {
   @Column('varchar')
   abi: string
 
-  @OneToMany((type) => BillingModel, (billingModel) => billingModel.contract)
+  @OneToMany(() => BillingModel, (billingModel) => billingModel.contract)
   billingModels: BillingModel[]
 
-  @OneToMany((type) => ContractEvent, (contractEvent) => contractEvent.contract)
+  @OneToMany(() => ContractEvent, (contractEvent) => contractEvent.contract)
   contractEvents: ContractEvent[]
 }

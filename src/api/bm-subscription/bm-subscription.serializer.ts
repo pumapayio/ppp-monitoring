@@ -50,5 +50,5 @@ export function serializeBMSubscription(
     nextPaymentTimestamp: bmSubscription.nextPaymentTimestamp,
     lastPaymentTimestamp: bmSubscription.lastPaymentTimestamp,
     pullPaymentIDs: bmSubscription.pullPaymentIDs,
-  } as CreateBMSubscriptionDto
+  }
 }

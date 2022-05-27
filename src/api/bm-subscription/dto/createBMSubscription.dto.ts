@@ -25,6 +25,11 @@ export class CreateBMSubscriptionDto {
   @IsNotEmpty()
   uniqueReference: string
 
+  paymentAmount?: string
+  settlementToken?: string
+  token?: string
+  pullPaymentIDs?: string[]
+
   // The below will be empty for single pull payments, therefore are optional
   remainingNumberOfPayments?: string
   startTimestamp?: string
