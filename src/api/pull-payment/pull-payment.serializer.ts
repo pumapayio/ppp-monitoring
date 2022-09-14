@@ -7,7 +7,7 @@ import Web3 from 'web3'
 export interface UnserializedPullPayment {
   billingModelID: string
   subscriptionID: string
-  pullPaymentID: string
+  pullPaymentID?: string
   paymentAmount: BigNumber
   executionTimestamp: string
 }
@@ -21,9 +21,12 @@ export async function serializePullPayment(
   pullPayment: UnserializedPullPayment,
   transactionHash: string,
   merchantAddress: string,
+  executionFeeAmount: string,
+  receivingAmount: string,
+  paymentAmount: string,
   web3: Web3,
 ): Promise<CreatePullPaymentDto> {
-  const transactionAmounts = await extractPullPaymentAmounts(
+  const transactionAmounts = await extractPullPaymentAmountsFromTransfer(
     networkId,
     transactionHash,
     merchantAddress,
@@ -44,7 +47,25 @@ export async function serializePullPayment(
   } as CreatePullPaymentDto
 }
 
-const extractPullPaymentAmounts = async (
+const extractPullPaymentAmountsFromPPExecuted = async (
+  networkId: string,
+  transactionHash: string,
+  merchantAddress: string,
+  web3: Web3,
+) => {
+  let executionFeeAmount: string
+  let receivingAmount: string
+  let paymentAmount: string
+
+  // console.log(' =======  =======  =======  =======  =======  ======= ')
+  return {
+    executionFeeAmount: executionFeeAmount,
+    receivingAmount: receivingAmount,
+    paymentAmount: paymentAmount,
+  }
+}
+
+const extractPullPaymentAmountsFromTransfer = async (
   networkId: string,
   transactionHash: string,
   merchantAddress: string,

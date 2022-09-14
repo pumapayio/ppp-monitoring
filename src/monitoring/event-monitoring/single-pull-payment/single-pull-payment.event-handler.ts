@@ -189,6 +189,9 @@ export class SinglePullPaymentEventHandler {
       unserializedPullPayment,
       eventLog.transactionHash,
       bmDetails.payee,
+      eventLog.returnValues.executionFee,
+      eventLog.returnValues.receiverAmount,
+      eventLog.returnValues.userAmount,
       this.web3Helper.getWeb3Instance(event.networkId),
     )
 
