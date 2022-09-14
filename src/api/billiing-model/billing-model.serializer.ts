@@ -16,6 +16,7 @@ export interface UnserializedBillingModel {
   settlementToken?: string
   trialPeriod?: string
   initialAmount?: string
+  recurringPPType?: string
 }
 
 export function serializeBMDetails(
@@ -45,5 +46,6 @@ export function serializeBMDetails(
     frequency: bm.frequency ? String(bm.frequency) : null,
     trialPeriod: bm.trialPeriod ? String(bm.trialPeriod) : null,
     initialAmount: bm.initialAmount ? String(bm.initialAmount) : null,
+    recurringPPType: bm.recurringPPType ? String(bm.recurringPPType) : null,
   } as CreateBMDto
 }

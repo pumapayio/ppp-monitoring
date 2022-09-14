@@ -70,6 +70,9 @@ export class BillingModel extends DateAudit {
   @Column('varchar', { length: 255, nullable: true })
   initialAmount: string
 
+  @Column('varchar', { length: 255, nullable: true })
+  recurringPPType: string
+
   @OneToMany(
     (type) => BMSubscription,
     (bmSubscription) => bmSubscription.billingModel,

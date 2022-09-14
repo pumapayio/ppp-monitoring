@@ -54,25 +54,32 @@ export interface ContractEventLog {
 export interface BillingModelCreatedEvent {
   billingModelID: string
   payee: string
+  recurringPPType?: string
 }
 
 export interface NewSubscriptionEvent {
   billingModelID: string
   subscriptionID: string
   payee: string
+  payer: string
 }
 
 export interface SinglePPNewSubscriptionEvent extends NewSubscriptionEvent {
   pullPaymentID: string
+  executionFee: string
+  userAmount: string
+  receiverAmount: string
 }
 
 export interface BillingModelEditedEvent {
   billingModelID: string
-  newName: string
-  amount: string
-  settlementToken: string
+  newName?: string
+  amount?: string
+  settlementToken?: string
   oldPayee: string
   newPayee: string
+  newMerchantName: string
+  newMerchantUrl: string
 }
 
 @Injectable()
