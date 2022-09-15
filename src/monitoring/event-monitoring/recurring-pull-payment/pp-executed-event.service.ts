@@ -43,24 +43,20 @@ export class RecurringPPExecutionEventMonitoring {
     utils: UtilsService,
   ): Promise<void> {
     if (merchantAddresses.length === 0) {
-      if (eventLog.returnValues.pullPaymentID != '0') {
-        await eventHandler.handlePPCreation(contract, event, eventLog)
-      }
+      await eventHandler.handlePPCreation(contract, event, eventLog)
     } else {
       if (merchantAddresses.includes(eventLog.returnValues.payee)) {
-        if (eventLog.returnValues.pullPaymentID != '0') {
-          const pullPayment = await eventHandler.handlePPCreation(
-            contract,
-            event,
-            eventLog,
-          )
+        const pullPayment = await eventHandler.handlePPCreation(
+          contract,
+          event,
+          eventLog,
+        )
 
-          if (utils.isMerchantNotification())
-            await utils.notifyMerchant(
-              ContractEventTypes.PullPaymentExecuted,
-              pullPayment,
-            )
-        }
+        if (utils.isMerchantNotification())
+          await utils.notifyMerchant(
+            ContractEventTypes.PullPaymentExecuted,
+            pullPayment,
+          )
       }
     }
   }

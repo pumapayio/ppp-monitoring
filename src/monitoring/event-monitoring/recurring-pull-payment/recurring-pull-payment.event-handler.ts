@@ -184,8 +184,13 @@ export class RecurringPullPaymentEventHandler {
     eventLog: ContractEventLog,
     checkDb: boolean,
   ) {
-    const unserializedPullPayment: UnserializedPullPayment =
-      await contract.methods.getPullPayment(pullPaymentId).call()
+    let unserializedPullPayment: UnserializedPullPayment
+
+    if (pullPaymentId != '0') {
+      unserializedPullPayment = await contract.methods
+        .getPullPayment(pullPaymentId)
+        .call()
+    }
 
     const bmDetails = await this.billingModelService.retrieveByBlockchainId(
       billingModelId,
