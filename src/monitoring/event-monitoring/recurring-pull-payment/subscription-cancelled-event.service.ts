@@ -44,28 +44,34 @@ export class SubscriptionCancelledEventMonitoring {
     eventHandler: RecurringPullPaymentEventHandler,
     utils: UtilsService,
   ): Promise<void> {
-    if (merchantAddresses.length === 0) {
-      await eventHandler.handleBMSubscriptionCreateOrEditEvent(
-        eventLog.returnValues.billingModelID,
-        eventLog.returnValues.subscriptionID,
-        contract,
-        event,
-      )
-    } else {
-      if (merchantAddresses.includes(eventLog.returnValues.payee)) {
-        const bmSubscription =
-          await eventHandler.handleBMSubscriptionCreateOrEditEvent(
-            eventLog.returnValues.billingModelID,
-            eventLog.returnValues.subscriptionID,
-            contract,
-            event,
-          )
-
-        await utils.notifyMerchant(
-          ContractEventTypes.SubscriptionCancelled,
-          bmSubscription,
+    try {
+      if (merchantAddresses.length === 0) {
+        await eventHandler.handleBMSubscriptionCreateOrEditEvent(
+          eventLog.returnValues.billingModelID,
+          eventLog.returnValues.subscriptionID,
+          contract,
+          event,
         )
+      } else {
+        if (merchantAddresses.includes(eventLog.returnValues.payee)) {
+          const bmSubscription =
+            await eventHandler.handleBMSubscriptionCreateOrEditEvent(
+              eventLog.returnValues.billingModelID,
+              eventLog.returnValues.subscriptionID,
+              contract,
+              event,
+            )
+
+          await utils.notifyMerchant(
+            ContractEventTypes.SubscriptionCancelled,
+            bmSubscription,
+          )
+        }
       }
+    } catch (error) {
+      this.logger.debug(
+        `Failed to handle bm subscription cancelled event logs. Reason: ${error.message}`,
+      )
     }
   }
 }

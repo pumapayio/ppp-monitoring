@@ -43,26 +43,35 @@ export class SinglePullPaymentBMCreatedEventMonitoring {
     eventHandler: SinglePullPaymentEventHandler,
     utils: UtilsService,
   ): Promise<void> {
-    if (merchantAddresses.length === 0) {
-      // for non-merchant mode, we store all the events
-      await eventHandler.handleBMCreateOrEditEvent(
-        eventLog.returnValues.billingModelID,
-        contract,
-        event,
-      )
-    } else {
-      // in case of merchant mode, we need to check if the payee
-      // is also part of the list of merchant addresses
-      if (merchantAddresses.includes(eventLog.returnValues.payee)) {
-        const bm = await eventHandler.handleBMCreateOrEditEvent(
+    try {
+      if (merchantAddresses.length === 0) {
+        // for non-merchant mode, we store all the events
+        await eventHandler.handleBMCreateOrEditEvent(
           eventLog.returnValues.billingModelID,
           contract,
           event,
         )
+      } else {
+        // in case of merchant mode, we need to check if the payee
+        // is also part of the list of merchant addresses
+        if (merchantAddresses.includes(eventLog.returnValues.payee)) {
+          const bm = await eventHandler.handleBMCreateOrEditEvent(
+            eventLog.returnValues.billingModelID,
+            contract,
+            event,
+          )
 
-        if (utils.isMerchantNotification())
-          await utils.notifyMerchant(ContractEventTypes.BillingModelCreated, bm)
+          if (utils.isMerchantNotification())
+            await utils.notifyMerchant(
+              ContractEventTypes.BillingModelCreated,
+              bm,
+            )
+        }
       }
+    } catch (error) {
+      this.logger.debug(
+        `Failed to handle billing model creation event log. Reason: ${error.message}`,
+      )
     }
   }
 }

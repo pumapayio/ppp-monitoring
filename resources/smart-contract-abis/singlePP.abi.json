@@ -1,5 +1,16 @@
 [
   {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "registryAddress",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "constructor"
+  },
+  {
     "anonymous": false,
     "inputs": [
       {
@@ -42,7 +53,7 @@
       {
         "indexed": false,
         "internalType": "string",
-        "name": "newMerhantName",
+        "name": "newMerchantName",
         "type": "string"
       },
       {
@@ -62,6 +73,12 @@
         "internalType": "address",
         "name": "oldPayee",
         "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "newMerchantUrl",
+        "type": "string"
       }
     ],
     "name": "BillingModelEdited",
@@ -99,6 +116,24 @@
         "internalType": "address",
         "name": "payer",
         "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "executionFee",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "userAmount",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "receiverAmount",
+        "type": "uint256"
       }
     ],
     "name": "NewSubscription",
@@ -137,124 +172,18 @@
     "type": "event"
   },
   {
-    "inputs": [],
-    "name": "owner",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function",
-    "constant": true
-  },
-  {
-    "inputs": [],
-    "name": "registry",
-    "outputs": [
-      {
-        "internalType": "contract IRegistry",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function",
-    "constant": true
-  },
-  {
-    "inputs": [],
-    "name": "renounceOwnership",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
     "inputs": [
-      {
-        "internalType": "address",
-        "name": "registryAddress",
-        "type": "address"
-      }
-    ],
-    "name": "setRegistry",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "newOwner",
-        "type": "address"
-      }
-    ],
-    "name": "transferOwnership",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "registryAddress",
-        "type": "address"
-      }
-    ],
-    "name": "initialize",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "_payee",
-        "type": "address"
-      },
-      {
-        "internalType": "string",
-        "name": "_name",
-        "type": "string"
-      },
-      {
-        "internalType": "string",
-        "name": "_merchantName",
-        "type": "string"
-      },
-      {
-        "internalType": "string",
-        "name": "_reference",
-        "type": "string"
-      },
-      {
-        "internalType": "string",
-        "name": "_merchantURL",
-        "type": "string"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_amount",
-        "type": "uint256"
-      },
-      {
-        "internalType": "address",
-        "name": "_token",
-        "type": "address"
-      }
+      { "internalType": "address", "name": "_payee", "type": "address" },
+      { "internalType": "string", "name": "_name", "type": "string" },
+      { "internalType": "string", "name": "_merchantName", "type": "string" },
+      { "internalType": "string", "name": "_reference", "type": "string" },
+      { "internalType": "string", "name": "_merchantURL", "type": "string" },
+      { "internalType": "uint256", "name": "_amount", "type": "uint256" },
+      { "internalType": "address", "name": "_token", "type": "address" }
     ],
     "name": "createBillingModel",
     "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "billingModelID",
-        "type": "uint256"
-      }
+      { "internalType": "uint256", "name": "billingModelID", "type": "uint256" }
     ],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -266,50 +195,9 @@
         "name": "_billingModelID",
         "type": "uint256"
       },
-      {
-        "internalType": "address",
-        "name": "_paymentToken",
-        "type": "address"
-      },
-      {
-        "internalType": "string",
-        "name": "_reference",
-        "type": "string"
-      }
-    ],
-    "name": "subscribeToBillingModel",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "subscriptionID",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "_billingModelID",
-        "type": "uint256"
-      },
-      {
-        "internalType": "address",
-        "name": "_newPayee",
-        "type": "address"
-      },
-      {
-        "internalType": "string",
-        "name": "_newName",
-        "type": "string"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_newAmount",
-        "type": "uint256"
-      },
+      { "internalType": "address", "name": "_newPayee", "type": "address" },
+      { "internalType": "string", "name": "_newName", "type": "string" },
+      { "internalType": "uint256", "name": "_newAmount", "type": "uint256" },
       {
         "internalType": "address",
         "name": "_newSettlementToken",
@@ -320,19 +208,11 @@
         "name": "_newMerchantName",
         "type": "string"
       },
-      {
-        "internalType": "string",
-        "name": "_newMerchantURL",
-        "type": "string"
-      }
+      { "internalType": "string", "name": "_newMerchantURL", "type": "string" }
     ],
     "name": "editBillingModel",
     "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "billingModelID",
-        "type": "uint256"
-      }
+      { "internalType": "uint256", "name": "billingModelID", "type": "uint256" }
     ],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -344,26 +224,14 @@
         "name": "_billingModelID",
         "type": "uint256"
       },
-      {
-        "internalType": "address",
-        "name": "_token",
-        "type": "address"
-      }
+      { "internalType": "address", "name": "_token", "type": "address" }
     ],
     "name": "getBillingModel",
     "outputs": [
       {
         "components": [
-          {
-            "internalType": "address",
-            "name": "payee",
-            "type": "address"
-          },
-          {
-            "internalType": "string",
-            "name": "name",
-            "type": "string"
-          },
+          { "internalType": "address", "name": "payee", "type": "address" },
+          { "internalType": "string", "name": "name", "type": "string" },
           {
             "internalType": "string",
             "name": "merchantName",
@@ -374,11 +242,7 @@
             "name": "uniqueReference",
             "type": "string"
           },
-          {
-            "internalType": "string",
-            "name": "merchantURL",
-            "type": "string"
-          },
+          { "internalType": "string", "name": "merchantURL", "type": "string" },
           {
             "internalType": "uint256",
             "name": "settlementAmount",
@@ -411,8 +275,7 @@
       }
     ],
     "stateMutability": "view",
-    "type": "function",
-    "constant": true
+    "type": "function"
   },
   {
     "inputs": [
@@ -426,16 +289,8 @@
     "outputs": [
       {
         "components": [
-          {
-            "internalType": "address",
-            "name": "payee",
-            "type": "address"
-          },
-          {
-            "internalType": "string",
-            "name": "name",
-            "type": "string"
-          },
+          { "internalType": "address", "name": "payee", "type": "address" },
+          { "internalType": "string", "name": "name", "type": "string" },
           {
             "internalType": "string",
             "name": "merchantName",
@@ -446,16 +301,8 @@
             "name": "uniqueReference",
             "type": "string"
           },
-          {
-            "internalType": "string",
-            "name": "merchantURL",
-            "type": "string"
-          },
-          {
-            "internalType": "uint256",
-            "name": "amount",
-            "type": "uint256"
-          },
+          { "internalType": "string", "name": "merchantURL", "type": "string" },
+          { "internalType": "uint256", "name": "amount", "type": "uint256" },
           {
             "internalType": "address",
             "name": "settlementToken",
@@ -478,8 +325,95 @@
       }
     ],
     "stateMutability": "view",
-    "type": "function",
-    "constant": true
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "address", "name": "_creator", "type": "address" }
+    ],
+    "name": "getBillingModelIdsByAddress",
+    "outputs": [
+      {
+        "internalType": "uint256[]",
+        "name": "billingModelIDs",
+        "type": "uint256[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getCurrentBillingModelId",
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getCurrentPullPaymentId",
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getCurrentSubscriptionId",
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "uint256", "name": "_pullPaymentID", "type": "uint256" }
+    ],
+    "name": "getPullPayment",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "paymentAmount",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "executionTimestamp",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "billingModelID",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "subscriptionID",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct SinglePullPayment.PullPayment",
+        "name": "pullPayment",
+        "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "address", "name": "_subscriber", "type": "address" }
+    ],
+    "name": "getPullPaymentsIdsByAddress",
+    "outputs": [
+      {
+        "internalType": "uint256[]",
+        "name": "pullPaymentIDs",
+        "type": "uint256[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
   },
   {
     "inputs": [
@@ -535,78 +469,11 @@
       }
     ],
     "stateMutability": "view",
-    "type": "function",
-    "constant": true
+    "type": "function"
   },
   {
     "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "_pullPaymentID",
-        "type": "uint256"
-      }
-    ],
-    "name": "getPullPayment",
-    "outputs": [
-      {
-        "components": [
-          {
-            "internalType": "uint256",
-            "name": "paymentAmount",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "executionTimestamp",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "billingModelID",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "subscriptionID",
-            "type": "uint256"
-          }
-        ],
-        "internalType": "struct SinglePullPayment.PullPayment",
-        "name": "pullPayment",
-        "type": "tuple"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function",
-    "constant": true
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "_creator",
-        "type": "address"
-      }
-    ],
-    "name": "getBillingModelIdsByAddress",
-    "outputs": [
-      {
-        "internalType": "uint256[]",
-        "name": "billingModelIDs",
-        "type": "uint256[]"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function",
-    "constant": true
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "_subscriber",
-        "type": "address"
-      }
+      { "internalType": "address", "name": "_subscriber", "type": "address" }
     ],
     "name": "getSubscriptionIdsByAddress",
     "outputs": [
@@ -617,98 +484,96 @@
       }
     ],
     "stateMutability": "view",
-    "type": "function",
-    "constant": true
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "_subscriber",
-        "type": "address"
-      }
-    ],
-    "name": "getPullPaymentsIdsByAddress",
-    "outputs": [
-      {
-        "internalType": "uint256[]",
-        "name": "pullPaymentIDs",
-        "type": "uint256[]"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function",
-    "constant": true
-  },
-  {
-    "inputs": [],
-    "name": "getCurrentBillingModelId",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function",
-    "constant": true
-  },
-  {
-    "inputs": [],
-    "name": "getCurrentSubscriptionId",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function",
-    "constant": true
-  },
-  {
-    "inputs": [],
-    "name": "getCurrentPullPaymentId",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function",
-    "constant": true
+    "type": "function"
   },
   {
     "inputs": [],
     "name": "getVersionNumber",
     "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
+      { "internalType": "uint256", "name": "", "type": "uint256" },
+      { "internalType": "uint256", "name": "", "type": "uint256" },
+      { "internalType": "uint256", "name": "", "type": "uint256" },
+      { "internalType": "uint256", "name": "", "type": "uint256" }
     ],
     "stateMutability": "pure",
-    "type": "function",
-    "constant": true
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "address", "name": "_subscriber", "type": "address" },
+      { "internalType": "address", "name": "_paymentToken", "type": "address" },
+      {
+        "internalType": "address",
+        "name": "_settlementToken",
+        "type": "address"
+      },
+      { "internalType": "uint256", "name": "_amount", "type": "uint256" }
+    ],
+    "name": "hasEnoughBalance",
+    "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "owner",
+    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "registry",
+    "outputs": [
+      { "internalType": "contract IRegistry", "name": "", "type": "address" }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "renounceOwnership",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "registryAddress",
+        "type": "address"
+      }
+    ],
+    "name": "setRegistry",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_billingModelID",
+        "type": "uint256"
+      },
+      { "internalType": "address", "name": "_paymentToken", "type": "address" },
+      { "internalType": "string", "name": "_reference", "type": "string" }
+    ],
+    "name": "subscribeToBillingModel",
+    "outputs": [
+      { "internalType": "uint256", "name": "subscriptionID", "type": "uint256" }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "address", "name": "newOwner", "type": "address" }
+    ],
+    "name": "transferOwnership",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
   }
 ]

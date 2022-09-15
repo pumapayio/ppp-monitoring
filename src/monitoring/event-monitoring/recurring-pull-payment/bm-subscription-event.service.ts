@@ -43,29 +43,35 @@ export class RecurringBMSubscriptionEventMonitoring {
     eventHandler: RecurringPullPaymentEventHandler,
     utils: UtilsService,
   ): Promise<void> {
-    if (merchantAddresses.length === 0) {
-      await eventHandler.handleBMSubscriptionCreateOrEditEvent(
-        eventLog.returnValues.billingModelID,
-        eventLog.returnValues.subscriptionID,
-        contract,
-        event,
-      )
-    } else {
-      if (merchantAddresses.includes(eventLog.returnValues.payee)) {
-        const bmSubscription =
-          await eventHandler.handleBMSubscriptionCreateOrEditEvent(
-            eventLog.returnValues.billingModelID,
-            eventLog.returnValues.subscriptionID,
-            contract,
-            event,
-          )
+    try {
+      if (merchantAddresses.length === 0) {
+        await eventHandler.handleBMSubscriptionCreateOrEditEvent(
+          eventLog.returnValues.billingModelID,
+          eventLog.returnValues.subscriptionID,
+          contract,
+          event,
+        )
+      } else {
+        if (merchantAddresses.includes(eventLog.returnValues.payee)) {
+          const bmSubscription =
+            await eventHandler.handleBMSubscriptionCreateOrEditEvent(
+              eventLog.returnValues.billingModelID,
+              eventLog.returnValues.subscriptionID,
+              contract,
+              event,
+            )
 
-        if (utils.isMerchantNotification())
-          await utils.notifyMerchant(
-            ContractEventTypes.NewSubscription,
-            bmSubscription,
-          )
+          if (utils.isMerchantNotification())
+            await utils.notifyMerchant(
+              ContractEventTypes.NewSubscription,
+              bmSubscription,
+            )
+        }
       }
+    } catch (error) {
+      this.logger.debug(
+        `Failed to handle billing model subscription event logs. Reason: ${error.message}`,
+      )
     }
   }
 }

@@ -84,6 +84,7 @@ export class RecurringPullPaymentEventHandler {
       eventLog.transactionHash,
       contract,
       event,
+      eventLog,
       checkDb,
     )
     const bmSubscription = await this.handleBMSubscriptionCreateOrEditEvent(
@@ -180,6 +181,7 @@ export class RecurringPullPaymentEventHandler {
     transactionHash: string,
     contract: any,
     event: ContractEvent,
+    eventLog: ContractEventLog,
     checkDb: boolean,
   ) {
     const unserializedPullPayment: UnserializedPullPayment =
@@ -200,6 +202,9 @@ export class RecurringPullPaymentEventHandler {
       unserializedPullPayment,
       transactionHash,
       bmDetails.payee,
+      eventLog.returnValues.executionFee,
+      eventLog.returnValues.receiverAmount,
+      eventLog.returnValues.userAmount,
       this.web3Helper.getWeb3Instance(event.networkId),
     )
 
