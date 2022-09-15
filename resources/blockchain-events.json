@@ -21,7 +21,7 @@
         "syncHistorical": true
       }
     ],
-    "abi":[
+    "abi": [
       {
         "inputs": [
           {
@@ -679,9 +679,9 @@
   },
   {
     "contractName": "SingleDynamicPullPayment",
-    "address": "0x9d65Db938064Ca45238Bd944ac10FB34F07B1159",
+    "address": "0xfa90269DE852B81e3d9A364983eE3bDF8374AC49",
     "networkId": "80001",
-    "blockNumber": "28059697",
+    "blockNumber": "28111265",
     "events": [
       {
         "eventName": "BillingModelCreated",
@@ -1015,6 +1015,16 @@
               {
                 "internalType": "uint256",
                 "name": "executionTimestamp",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "billingModelID",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "subscriptionID",
                 "type": "uint256"
               }
             ],

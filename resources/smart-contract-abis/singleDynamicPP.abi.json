@@ -285,6 +285,16 @@
             "internalType": "uint256",
             "name": "executionTimestamp",
             "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "billingModelID",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "subscriptionID",
+            "type": "uint256"
           }
         ],
         "internalType": "struct SingleDynamicPullPayment.PullPayment",

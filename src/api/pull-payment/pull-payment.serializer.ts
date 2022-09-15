@@ -26,12 +26,12 @@ export async function serializePullPayment(
   paymentAmount: string,
   web3: Web3,
 ): Promise<CreatePullPaymentDto> {
-  const transactionAmounts = await extractPullPaymentAmountsFromTransfer(
-    networkId,
-    transactionHash,
-    merchantAddress,
-    web3,
-  )
+  // const transactionAmounts = await extractPullPaymentAmountsFromTransfer(
+  //   networkId,
+  //   transactionHash,
+  //   merchantAddress,
+  //   web3,
+  // )
 
   return {
     pullPaymentId,
@@ -39,30 +39,12 @@ export async function serializePullPayment(
     billingModelId,
     contractAddress,
     networkId,
-    paymentAmount: String(transactionAmounts.paymentAmount),
-    executionFeeAmount: String(transactionAmounts.executionFeeAmount),
-    receivingAmount: String(transactionAmounts.receivingAmount),
+    paymentAmount: String(paymentAmount),
+    executionFeeAmount: String(executionFeeAmount),
+    receivingAmount: String(receivingAmount),
     executionTimestamp: pullPayment.executionTimestamp,
     transactionHash: transactionHash,
   } as CreatePullPaymentDto
-}
-
-const extractPullPaymentAmountsFromPPExecuted = async (
-  networkId: string,
-  transactionHash: string,
-  merchantAddress: string,
-  web3: Web3,
-) => {
-  let executionFeeAmount: string
-  let receivingAmount: string
-  let paymentAmount: string
-
-  // console.log(' =======  =======  =======  =======  =======  ======= ')
-  return {
-    executionFeeAmount: executionFeeAmount,
-    receivingAmount: receivingAmount,
-    paymentAmount: paymentAmount,
-  }
 }
 
 const extractPullPaymentAmountsFromTransfer = async (
