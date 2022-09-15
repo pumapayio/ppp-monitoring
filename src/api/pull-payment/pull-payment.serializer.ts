@@ -35,6 +35,8 @@ export async function serializePullPayment(
   //   web3,
   // )
 
+  const executionTime = await getExecutionTimeStamp(transactionHash, web3)
+
   return {
     pullPaymentId,
     bmSubscriptionId,
@@ -44,9 +46,23 @@ export async function serializePullPayment(
     paymentAmount: String(eventLog.returnValues.userAmount),
     executionFeeAmount: String(eventLog.returnValues.executionFee),
     receivingAmount: String(eventLog.returnValues.receiverAmount),
-    executionTimestamp: String(pullPayment.executionTimestamp),
+    executionTimestamp: executionTime,
     transactionHash: transactionHash,
   } as CreatePullPaymentDto
+}
+
+const getExecutionTimeStamp = async (
+  transactionHash: string,
+  web3: Web3,
+): Promise<string> => {
+  const transactionReceipt: TransactionReceipt =
+    await web3.eth.getTransactionReceipt(transactionHash)
+
+  const transactionBlock = await web3.eth.getBlock(
+    transactionReceipt.blockNumber,
+  )
+
+  return transactionBlock?.timestamp.toString()
 }
 
 const extractPullPaymentAmountsFromTransfer = async (
