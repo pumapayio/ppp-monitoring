@@ -22,9 +22,7 @@ export async function serializePullPayment(
   billingModelId: string,
   contractAddress: string,
   networkId: string,
-  pullPayment: UnserializedPullPayment,
   transactionHash: string,
-  merchantAddress: string,
   eventLog: ContractEventLog,
   web3: Web3,
 ): Promise<CreatePullPaymentDto> {

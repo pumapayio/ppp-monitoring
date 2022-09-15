@@ -169,26 +169,13 @@ export class SinglePullPaymentEventHandler {
     eventLog: ContractEventLog,
     checkDb: boolean,
   ) {
-    const unserializedPullPayment: UnserializedPullPayment =
-      await contract.methods
-        .getPullPayment(eventLog.returnValues.pullPaymentID)
-        .call()
-
-    const bmDetails = await this.billingModelService.retrieveByBlockchainId(
-      eventLog.returnValues.billingModelID,
-      event.contractAddress,
-      event.networkId,
-    )
-
     const serializedPullPayment = await serializePullPayment(
       eventLog.returnValues.pullPaymentID,
       eventLog.returnValues.subscriptionID,
       eventLog.returnValues.billingModelID,
       event.contractAddress,
       event.networkId,
-      unserializedPullPayment,
       eventLog.transactionHash,
-      bmDetails.payee,
       eventLog,
       this.web3Helper.getWeb3Instance(event.networkId),
     )
