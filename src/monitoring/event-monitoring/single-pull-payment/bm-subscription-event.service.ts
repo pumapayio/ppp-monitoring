@@ -41,33 +41,44 @@ export class SingleBMSubscriptionEventMonitoring {
     eventHandler: SinglePullPaymentEventHandler,
     utils: UtilsService,
   ): Promise<void> {
-    if (merchantAddresses.length === 0) {
-      await eventHandler.handleBMSubscriptionCreation(contract, event, eventLog)
-      await eventHandler.handlePPCreation(contract, event, eventLog)
-    } else {
-      if (merchantAddresses.includes(eventLog.returnValues.payee)) {
-        const bmSubscription = await eventHandler.handleBMSubscriptionCreation(
+    try {
+      if (merchantAddresses.length === 0) {
+        await eventHandler.handleBMSubscriptionCreation(
           contract,
           event,
           eventLog,
         )
+        await eventHandler.handlePPCreation(contract, event, eventLog)
+      } else {
+        if (merchantAddresses.includes(eventLog.returnValues.payee)) {
+          const bmSubscription =
+            await eventHandler.handleBMSubscriptionCreation(
+              contract,
+              event,
+              eventLog,
+            )
 
-        const pullPayment = await eventHandler.handlePPCreation(
-          contract,
-          event,
-          eventLog,
-        )
-        pullPayment.bmSubscription = bmSubscription
-
-        if (utils.isMerchantNotification())
-          // NOTE: The actual event here is a new subscription, but since we are
-          // dealing with single payments it is also the execution of the pull
-          // payment, and we notify the merchant with this type of event
-          await utils.notifyMerchant(
-            ContractEventTypes.PullPaymentExecuted,
-            pullPayment,
+          const pullPayment = await eventHandler.handlePPCreation(
+            contract,
+            event,
+            eventLog,
           )
+          pullPayment.bmSubscription = bmSubscription
+
+          if (utils.isMerchantNotification())
+            // NOTE: The actual event here is a new subscription, but since we are
+            // dealing with single payments it is also the execution of the pull
+            // payment, and we notify the merchant with this type of event
+            await utils.notifyMerchant(
+              ContractEventTypes.PullPaymentExecuted,
+              pullPayment,
+            )
+        }
       }
+    } catch (error) {
+      this.logger.debug(
+        `Failed to handle pull payment execution event logs. Reason: ${error.message}`,
+      )
     }
   }
 }

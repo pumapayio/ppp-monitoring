@@ -202,9 +202,7 @@ export class RecurringPullPaymentEventHandler {
       unserializedPullPayment,
       transactionHash,
       bmDetails.payee,
-      eventLog.returnValues.executionFee,
-      eventLog.returnValues.receiverAmount,
-      eventLog.returnValues.userAmount,
+      eventLog,
       this.web3Helper.getWeb3Instance(event.networkId),
     )
 
