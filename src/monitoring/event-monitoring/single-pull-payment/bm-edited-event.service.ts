@@ -44,26 +44,35 @@ export class SinglePullPaymentBMEditedEventMonitoring {
     eventHandler: SinglePullPaymentEventHandler,
     utils: UtilsService,
   ) {
-    if (merchantAddresses.length === 0) {
-      await eventHandler.handleBMCreateOrEditEvent(
-        eventLog.returnValues.billingModelID,
-        contract,
-        event,
-      )
-    } else {
-      if (
-        merchantAddresses.includes(eventLog.returnValues.oldPayee) ||
-        merchantAddresses.includes(eventLog.returnValues.newPayee)
-      ) {
-        const bm = await eventHandler.handleBMCreateOrEditEvent(
+    try {
+      if (merchantAddresses.length === 0) {
+        await eventHandler.handleBMCreateOrEditEvent(
           eventLog.returnValues.billingModelID,
           contract,
           event,
         )
+      } else {
+        if (
+          merchantAddresses.includes(eventLog.returnValues.oldPayee) ||
+          merchantAddresses.includes(eventLog.returnValues.newPayee)
+        ) {
+          const bm = await eventHandler.handleBMCreateOrEditEvent(
+            eventLog.returnValues.billingModelID,
+            contract,
+            event,
+          )
 
-        if (utils.isMerchantNotification())
-          await utils.notifyMerchant(ContractEventTypes.BillingModelEdited, bm)
+          if (utils.isMerchantNotification())
+            await utils.notifyMerchant(
+              ContractEventTypes.BillingModelEdited,
+              bm,
+            )
+        }
       }
+    } catch (error) {
+      this.logger.debug(
+        `Failed to handle billing model edit event logs. Reason: ${error.message}`,
+      )
     }
   }
 }

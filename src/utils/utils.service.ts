@@ -18,9 +18,9 @@ export class UtilsService {
   public isExecutorMode(): boolean {
     return (
       OperationModes[this.config.get('app.operationMode')] ===
-        OperationModes.Executor ||
-      OperationModes[this.config.get('app.operationMode')] ===
-        OperationModes.MerchantNotification
+      OperationModes.Executor
+      //  || OperationModes[this.config.get('app.operationMode')] ===
+      //   OperationModes.MerchantNotification
     )
   }
 

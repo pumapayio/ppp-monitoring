@@ -1,14 +1,18 @@
 import { BigNumber } from 'bignumber.js'
 import { CreatePullPaymentDto } from './dto/create-pull-payment.dto'
 import { TransactionReceipt } from 'web3-core'
-import { BlockchainGlobals, SmartContractNames } from '../../utils/blockchain'
+import {
+  BlockchainGlobals,
+  ContractEventLog,
+  SmartContractNames,
+} from '../../utils/blockchain'
 import Web3 from 'web3'
 
 export interface UnserializedPullPayment {
   billingModelID: string
   subscriptionID: string
   pullPaymentID?: string
-  paymentAmount: BigNumber
+  paymentAmount: string
   executionTimestamp: string
 }
 
@@ -18,12 +22,8 @@ export async function serializePullPayment(
   billingModelId: string,
   contractAddress: string,
   networkId: string,
-  pullPayment: UnserializedPullPayment,
   transactionHash: string,
-  merchantAddress: string,
-  executionFeeAmount: string,
-  receivingAmount: string,
-  paymentAmount: string,
+  eventLog: ContractEventLog,
   web3: Web3,
 ): Promise<CreatePullPaymentDto> {
   // const transactionAmounts = await extractPullPaymentAmountsFromTransfer(
@@ -33,18 +33,34 @@ export async function serializePullPayment(
   //   web3,
   // )
 
+  const executionTime = await getExecutionTimeStamp(transactionHash, web3)
+
   return {
     pullPaymentId,
     bmSubscriptionId,
     billingModelId,
     contractAddress,
     networkId,
-    paymentAmount: String(paymentAmount),
-    executionFeeAmount: String(executionFeeAmount),
-    receivingAmount: String(receivingAmount),
-    executionTimestamp: pullPayment.executionTimestamp,
+    paymentAmount: String(eventLog.returnValues.userAmount),
+    executionFeeAmount: String(eventLog.returnValues.executionFee),
+    receivingAmount: String(eventLog.returnValues.receiverAmount),
+    executionTimestamp: executionTime,
     transactionHash: transactionHash,
   } as CreatePullPaymentDto
+}
+
+const getExecutionTimeStamp = async (
+  transactionHash: string,
+  web3: Web3,
+): Promise<string> => {
+  const transactionReceipt: TransactionReceipt =
+    await web3.eth.getTransactionReceipt(transactionHash)
+
+  const transactionBlock = await web3.eth.getBlock(
+    transactionReceipt.blockNumber,
+  )
+
+  return transactionBlock?.timestamp.toString()
 }
 
 const extractPullPaymentAmountsFromTransfer = async (
