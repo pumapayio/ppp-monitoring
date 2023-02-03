@@ -250,6 +250,13 @@ We have set up the local DB using docker-compose to make it easier
 # starts the docker image and have it running in the background (-d)
 $ docker-compose up -d postgres
 ```
+#### Yarn
+You can also setup the DB using the yarn with the following command-
+
+```bash
+$ yarn db:setup
+``` 
+
 
 #### Local DB instance
 You can also set up a local DB instance according to your preference. We suggest postgres, however any DB that is 
