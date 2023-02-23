@@ -251,7 +251,7 @@ We have set up the local DB using docker-compose to make it easier
 $ docker-compose up -d postgres
 ```
 #### Yarn
-You can also setup the DB using the yarn with the following command-
+After setting up the database connection you need to create the schema for the database using the following command.
 
 ```bash
 $ yarn db:setup
