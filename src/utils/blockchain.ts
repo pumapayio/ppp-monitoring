@@ -197,8 +197,10 @@ export class BlockchainGlobals {
           'https://rpc-mumbai.maticvigil.com/',
         ]
       case ChainId.POLYGON:
+        return ['https://matic-mainnet.chainstacklabs.com/']
+
       default:
-        return ['https://matic-mumbai.chainstacklabs.com']
+        return ['https://matic-mainnet.chainstacklabs.com/']
     }
   }
 

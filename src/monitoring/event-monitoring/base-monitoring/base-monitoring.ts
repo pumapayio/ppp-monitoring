@@ -46,6 +46,8 @@ export class BaseMonitoring {
         event.syncHistorical &&
         Number(currentBlockNumber) > event.lastSyncedBlock
       ) {
+        console.log('currentBlockNumber: ', currentBlockNumber)
+
         await this.contractEventService.update({
           id: event.id,
           syncStatus: ContractEventSyncStatus.ProcessingPastEvents,
@@ -161,14 +163,15 @@ export class BaseMonitoring {
       | SinglePullPaymentEventHandler
       | RecurringPullPaymentEventHandler,
   ): Promise<void> {
-    this.logger.log(
-      `Processing ${event.eventName} events. Latest block: ${currentBlockNumber} - Start Block ${event.lastSyncedBlock}`,
-    )
     try {
+      this.logger.log(
+        `Processing ${event.eventName} events. Latest block: ${currentBlockNumber} - Start Block ${event.lastSyncedBlock}`,
+      )
       let startBlock = Number(event.lastSyncedBlock) - 1
       const blockScanThreshold = this.config.get(
         'blockchain.blockScanThreshold',
       )
+
       const contract = await this.web3Helper.getContractInstance(
         event.networkId,
         event.contractAddress,
