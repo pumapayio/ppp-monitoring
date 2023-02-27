@@ -39,7 +39,8 @@ export class SinglePullPaymentEventHandler {
       event,
       checkDb,
     )
-    return await this.billingModelService.create(billingModelDetails)
+    const res = await this.billingModelService.create(billingModelDetails)
+    return res
   }
 
   private async constructBMDetails(
@@ -48,28 +49,32 @@ export class SinglePullPaymentEventHandler {
     event: ContractEvent,
     checkDb: boolean,
   ) {
-    const web3Utils = this.web3Helper.getWeb3Utils(event.networkId)
-    const unserializedBillingModel: UnserializedBillingModel =
-      await contract.methods.getBillingModel(billingModelId).call()
-    const billingModelDetails = serializeBMDetails(
-      billingModelId,
-      event.contractAddress,
-      event.networkId,
-      unserializedBillingModel,
-      web3Utils,
-    )
-    billingModelDetails.billingModelId = billingModelId
-
-    if (checkDb) {
-      const dbRecord = await this.billingModelService.retrieveByBlockchainId(
+    try {
+      const web3Utils = this.web3Helper.getWeb3Utils(event.networkId)
+      const unserializedBillingModel: UnserializedBillingModel =
+        await contract.methods.getBillingModel(billingModelId).call()
+      const billingModelDetails = serializeBMDetails(
         billingModelId,
         event.contractAddress,
         event.networkId,
+        unserializedBillingModel,
+        web3Utils,
       )
-      if (dbRecord) billingModelDetails.id = dbRecord.id
-    }
+      billingModelDetails.billingModelId = billingModelId
 
-    return billingModelDetails
+      if (checkDb) {
+        const dbRecord = await this.billingModelService.retrieveByBlockchainId(
+          billingModelId,
+          event.contractAddress,
+          event.networkId,
+        )
+        if (dbRecord) billingModelDetails.id = dbRecord.id
+      }
+
+      return billingModelDetails
+    } catch (error) {
+      console.log('error: ', error)
+    }
   }
 
   public async handleBMSubscriptionCreation(
@@ -78,22 +83,26 @@ export class SinglePullPaymentEventHandler {
     eventLog: ContractEventLog,
     checkDb = true,
   ) {
-    const serializedSubscription = await this.constructBMSubscriptionDetails(
-      contract,
-      event,
-      eventLog,
-      checkDb,
-    )
-    const billingModel = await this.handleMissingBMRecord(
-      eventLog.returnValues.billingModelID,
-      contract,
-      event,
-    )
-    const bmSubscription = await this.bmSubscriptionsService.create(
-      serializedSubscription,
-    )
-    bmSubscription.billingModel = billingModel
-    return bmSubscription
+    try {
+      const serializedSubscription = await this.constructBMSubscriptionDetails(
+        contract,
+        event,
+        eventLog,
+        checkDb,
+      )
+      const billingModel = await this.handleMissingBMRecord(
+        eventLog.returnValues.billingModelID,
+        contract,
+        event,
+      )
+      const bmSubscription = await this.bmSubscriptionsService.create(
+        serializedSubscription,
+      )
+      bmSubscription.billingModel = billingModel
+      return bmSubscription
+    } catch (error) {
+      console.log('error: ', error)
+    }
   }
 
   private async constructBMSubscriptionDetails(

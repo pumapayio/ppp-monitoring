@@ -50,25 +50,29 @@ export class RecurringPullPaymentEventHandler {
     event: ContractEvent,
     checkDb = true,
   ) {
-    const bmSubscriptionDetails = await this.constructBMSubscriptionDetails(
-      billingModelId,
-      subscriptionId,
-      contract,
-      event,
-      checkDb,
-    )
-    const billingModel = await this.handleMissingBMRecord(
-      billingModelId,
-      contract,
-      event,
-    )
+    try {
+      const bmSubscriptionDetails = await this.constructBMSubscriptionDetails(
+        billingModelId,
+        subscriptionId,
+        contract,
+        event,
+        checkDb,
+      )
+      const billingModel = await this.handleMissingBMRecord(
+        billingModelId,
+        contract,
+        event,
+      )
 
-    const createBMSubscription = await this.bmSubscriptionsService.create(
-      bmSubscriptionDetails,
-    )
-    createBMSubscription.billingModel = billingModel
+      const createBMSubscription = await this.bmSubscriptionsService.create(
+        bmSubscriptionDetails,
+      )
+      createBMSubscription.billingModel = billingModel
 
-    return createBMSubscription
+      return createBMSubscription
+    } catch (error) {
+      console.log('error: ', error)
+    }
   }
 
   public async handlePPCreation(
