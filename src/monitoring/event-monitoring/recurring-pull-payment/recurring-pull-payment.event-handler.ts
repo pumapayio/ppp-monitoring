@@ -50,25 +50,29 @@ export class RecurringPullPaymentEventHandler {
     event: ContractEvent,
     checkDb = true,
   ) {
-    const bmSubscriptionDetails = await this.constructBMSubscriptionDetails(
-      billingModelId,
-      subscriptionId,
-      contract,
-      event,
-      checkDb,
-    )
-    const billingModel = await this.handleMissingBMRecord(
-      billingModelId,
-      contract,
-      event,
-    )
+    try {
+      const bmSubscriptionDetails = await this.constructBMSubscriptionDetails(
+        billingModelId,
+        subscriptionId,
+        contract,
+        event,
+        checkDb,
+      )
+      const billingModel = await this.handleMissingBMRecord(
+        billingModelId,
+        contract,
+        event,
+      )
 
-    const createBMSubscription = await this.bmSubscriptionsService.create(
-      bmSubscriptionDetails,
-    )
-    createBMSubscription.billingModel = billingModel
+      const createBMSubscription = await this.bmSubscriptionsService.create(
+        bmSubscriptionDetails,
+      )
+      createBMSubscription.billingModel = billingModel
 
-    return createBMSubscription
+      return createBMSubscription
+    } catch (error) {
+      console.log('error: ', error)
+    }
   }
 
   public async handlePPCreation(
@@ -77,29 +81,33 @@ export class RecurringPullPaymentEventHandler {
     eventLog: ContractEventLog,
     checkDb = true,
   ) {
-    const pullPaymentDetails = await this.constructPullPaymentDetails(
-      eventLog.returnValues.billingModelID,
-      eventLog.returnValues.subscriptionID,
-      eventLog.returnValues.pullPaymentID,
-      eventLog.transactionHash,
-      contract,
-      event,
-      eventLog,
-      checkDb,
-    )
-    const bmSubscription = await this.handleBMSubscriptionCreateOrEditEvent(
-      eventLog.returnValues.billingModelID,
-      eventLog.returnValues.subscriptionID,
-      contract,
-      event,
-      checkDb,
-    )
-    const createdPPDetails = await this.pullPaymentService.create(
-      pullPaymentDetails,
-    )
-    createdPPDetails.bmSubscription = bmSubscription
+    try {
+      const pullPaymentDetails = await this.constructPullPaymentDetails(
+        eventLog.returnValues.billingModelID,
+        eventLog.returnValues.subscriptionID,
+        eventLog.returnValues.pullPaymentID,
+        eventLog.transactionHash,
+        contract,
+        event,
+        eventLog,
+        checkDb,
+      )
+      const bmSubscription = await this.handleBMSubscriptionCreateOrEditEvent(
+        eventLog.returnValues.billingModelID,
+        eventLog.returnValues.subscriptionID,
+        contract,
+        event,
+        checkDb,
+      )
+      const createdPPDetails = await this.pullPaymentService.create(
+        pullPaymentDetails,
+      )
+      createdPPDetails.bmSubscription = bmSubscription
 
-    return createdPPDetails
+      return createdPPDetails
+    } catch (error) {
+      console.log('error:', error)
+    }
   }
 
   private async constructBMDetails(
@@ -108,32 +116,36 @@ export class RecurringPullPaymentEventHandler {
     event: ContractEvent,
     checkDb: boolean,
   ) {
-    const web3Utils = this.web3Helper.getWeb3Utils(event.networkId)
-    const unserializedBillingModel: UnserializedBillingModel =
-      await contract.methods.getBillingModel(billingModelId).call()
-    // console.log('=================================================')
-    // console.log('unserializedBillingModel', unserializedBillingModel)
-    // console.log('=================================================')
-    const billingModelDetails = serializeBMDetails(
-      billingModelId,
-      event.contractAddress,
-      event.networkId,
-      unserializedBillingModel,
-      web3Utils,
-    )
-
-    if (checkDb) {
-      const dbRecord = await this.billingModelService.retrieveByBlockchainId(
+    try {
+      const web3Utils = this.web3Helper.getWeb3Utils(event.networkId)
+      const unserializedBillingModel: UnserializedBillingModel =
+        await contract.methods.getBillingModel(billingModelId).call()
+      // console.log('=================================================')
+      // console.log('unserializedBillingModel', unserializedBillingModel)
+      // console.log('=================================================')
+      const billingModelDetails = serializeBMDetails(
         billingModelId,
         event.contractAddress,
         event.networkId,
+        unserializedBillingModel,
+        web3Utils,
       )
-      if (dbRecord) billingModelDetails.id = dbRecord.id
+
+      if (checkDb) {
+        const dbRecord = await this.billingModelService.retrieveByBlockchainId(
+          billingModelId,
+          event.contractAddress,
+          event.networkId,
+        )
+        if (dbRecord) billingModelDetails.id = dbRecord.id
+      }
+      // console.log('=================================================')
+      // console.log('billingModelDetails', billingModelDetails)
+      // console.log('=================================================')
+      return billingModelDetails
+    } catch (error) {
+      console.log('error: ', error)
     }
-    // console.log('=================================================')
-    // console.log('billingModelDetails', billingModelDetails)
-    // console.log('=================================================')
-    return billingModelDetails
   }
 
   private async constructBMSubscriptionDetails(
@@ -143,35 +155,40 @@ export class RecurringPullPaymentEventHandler {
     event: ContractEvent,
     checkDb: boolean,
   ) {
-    const unserializedSubscription: UnserializedBMSubscription =
-      await contract.methods.getSubscription(subscriptionId).call()
-    // console.log('=================================================')
-    // console.log('unserializedSubscription', unserializedSubscription)
-    // console.log('=================================================')
-    const subscriptionDetails = serializeBMSubscription(
-      billingModelId,
-      subscriptionId,
-      event.contractAddress,
-      event.networkId,
-      event.contract.contractName ===
-        String(SmartContractNames.recurringDynamicPP)
-        ? unserializedSubscription[0]
-        : unserializedSubscription,
-    )
-
-    if (checkDb) {
-      const dbRecord = await this.bmSubscriptionsService.retrieveByBlockchainId(
+    try {
+      const unserializedSubscription: UnserializedBMSubscription =
+        await contract.methods.getSubscription(subscriptionId).call()
+      // console.log('=================================================')
+      // console.log('unserializedSubscription', unserializedSubscription)
+      // console.log('=================================================')
+      const subscriptionDetails = serializeBMSubscription(
         billingModelId,
         subscriptionId,
         event.contractAddress,
         event.networkId,
+        event.contract.contractName ===
+          String(SmartContractNames.recurringDynamicPP)
+          ? unserializedSubscription[0]
+          : unserializedSubscription,
       )
-      if (dbRecord) subscriptionDetails.id = dbRecord.id
+
+      if (checkDb) {
+        const dbRecord =
+          await this.bmSubscriptionsService.retrieveByBlockchainId(
+            billingModelId,
+            subscriptionId,
+            event.contractAddress,
+            event.networkId,
+          )
+        if (dbRecord) subscriptionDetails.id = dbRecord.id
+      }
+      // console.log('=================================================')
+      // console.log('subscriptionDetails', subscriptionDetails)
+      // console.log('=================================================')
+      return subscriptionDetails
+    } catch (error) {
+      console.log('error: ', error)
     }
-    // console.log('=================================================')
-    // console.log('subscriptionDetails', subscriptionDetails)
-    // console.log('=================================================')
-    return subscriptionDetails
   }
 
   private async constructPullPaymentDetails(
@@ -184,29 +201,33 @@ export class RecurringPullPaymentEventHandler {
     eventLog: ContractEventLog,
     checkDb: boolean,
   ) {
-    const pullPaymentDetails = await serializePullPayment(
-      pullPaymentId,
-      subscriptionId,
-      billingModelId,
-      event.contractAddress,
-      event.networkId,
-      transactionHash,
-      eventLog,
-      this.web3Helper.getWeb3Instance(event.networkId),
-    )
-
-    if (checkDb) {
-      const dbRecord = await this.pullPaymentService.retrieveByBlockchainId(
-        billingModelId,
-        subscriptionId,
+    try {
+      const pullPaymentDetails = await serializePullPayment(
         pullPaymentId,
+        subscriptionId,
+        billingModelId,
         event.contractAddress,
         event.networkId,
+        transactionHash,
+        eventLog,
+        this.web3Helper.getWeb3Instance(event.networkId),
       )
-      if (dbRecord) pullPaymentDetails.id = dbRecord.id
-    }
 
-    return pullPaymentDetails
+      if (checkDb) {
+        const dbRecord = await this.pullPaymentService.retrieveByBlockchainId(
+          billingModelId,
+          subscriptionId,
+          pullPaymentId,
+          event.contractAddress,
+          event.networkId,
+        )
+        if (dbRecord) pullPaymentDetails.id = dbRecord.id
+      }
+
+      return pullPaymentDetails
+    } catch (error) {
+      console.log('error: ', error)
+    }
   }
 
   private async handleMissingBMRecord(
@@ -214,19 +235,23 @@ export class RecurringPullPaymentEventHandler {
     contract: any,
     event: ContractEvent,
   ) {
-    const dbRecord = await this.billingModelService.retrieveByBlockchainId(
-      billingModelId,
-      event.contractAddress,
-      event.networkId,
-    )
-    if (dbRecord) return dbRecord
-    // no need to check from the db as we just did above
-    // and we know that the record doesn't exist
-    return await this.handleBMCreateOrEditEvent(
-      billingModelId,
-      contract,
-      event,
-      false,
-    )
+    try {
+      const dbRecord = await this.billingModelService.retrieveByBlockchainId(
+        billingModelId,
+        event.contractAddress,
+        event.networkId,
+      )
+      if (dbRecord) return dbRecord
+      // no need to check from the db as we just did above
+      // and we know that the record doesn't exist
+      return await this.handleBMCreateOrEditEvent(
+        billingModelId,
+        contract,
+        event,
+        false,
+      )
+    } catch (error) {
+      console.log('error: ', error)
+    }
   }
 }
