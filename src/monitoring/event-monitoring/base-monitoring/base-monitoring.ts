@@ -46,8 +46,6 @@ export class BaseMonitoring {
         event.syncHistorical &&
         Number(currentBlockNumber) > event.lastSyncedBlock
       ) {
-        console.log('currentBlockNumber: ', currentBlockNumber)
-
         await this.contractEventService.update({
           id: event.id,
           syncStatus: ContractEventSyncStatus.ProcessingPastEvents,
