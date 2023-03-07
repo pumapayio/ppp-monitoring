@@ -217,11 +217,13 @@ export class BlockchainGlobals {
           'wss://polygon-mumbai.g.alchemy.com/v2/KXiGUUfDqYhWiLPVix3b_fm5MRFJEEKh',
         ]
       case ChainId.POLYGON:
-        ;['']
+        return [
+          'wss://polygon-mainnet.g.alchemy.com/v2/KXiGUUfDqYhWiLPVix3b_fm5MRFJEEKh',
+        ]
       default:
         // TODO: We must have a list of providers to connect to
         return [
-          'wss://polygon-mumbai.g.alchemy.com/v2/KXiGUUfDqYhWiLPVix3b_fm5MRFJEEKh',
+          'wss://polygon-mainnet.g.alchemy.com/v2/KXiGUUfDqYhWiLPVix3b_fm5MRFJEEKh',
         ]
     }
   }
