@@ -53,14 +53,18 @@ const getExecutionTimeStamp = async (
   transactionHash: string,
   web3: Web3,
 ): Promise<string> => {
-  const transactionReceipt: TransactionReceipt =
-    await web3.eth.getTransactionReceipt(transactionHash)
+  try {
+    const transactionReceipt: TransactionReceipt =
+      await web3.eth.getTransactionReceipt(transactionHash)
 
-  const transactionBlock = await web3.eth.getBlock(
-    transactionReceipt.blockNumber,
-  )
+    const transactionBlock = await web3.eth.getBlock(
+      transactionReceipt?.blockNumber,
+    )
 
-  return transactionBlock?.timestamp.toString()
+    return transactionBlock?.timestamp.toString()
+  } catch (error) {
+    console.log('error: ', error)
+  }
 }
 
 const extractPullPaymentAmountsFromTransfer = async (
