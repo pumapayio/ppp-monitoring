@@ -25,11 +25,10 @@ existing services so that their backend is aware of any payment / new subscripti
 > More details on the PumaPay Pull Payment Protocol v3.0 can be found [here](). 
 
 ## Operation Modes 
-This service can operate in 4 different modes at the moment:
+This service can operate in 3 different modes at the moment:
 
 1. Monitoring - `Monitoring`
 This operation mode monitors and stores all the blockchain events that are emitted from the protocol to a database.
-
 
 2. Merchant Monitoring - `MerchantMonitoring`
 This operation mode monitors and stores all the blockchain events that are emitted from the protocol to a database
@@ -38,20 +37,11 @@ but for a selected list of addresses that is specified through the [configs](#me
 > Each event emitted from the blockchain has a `payee` attribute and we are checking if that value is part of the list 
 > specified through the configurations.
 
-
-4. Merchant Notification - `MerchantNotification`
+3. Merchant Notification - `MerchantNotification`
 This mode extends the merchant monitoring mode with the additional feature of sending a notification through an API
 to an endpoint specified from the merchant through the [configs](#merchant-notification-configs). Details on the 
 notifications that are sent to the API can be found [here](#notifications).
 
-
-5. Executor - `Executor`
-This mode extends the monitoring mode, i.e. monitors all the blockchain events and stores them in a database. On top 
-of that there is a scheduled job (default is every 5'), which checks the DB for all the subscriptions that their
-next payment time is in the past and triggers its execution. A wallet address with funds is necessary to operate this 
-mode and special permissions must be given to that address on the protocol level (smart contracts).
-
-> More details on this in the future! Keep an eye on our [blog](https://pumapay.io/blog)!
 
 ## Configurations
 
