@@ -1,5 +1,4 @@
 # PumaPay Monitoring Service - PPP v3.0
-[![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/)
 
 ## Intro
 The PumaPay Monitoring Service is an open source project, which monitors and store the following events of the 
@@ -22,7 +21,7 @@ notification and allowance of services to their customer.
 The merchant is able to configure this monitoring service in such a way that it will call an API to 
 existing services so that their backend is aware of any payment / new subscription / cancellation.
 
-> More details on the PumaPay Pull Payment Protocol v3.0 can be found [here](). 
+> More details on the PumaPay Pull Payment Protocol v3.0 can be found [here](https://pumapayv3.gitbook.io/v3/). 
 
 ## Operation Modes 
 This service can operate in 3 different modes at the moment:
@@ -143,6 +142,8 @@ On every billing model creation and edit, we send the billing model details to t
 ### New Billing Model Subscription / Cancellation of Subscription
 Whenever a new customer subscribes to one of the merchant's billing model we send the subscription and 
 billing model details. Same applies when the customer or the merchant cancels a subscription.
+
+> Details on the cancellation policy of the protocol can be found [here](https://pumapayv3.gitbook.io/v3/pumapayv3/smart-contracts-v3/cancellation-policy).
 
 ```json
 {
